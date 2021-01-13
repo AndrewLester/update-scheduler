@@ -15,10 +15,6 @@ class Config:
         SQLALCHEMY_POOL_RECYCLE = 55
         SQLALCHEMY_POOL_TIMEOUT = 5
 
-    # How often the scheduler checks for new jobs to add to the
-    # queue (in seconds, can be floating-point for more precision).
-    SCHEDULER_INTERVAL = 5
-
     SCHOOLOGY_CLIENT_ID = os.environ.get('CONSUMER_KEY')
     SCHOOLOGY_CLIENT_SECRET = os.environ.get('CONSUMER_SECRET')
     SCHOOLOGY_CLIENT_KWARGS = {}

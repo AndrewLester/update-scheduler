@@ -1,16 +1,12 @@
 import functools
 from datetime import timedelta, datetime
-import inspect
 from typing import (
     Any,
     Callable,
-    Dict,
-    List,
     Literal,
     Optional,
     Protocol,
     Set,
-    Tuple,
     Type,
     TypeVar,
     Union,
@@ -21,17 +17,14 @@ from flask import (
     Response,
     request,
     make_response,
-    request,
-    current_app,
-    render_template,
+    request
 )
 from flask.blueprints import Blueprint
 from flask.json import jsonify
 from flask_login import current_user
-from flask_login.utils import expand_login_view
+from flask_login.utils import login_required
 
 from wtforms import Form
-from wtforms.fields.core import Field
 
 from app.exts import cache, db
 
@@ -40,7 +33,7 @@ HTTPMethod = Union[Literal['POST'], Literal['GET'], Literal['PUT'], Literal['DEL
 
 
 class LocalizableTz(Protocol):
-    def localize(self, dt, is_dst=False) -> datetime:
+    def localize(self, dt: datetime, is_dst: bool = False) -> datetime:
         ...
 
 
@@ -92,8 +85,8 @@ def rest_endpoint(
 
             if request.method == 'DELETE' and 'DELETE' in methods and id is not None:
                 model_instance = model.query.get_or_404(id)  # type: ignore
-                db.session.delete(model_instance)
-                db.session.commit()
+                db.session.delete(model_instance)  # type: ignore
+                db.session.commit()  # type: ignore
                 return jsonify(), 204
 
             form_data = form.from_json(request.get_json())  # type: ignore
@@ -102,14 +95,14 @@ def rest_endpoint(
 
             if request.method == 'POST' and 'POST' in methods:
                 model_instance = func(form_data)
-                db.session.add(model_instance)
-                db.session.commit()
+                db.session.add(model_instance)  # type: ignore
+                db.session.commit()  # type: ignore
                 return model_instance.to_json()  # type: ignore
 
             if request.method == 'PUT' and 'PUT' in methods and id is not None:
                 model_instance = func(form_data)
-                db.session.add(model_instance)
-                db.session.commit()
+                db.session.add(model_instance)  # type: ignore
+                db.session.commit()  # type: ignore
                 return jsonify(), 200
 
             # Every possible correct option was exhausted

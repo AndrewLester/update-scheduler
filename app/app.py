@@ -1,20 +1,15 @@
-# from app.blueprints.calendar import models
-
 import functools
 from typing import Optional
-import pytz
+from rq import Queue
 import redis
-# from authlib.client.client import OAuthClient
 from flask import Flask, render_template, request, jsonify, g, send_from_directory, flash, current_app
 from flask.cli import load_dotenv
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 from flask_sitemap import sitemap_page_needed
-# from requests_cache.backends.redis import RedisCache
 
-from app import login, db, migrate, cache, csrf
-# from app.blueprints import calendar, main, oauth
-# from app.exts import oauth as oauth_client
+from app import login, db, migrate, cache, csrf, oauth_client
+from app import update_scheduler, main, oauth
 from config import Config
 
 
@@ -23,6 +18,10 @@ def create_app(config=Config):
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config)
     app.redis = redis.from_url(app.config['REDIS_URL'])
+    app.redis_queue = Queue(
+        name=app.config['APP_NAME'].lower().replace(' ', '-'),
+        connection=app.redis
+    )
 
     register_extensions(app)
     register_blueprints(app)
@@ -43,33 +42,33 @@ def register_extensions(app: Flask):
             migrate.init_app(app, db, render_as_batch=True)
         else:
             migrate.init_app(app, db)
+    oauth_client.init_app(app)
     csrf.init_app(app)
     cache.init_app(app, config=app.config)
 
     def fetch_token(name) -> Optional[dict]:
-        # item = oauth.models.OAuth1Token.query.filter_by(
-        #     name=name, user_id=getattr(current_user, 'id', False)
-        # ).first()
-        # if item:
-        #     return item.to_token()
-        pass
+        item = oauth.models.OAuth1Token.query.filter_by(
+            name=name, user_id=getattr(current_user, 'id', False)
+        ).first()
+        
+        return item.to_token()
 
-    # oauth_client.init_app(app, fetch_token=fetch_token, cache=cache)
-    # oauth_client.register(
-    #     name='schoology',
-    #     api_base_url='https://api.schoology.com/v1/',
-    #     request_token_url='https://api.schoology.com/v1/oauth/request_token',
-    #     access_token_url='https://api.schoology.com/v1/oauth/access_token',
-    #     authorize_url='https://www.schoology.com/oauth/authorize',
-    #     client_id=app.config['SCHOOLOGY_CLIENT_ID'],
-    #     client_key=app.config['SCHOOLOGY_CLIENT_SECRET']
-    # )
+    oauth_client.init_app(app, fetch_token=fetch_token, cache=cache)
+    oauth_client.register(
+        name='schoology',
+        api_base_url='https://api.schoology.com/v1/',
+        request_token_url='https://api.schoology.com/v1/oauth/request_token',
+        access_token_url='https://api.schoology.com/v1/oauth/access_token',
+        authorize_url='https://www.schoology.com/oauth/authorize',
+        client_id=app.config['SCHOOLOGY_CLIENT_ID'],
+        client_key=app.config['SCHOOLOGY_CLIENT_SECRET']
+    )
 
 
 def register_blueprints(app):
-    # app.register_blueprint(main.views.blueprint)
-    # app.register_blueprint(update_scheduler.views.blueprint)
-    pass
+    app.register_blueprint(main.views.blueprint)
+    app.register_blueprint(oauth.views.blueprint)
+    app.register_blueprint(update_scheduler.views.blueprint)
 
 
 def register_errorhandlers(app):
