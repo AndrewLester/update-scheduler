@@ -80,12 +80,3 @@ def register_errorhandlers(app):
         return render_template('500.html'), 500
 
     app.register_error_handler(500, internal_error)
-
-
-def load_page(fn):
-    @functools.wraps(fn)
-    def loader(*args, **kwargs):
-        page = kwargs.get('page')
-        data = cache.get(str(page))
-        return data if data else fn(*args, **kwargs)
-    return loader
