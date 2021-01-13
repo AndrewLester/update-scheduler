@@ -4,6 +4,7 @@ from typing import (
     Any,
     Callable,
     Literal,
+    NoReturn,
     Optional,
     Protocol,
     Set,
@@ -23,18 +24,34 @@ from flask.blueprints import Blueprint
 from flask.json import jsonify
 from flask_login import current_user
 from flask_login.utils import login_required
+from flask_wtf.form import FlaskForm
 
 from wtforms import Form
+from wtforms.fields.core import Field
+from wtforms.widgets.core import TextInput
+
+import isodate
 
 from app.exts import cache, db
 
 
 HTTPMethod = Union[Literal['POST'], Literal['GET'], Literal['PUT'], Literal['DELETE']]
+Validator = Callable[[FlaskForm, Field], None]
 
 
 class LocalizableTz(Protocol):
     def localize(self, dt: datetime, is_dst: bool = False) -> datetime:
         ...
+
+
+class IntervalField(Field):
+    widget = TextInput()
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = isodate.parse_duration(valuelist[0])
+        else:
+            self.data = timedelta()
 
 
 def cache_header(max_age, **ckwargs):
@@ -69,7 +86,7 @@ def rest_endpoint(
     form: Type[FormType],
     methods: Set[HTTPMethod],
 ) -> Callable:
-    def decorator(func: Callable[[FormType], ModelType]) -> Callable[[int], Any]:
+    def decorator(func: Callable[[FormType], Union[ModelType, NoReturn]]) -> Callable[[int], Any]:
         @login_required
         @functools.wraps(func)
         def wrapper(id: Optional[int] = None):
@@ -112,13 +129,13 @@ def rest_endpoint(
         blueprint.add_url_rule(
             route,
             view_func=wrapper,
-            methods=[method for method in methods if method in ('GET', 'POST')],
+            methods=[method for method in methods if method in {'GET', 'POST'}],
         )
-        # Route for Identifying REST requests
+        # Route for identifying REST requests
         blueprint.add_url_rule(
             route + '/<int:id>',
             view_func=wrapper,
-            methods=[method for method in methods if method in ('PUT', 'DELETE')],
+            methods=[method for method in methods if method in {'PUT', 'DELETE'}],
         )
 
         return wrapper
