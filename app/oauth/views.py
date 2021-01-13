@@ -1,10 +1,7 @@
-from secrets import token_urlsafe
-
 from authlib.common.errors import AuthlibBaseError
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 from flask_login.utils import login_required
-from werkzeug.routing import BuildError
 
 from app import db, oauth_client as oauth
 from app.main.models import User
@@ -25,10 +22,6 @@ blueprint = Blueprint(
 @blueprint.route('/logout')
 @login_required
 def logout():
-    """
-    Logs you out of Calendar Mixer. You will have to log in again to access your Calendar.
-    Your Calendar Mixer feed will continue to update even if you are logged out.
-    """
     if current_user.is_authenticated:
         logout_user()
     return redirect(url_for('main.index'))

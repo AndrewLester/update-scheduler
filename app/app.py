@@ -2,11 +2,10 @@ import functools
 from typing import Optional
 from rq import Queue
 import redis
-from flask import Flask, render_template, request, jsonify, g, send_from_directory, flash, current_app
+from flask import Flask, render_template, jsonify, flash
 from flask.cli import load_dotenv
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
-from flask_sitemap import sitemap_page_needed
 
 from app import login, db, migrate, cache, csrf, oauth_client
 from app import update_scheduler, main, oauth
