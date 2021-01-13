@@ -81,8 +81,6 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
                 update
             )
 
-        db.session.add(update)  # type: ignore
-        db.session.commit()  # type: ignore
     return update
 
 

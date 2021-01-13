@@ -1,4 +1,5 @@
 # type: ignore
+from typing import Dict
 from app.exts import db
 
 
@@ -16,6 +17,15 @@ class Update(db.Model):
         backref=db.backref('update', cascade='all, delete-orphan', single_parent=True)
     )
 
+    def to_json(self):
+        return {
+            'id': self.id,
+            'realm_type': self.realm_type,
+            'realm_id': self.realm_id,
+            'body': self.body,
+            'attachments': self.attachments,
+            'job': self.job.to_json()
+        }
 
 class ScheduledJob(db.Model):
     __tablename__ = 'scheduled_job'
@@ -25,3 +35,10 @@ class ScheduledJob(db.Model):
     scheduled_at = db.Column(db.DateTime, nullable=False)
     scheduled_for = db.Column(db.DateTime, nullable=False)
     update_id = db.Column(db.Integer, db.ForeignKey('update.id', name='fk_update_id'), nullable=False)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'scheduled_at': self.scheduled_at,
+            'scheduled_for': self.scheduled_for
+        }
