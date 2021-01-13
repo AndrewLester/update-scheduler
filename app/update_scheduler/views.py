@@ -26,7 +26,7 @@ blueprint = Blueprint(
 )
 
 
-@blueprint.route('/')
+@blueprint.route('')
 def scheduler():
     return render_template('scheduler.html')
 
