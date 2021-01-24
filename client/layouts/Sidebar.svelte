@@ -7,7 +7,7 @@ export let side: Side;
 </script>
 
 <div class="container" class:left={side === 'left'} class:right={side === 'right'}>
-
+    <slot></slot>
 </div>
 
 <style>

@@ -6,6 +6,8 @@ import Bottombar from './layouts/Bottombar.svelte';
 import ScheduledUpdateList from './updates/ScheduledUpdateList.svelte';
 import type { Update } from './api/types';
 import Sidebar from './layouts/Sidebar.svelte';
+import CardList from './layouts/CardList.svelte';
+import UpdateCard from './updates/UpdateCard.svelte';
 
 const updates: Update[] = [
     {
@@ -28,13 +30,19 @@ const updates: Update[] = [
         <UpdateEditor />
     </slot>
     <slot slot="bottombar">
-        <ScheduledUpdateList scheduledUpdates={updates} />
+        <CardList header={'Saved Updates'} horizontal items={updates} let:item>
+            <UpdateCard update={item} />
+        </CardList>
     </slot>
     <slot slot="left-sidebar">
         <Sidebar side={'left'} />
     </slot>
     <slot slot="right-sidebar">
-        <Sidebar side={'right'} />
+        <Sidebar side={'right'}>
+            <CardList header={'Scheduled Updates'} items={updates} let:item>
+                <UpdateCard update={item} />
+            </CardList>
+        </Sidebar>
     </slot>
 </Layout>
 

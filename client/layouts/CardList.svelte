@@ -27,9 +27,13 @@ export let horizontal = false;
 
 <style>
 .card-list {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
     background-color: white;
     width: 100%;
     height: 100%;
+    padding: 20px 10px;
     border-radius: 10px;
 }
 
@@ -42,16 +46,23 @@ export let horizontal = false;
 
 .container {
     display: flex;
-    flex: column no-wrap;
-    height: auto;
+    flex-flow: column nowrap;
+    align-items: center;
     width: 100%;
+    height: 100%;
+    padding: 20px 10px;
+    border-radius: 5px;
+    overflow-y: auto;
+    box-shadow: inset 0px 0px 8px 1px rgba(0, 0, 0, 0.2);
     margin: 0px auto;
     background-color: var(--main-background-color);
 }
 
 .container.horizontal {
-    flex: row no-wrap;
+    flex-flow: row nowrap;
     width: 80%;
+    padding: 10px 20px;
+    height: auto;
     margin: 0px auto;
 }
 
