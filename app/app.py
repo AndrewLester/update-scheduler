@@ -26,7 +26,9 @@ def create_app(config=Config):
     register_blueprints(app)
     register_errorhandlers(app)
     app.shell_context_processor(lambda: {
-        'db': db, 'User': main.models.User, 'Update': update_scheduler.models.Update
+        'db': db, 'User': main.models.User, 'Update': update_scheduler.models.Update,
+        'OAuth1Token': oauth.models.OAuth1Token,
+        'ScheduledJob': update_scheduler.models.ScheduledJob
     })
 
     return app

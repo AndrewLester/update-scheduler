@@ -8,5 +8,17 @@ module.exports = {
         sourceMaps: !production,
         out: 'app/bundle/build'
     },
-    plugins: ['@snowpack/plugin-svelte', '@snowpack/plugin-typescript', '@snowpack/plugin-dotenv']
+    plugins: [
+        '@snowpack/plugin-svelte',
+        '@snowpack/plugin-typescript',
+        '@snowpack/plugin-dotenv',
+        [
+            '@snowpack/plugin-sass',
+            {
+                compilerOptions: {
+                    update: true
+                }
+            }
+        ]
+    ]
 }

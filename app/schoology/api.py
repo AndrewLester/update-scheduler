@@ -1,7 +1,7 @@
 from app.schoology.types import Realm
 from datetime import datetime
 from json.decoder import JSONDecodeError
-from typing import List, cast
+from typing import Dict, List, cast
 from app.exts import cache, oauth_client as oauth
 from app.main.models import User
 
@@ -42,7 +42,7 @@ def schoology_to_datetime(string: str, tz: LocalizableTz) -> datetime:
     return tz.localize(time)
 
 
-@cache.memoize(900)
+@cache.memoize(timeout=900)
 def get_user_realms(user: User) -> List[Realm]:
     sections: List[Realm] = [
         {'id': section['id'], 'name': section['course_title'], 'realm_type': 'section'}
@@ -70,9 +70,9 @@ def get_user_realms(user: User) -> List[Realm]:
     return sections + groups + school + district
 
 
-def post_update(realm: str, body: str, attachments: str):
+def post_update(realm: str, body: str, attachments: List[Dict]):
     data = {
         'body': body,
         'attachments': attachments
     }
-    oauth.schoology.post(f'/{realm}/updates', data=data)
+    oauth.schoology.post(f'/{realm}/updates', json=data)

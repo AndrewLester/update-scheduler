@@ -8,7 +8,7 @@ from app.exts import db, login
 @login.user_loader
 def load_user(id):
     user = User.query.get(int(id))
-    if user.oauth_token is None:
+    if user is not None and user.oauth_token is None:
         user = None
     return user
 
@@ -24,7 +24,8 @@ class User(UserMixin, db.Model):
     oauth_token = db.relationship(
         'OAuth1Token',
         uselist=False,
-        backref=backref('user', cascade='all, delete-orphan', single_parent=True)
+        backref=backref('user', single_parent=True),
+        cascade='all, delete-orphan'
     )
 
     def __repr__(self):

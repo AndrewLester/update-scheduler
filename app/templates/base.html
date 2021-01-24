@@ -10,11 +10,13 @@
         {% endif %}
         <link rel="icon" href="https://cdn2.iconfinder.com/data/icons/files-time/24/time-check-512.png" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/flashed_messages.css') }}">
+        <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
         {% block head %}{% endblock %}
     </head>
     <body>
-        <header>
+        <header class="shown">
             <nav>
                 <a href="{{ url_for('main.index') }}">Home</a>
                 <a href="{{ url_for('main.tutorial') }}">Tutorial</a>

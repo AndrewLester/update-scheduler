@@ -14,14 +14,15 @@ class Update(db.Model):
     job = db.relationship(
         'ScheduledJob',
         uselist=False,
-        backref=db.backref('update', cascade='all, delete-orphan', single_parent=True)
+        backref=db.backref('update', single_parent=True),
+        cascade='all, delete-orphan'
     )
 
     def to_json(self):
         return {
             'id': self.id,
-            'realm_type': self.realm_type,
-            'realm_id': self.realm_id,
+            'realmType': self.realm_type,
+            'realmId': self.realm_id,
             'body': self.body,
             'attachments': self.attachments,
             'job': self.job.to_json()
@@ -39,6 +40,6 @@ class ScheduledJob(db.Model):
     def to_json(self):
         return {
             'id': self.id,
-            'scheduled_at': self.scheduled_at,
-            'scheduled_for': self.scheduled_for
+            'scheduled_at': str(self.scheduled_at),
+            'scheduled_for': str(self.scheduled_for)
         }

@@ -23,6 +23,8 @@ blueprint = Blueprint(
 @login_required
 def logout():
     if current_user.is_authenticated:
+        db.session.delete(current_user.oauth_token)  # type: ignore
+        db.session.commit()  # type: ignore
         logout_user()
     return redirect(url_for('main.index'))
 
@@ -60,8 +62,8 @@ def authorize():
             username=user_data['username'],
             email=user_data['primary_email'],
             timezone=user_data['tz_name'],
-            building_id=str(user_data['building_id']),
-            school_id=str(user_data['school_id']),
+            building_id=str(user_data.get('building_id', '')),
+            school_id=str(user_data.get('school_id', '')),
             profile_picture_url=user_data['picture_url']
         )
 
