@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, render_template
+from flask import Blueprint, flash, render_template, abort
 from flask_login.utils import login_required
 
 from app.exts import oauth_client as oauth
@@ -41,7 +41,7 @@ def profile():
     resp = oauth.schoology.get('users/me', cache=True)
     if resp.status_code >= 400:
         flash('Schoology API error...')
-        return 500
+        abort(500)
     return render_template('user.html', profile=resp.json())
 
 

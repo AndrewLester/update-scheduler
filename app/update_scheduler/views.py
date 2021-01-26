@@ -33,7 +33,7 @@ def scheduler():
 
 @blueprint.route('/realms')
 def realms():
-    realms = get_user_realms(current_user)
+    realms = get_user_realms(current_user)  # type: ignore
     return jsonify(realms)
 
 
@@ -51,32 +51,35 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
             realm_type=form.realm_type.data,
             realm_id=form.realm_id.data,
             body=form.body.data,
-            attachments=form.attachments.data
+            attachments=form.attachments.data,
+            user_id=current_user.id
         )
 
-        schedule_update(
-            current_app.redis_queue,
-            scheduled_formdata_to_time(
-                form.scheduled_for.data,
-                form.scheduled_in.data
-            ),
-            update
-        )
+        if form.job.scheduled_for.data or form.job.scheduled_in.data:
+            schedule_update(
+                current_app.redis_queue,
+                scheduled_formdata_to_time(
+                    form.job.scheduled_for.data,
+                    form.job.scheduled_in.data
+                ),
+                update
+            )
     else:
         update.realm_type = form.realm_type.data,
         update.realm_id = form.realm_id.data,
         update.body = form.body.data,
         update.attachments = form.attachments.data
 
-        if update.job and (form.scheduled_for.data or form.scheduled_in.data):
+        if update.job:
             job = Job.fetch(update.job.id, connection=current_app.redis)
             job.cancel()
 
+        if form.job.scheduled_for.data or form.job.scheduled_in.data:
             schedule_update(
                 current_app.redis_queue,
                 scheduled_formdata_to_time(
-                    form.scheduled_for.data,
-                    form.scheduled_in.data
+                    form.job.scheduled_for.data,
+                    form.job.scheduled_in.data
                 ),
                 update
             )

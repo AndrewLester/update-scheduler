@@ -21,6 +21,10 @@ class User(UserMixin, db.Model):
     school_id = db.Column(db.String(36))
     timezone = db.Column(db.String(120))
     profile_picture_url = db.Column(db.String(250))
+    updates = db.relationship(
+        'Update',
+        backref='user'
+    )
     oauth_token = db.relationship(
         'OAuth1Token',
         uselist=False,

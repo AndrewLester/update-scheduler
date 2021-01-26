@@ -13,15 +13,17 @@ export let horizontal = false;
 
 <div class="card-list">
     <h3>{header}</h3>
-    <div class="container" class:horizontal>
-        {#each items as item (item.id)}
-            <div class="item"
-                in:scale={{ start: 0.6, easing: backOut, duration: 250 }}
-                out:scale={{ start: 0.6, easing: cubicIn, duration: 250 }}
-                animate:flip={{ duration: 350 }}>
-                <slot {item} />
-            </div>
-        {/each}
+    <div class="scrollable" class:horizontal>
+        <div class="container">
+            {#each items as item (item.id)}
+                <div class="item"
+                    in:scale={{ start: 0.6, easing: backOut, duration: 250 }}
+                    out:scale={{ start: 0.6, easing: cubicIn, duration: 250 }}
+                    animate:flip={{ duration: 350 }}>
+                    <slot {item} />
+                </div>
+            {/each}
+        </div>
     </div>
 </div>
 
@@ -33,7 +35,7 @@ export let horizontal = false;
     background-color: white;
     width: 100%;
     height: 100%;
-    padding: 20px 10px;
+    padding: 20px 1em;
     border-radius: 10px;
 }
 
@@ -41,29 +43,38 @@ export let horizontal = false;
     margin-top: 0px;
     text-align: center;
     color: black;
-    font-weight: bold;
+}
+
+.scrollable {
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
+    border-radius: 5px;
+    overflow-y: auto;
+    box-shadow: inset 0px 0px 8px 1px rgba(0, 0, 0, 0.2);
+    background-color: var(--main-background-color);
+}
+
+.scrollable.horizontal {
+    width: 80%;
+    height: auto;
+    overflow-y: auto;
 }
 
 .container {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
+    float: left;
+    gap: 20px;
     padding: 20px 10px;
-    border-radius: 5px;
-    overflow-y: auto;
-    box-shadow: inset 0px 0px 8px 1px rgba(0, 0, 0, 0.2);
-    margin: 0px auto;
-    background-color: var(--main-background-color);
 }
 
-.container.horizontal {
+.scrollable.horizontal > .container {
     flex-flow: row nowrap;
-    width: 80%;
     padding: 10px 20px;
-    height: auto;
-    margin: 0px auto;
 }
 
 </style>

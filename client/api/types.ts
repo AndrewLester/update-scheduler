@@ -13,7 +13,13 @@ export interface Update {
     realm_id: string,
     body: string,
     attachments: string,
-    job: ScheduledJob
+    job: ScheduledJob | null
+}
+
+export interface Realm {
+    id: string,
+    name: string,
+    realm_type: string
 }
 
 const schoologyTimestampFormat = 'YYYY-MM-DD HH:mm:ss';

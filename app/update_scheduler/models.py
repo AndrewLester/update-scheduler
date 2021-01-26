@@ -11,6 +11,7 @@ class Update(db.Model):
     realm_id = db.Column(db.Integer, nullable=False)
     body = db.Column(db.String, nullable=False)
     attachments = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.String, db.ForeignKey('user.id', name='fk_user_id'), nullable=False)
     job = db.relationship(
         'ScheduledJob',
         uselist=False,
@@ -25,7 +26,7 @@ class Update(db.Model):
             'realmId': self.realm_id,
             'body': self.body,
             'attachments': self.attachments,
-            'job': self.job.to_json()
+            'job': self.job.to_json() if self.job else None
         }
 
 class ScheduledJob(db.Model):

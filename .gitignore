@@ -16,7 +16,6 @@ logs/
 app/bundle/
 *.rdb
 .sqlite
-debug_app.sh
 .stubs/
 
 *.crt

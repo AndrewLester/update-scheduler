@@ -195,7 +195,7 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
         super(endpoint, defaultValue, fetchErrorHandler);
     }
 
-    async create(element: ElementType<T>) {
+    async create(element: ElementType<T>): Promise<ElementType<T> | undefined> {
         if (!this.api) throw new Error('Networking not loaded');
 
         try {
@@ -204,6 +204,7 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
                 element
             );
             this.store.update((current) => [created, ...current] as any);
+            return created;
         } catch (e) {
             this.fetchErrorHandler(e);
         }
