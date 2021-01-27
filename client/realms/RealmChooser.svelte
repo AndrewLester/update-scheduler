@@ -10,7 +10,7 @@ export let realms: Realm[];
 export let update: Update;
 
 function selectRealm(realm: Realm) {
-    update.realm_id = realm.id;
+    update.realm_id = parseInt(realm.id);
     update.realm_type = realm.realm_type;
 }
 
@@ -23,7 +23,7 @@ function selectRealm(realm: Realm) {
         <div class="selected-realm" in:fade>
             {#if update.realm_id }
                 <RealmOption
-                    realm={realms.find((realm) => realm.id === update.realm_id)}
+                    realm={realms.find((realm) => realm.id === update.realm_id.toString())}
                     on:click={() => selectRealm({ id: '', realm_type: '', name: ''})}
                     selected />
             {:else}
@@ -33,7 +33,7 @@ function selectRealm(realm: Realm) {
     {/key}
     <h4>Realm List</h4>
     <div class="realm-list">
-        {#each realms.filter((realm) => realm.id !== update.realm_id) as realm (realm.id)}
+        {#each realms.filter((realm) => realm.id !== update.realm_id.toString()) as realm (realm.id)}
             <div
                 animate:flip={{ delay: 200 }}
                 in:fade={{ duration: 200 }}

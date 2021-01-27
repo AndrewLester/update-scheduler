@@ -4,8 +4,24 @@ export function sleep(millis: number): Promise<void> {
 
 type AnimationEventListener = (ev: AnimationEvent) => any;
 
+export function svelteTransitionEnd(
+    element: Element,
+    timeout?: number
+): Promise<void> {
+    return new Promise((resolve) => {
+        element.addEventListener('outroend', () => resolve());
+
+        if (timeout !== undefined) {
+            sleep(timeout).then(() => {
+                element.removeEventListener('outroend', () => resolve());
+                resolve();
+            });
+        }
+    });
+}
+
 export function animationEnd(
-    element: HTMLElement,
+    element: Element,
     animationName: string,
     timeout?: number
 ): Promise<void> {

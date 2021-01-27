@@ -10,7 +10,7 @@ export interface ScheduledJob {
 export interface Update {
     id: number,
     realm_type: string,
-    realm_id: string,
+    realm_id: number,
     body: string,
     attachments: string,
     job: ScheduledJob | null

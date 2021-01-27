@@ -22,8 +22,8 @@ class Update(db.Model):
     def to_json(self):
         return {
             'id': self.id,
-            'realmType': self.realm_type,
-            'realmId': self.realm_id,
+            'realm_type': self.realm_type,
+            'realm_id': self.realm_id,
             'body': self.body,
             'attachments': self.attachments,
             'job': self.job.to_json() if self.job else None

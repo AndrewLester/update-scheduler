@@ -2,7 +2,7 @@
 declare const csrf_token: string;
 
 export function getNewUpdate(): Update {
-    return { id: -1, body: '', attachments: '', realm_id: '', realm_type: '', job: null };
+    return { id: -1, body: '', attachments: '', realm_id: 0, realm_type: '', job: null };
 }
 </script>
 
@@ -19,7 +19,7 @@ import Sidebar from './layouts/Sidebar.svelte';
 import RealmChooser from './realms/RealmChooser.svelte';
 import { realms, updates } from './stores';
 import UpdateCard from './updates/UpdateCard.svelte';
-import { slide } from 'svelte/transition';
+import { fly, slide } from 'svelte/transition';
 
 
 let api: Networking | undefined;
@@ -27,10 +27,11 @@ let selectedUpdate: Update = getNewUpdate();
 
 $: scheduledUpdates = $updates.filter((update) => update.job);
 $: savedUpdates = $updates.filter((update) => !update.job);
-let gridAreas: GridArea = 'maximum';
-$: console.log(scheduledUpdates);
-$: (async () => {
-    await tick();
+let gridAreas: GridArea = 'minimal';
+$: if (scheduledUpdates || savedUpdates || true) {
+    console.time('layout-change');
+}
+$: {
     if (scheduledUpdates.length === 0 && savedUpdates.length == 0) {
         gridAreas = 'minimal';
     } else if (scheduledUpdates.length === 0) {
@@ -40,7 +41,8 @@ $: (async () => {
     } else {
         gridAreas = 'maximum';
     }
-})();
+    console.timeLog('layout-change', 'Areas updated in App.svelte');
+};
 
 onMount(() => {
     api = networking.mountNetworking(csrf_token);
@@ -65,7 +67,9 @@ function handleUpdateDelete(update: Update) {
     </slot>
     <slot slot="bottombar">
         {#if savedUpdates.length !== 0 }
-            <div>
+            <div transition:fly={{ y: 50, duration: 250 }}
+                on:outrostart={() => console.timeLog('layout-change', 'Fly animation start')}
+                on:outroend={() => {console.timeLog('layout-change', 'Fly animation done')}}>
                 <CardList header={'Saved Updates'} horizontal items={savedUpdates} let:item>
                     <UpdateCard
                         update={item}
@@ -83,15 +87,17 @@ function handleUpdateDelete(update: Update) {
     </slot>
     <slot slot="right-sidebar">
         {#if scheduledUpdates.length !== 0 }
-            <Sidebar side={'right'}>
-                <CardList header={'Scheduled Updates'} items={scheduledUpdates} let:item>
-                    <UpdateCard
-                    selected={item === selectedUpdate}
-                    update={item}
-                    on:edit={() => selectedUpdate = item}
-                    on:delete={() => handleUpdateDelete(item)} />
-                </CardList>
-            </Sidebar>
+            <div transition:fly={{ x: 50, duration: 250 }}>
+                <Sidebar side={'right'}>
+                    <CardList header={'Scheduled Updates'} items={scheduledUpdates} let:item>
+                        <UpdateCard
+                        selected={item === selectedUpdate}
+                        update={item}
+                        on:edit={() => selectedUpdate = item}
+                        on:delete={() => handleUpdateDelete(item)} />
+                    </CardList>
+                </Sidebar>
+            </div>
         {/if}
     </slot>
 </Layout>

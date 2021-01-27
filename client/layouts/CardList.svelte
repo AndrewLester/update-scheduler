@@ -17,8 +17,8 @@ export let horizontal = false;
         <div class="container">
             {#each items as item (item.id)}
                 <div class="item"
-                    in:scale={{ start: 0.6, easing: backOut, duration: 250 }}
-                    out:scale={{ start: 0.6, easing: cubicIn, duration: 250 }}
+                    in:scale|local={{ start: 0.6, easing: backOut, duration: 250 }}
+                    out:scale|local={{ start: 0.6, easing: cubicIn, duration: 250 }}
                     animate:flip={{ duration: 350 }}>
                     <slot {item} />
                 </div>
