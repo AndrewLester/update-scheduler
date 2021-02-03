@@ -13,7 +13,7 @@ def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update
         job = queue.enqueue_at(
             dt.astimezone(pytz.utc),
             post_update,
-            update.realm + '/' + update.realm_id,
+            update.realm_type + '/' + update.realm_id,
             update.body,
             update.attachments
         )
@@ -21,13 +21,17 @@ def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update
         job = queue.enqueue_in(
             dt,
             post_update,
-            update.realm + '/' + update.realm_id,
+            update.realm_type + '/' + update.realm_id,
             update.body,
             update.attachments
         )
     
-    scheduled_for = dt.astimezone(pytz.utc) if isinstance(dt, datetime) else datetime.utcnow() + dt
-    scheduled_job = ScheduledJob(scheduled_at=job.created_at, scheduled_for=scheduled_for)
+    scheduled_job = ScheduledJob(
+        id=job.id,
+        scheduled_at=job.created_at,
+        scheduled_in=dt if isinstance(dt, timedelta) else None,
+        scheduled_for=dt if isinstance(dt, datetime) else None
+    )
     update.job = scheduled_job
     db.session.add(update)  # type: ignore
     db.session.commit()  # type: ignore

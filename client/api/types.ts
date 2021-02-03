@@ -2,15 +2,15 @@ import moment from 'moment';
 
 
 export interface ScheduledJob {
-    id: number,
-    scheduled_at?: string,
-    scheduled_for?: string
+    id: string,
+    scheduled_for?: string,
+    scheduled_in?: string
 }
 
 export interface Update {
     id: number,
     realm_type: string,
-    realm_id: number,
+    realm_id: string,
     body: string,
     attachments: string,
     job: ScheduledJob | null

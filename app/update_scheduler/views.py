@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from flask.globals import current_app
+from flask_login.utils import login_required
 from isodate.duration import Duration
 import pytz
 from rq.job import Job
@@ -27,11 +28,13 @@ blueprint = Blueprint(
 
 
 @blueprint.route('')
+@login_required
 def scheduler():
     return render_template('scheduler.html')
 
 
 @blueprint.route('/realms')
+@login_required
 def realms():
     realms = get_user_realms(current_user)  # type: ignore
     return jsonify(realms)
@@ -44,6 +47,7 @@ def realms():
     form=UpdateForm,
     methods={'GET', 'POST', 'PUT', 'DELETE'}
 )
+@login_required
 def updates(form: UpdateForm) -> Union[Update, NoReturn]:
     update = Update.query.get(form.id.data)
     if update is None:
@@ -65,14 +69,15 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
                 update
             )
     else:
-        update.realm_type = form.realm_type.data,
-        update.realm_id = form.realm_id.data,
-        update.body = form.body.data,
+        update.realm_type = form.realm_type.data
+        update.realm_id = form.realm_id.data
+        update.body = form.body.data
         update.attachments = form.attachments.data
 
-        if update.job:
+        if update.job is not None:
             job = Job.fetch(update.job.id, connection=current_app.redis)
-            job.cancel()
+            if job:
+                job.cancel()
 
         if form.job.scheduled_for.data or form.job.scheduled_in.data:
             schedule_update(
@@ -83,6 +88,8 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
                 ),
                 update
             )
+        else:
+            update.job = None
 
     return update
 

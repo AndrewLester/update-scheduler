@@ -58,14 +58,14 @@ export let horizontal = false;
 .scrollable.horizontal {
     width: 80%;
     height: auto;
-    overflow-y: auto;
+    overflow-x: auto;
 }
 
 .container {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    width: auto;
+    width: 100%;
     height: auto;
     float: left;
     gap: 20px;
@@ -74,6 +74,7 @@ export let horizontal = false;
 
 .scrollable.horizontal > .container {
     flex-flow: row nowrap;
+    width: auto;
     padding: 10px 20px;
 }
 

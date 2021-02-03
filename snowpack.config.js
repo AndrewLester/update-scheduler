@@ -8,17 +8,17 @@ module.exports = {
         sourceMaps: !production,
         out: 'app/bundle/build'
     },
+    installOptions: {
+        rollup: {
+            plugins: [
+                require('rollup-plugin-scss')()
+            ]
+        }
+    },
     plugins: [
         '@snowpack/plugin-svelte',
         '@snowpack/plugin-typescript',
         '@snowpack/plugin-dotenv',
-        [
-            '@snowpack/plugin-sass',
-            {
-                compilerOptions: {
-                    update: true
-                }
-            }
-        ]
+        '@snowpack/plugin-sass'
     ]
 }

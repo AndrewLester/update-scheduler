@@ -8,7 +8,7 @@ class Update(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     realm_type = db.Column(db.String, nullable=False)
-    realm_id = db.Column(db.Integer, nullable=False)
+    realm_id = db.Column(db.String(30), nullable=False)
     body = db.Column(db.String, nullable=False)
     attachments = db.Column(db.String, nullable=False)
     user_id = db.Column(db.String, db.ForeignKey('user.id', name='fk_user_id'), nullable=False)
@@ -32,15 +32,17 @@ class Update(db.Model):
 class ScheduledJob(db.Model):
     __tablename__ = 'scheduled_job'
 
-    id = db.Column(db.String(), primary_key=True)
+    id = db.Column(db.String, primary_key=True)
     # Both in UTC
     scheduled_at = db.Column(db.DateTime, nullable=False)
-    scheduled_for = db.Column(db.DateTime, nullable=False)
+    scheduled_in = db.Column(db.Interval)
+    scheduled_for = db.Column(db.DateTime)
     update_id = db.Column(db.Integer, db.ForeignKey('update.id', name='fk_update_id'), nullable=False)
 
     def to_json(self):
         return {
             'id': self.id,
             'scheduled_at': str(self.scheduled_at),
-            'scheduled_for': str(self.scheduled_for)
+            'scheduled_in': str(self.scheduled_in) if self.scheduled_in else None,
+            'scheduled_for': str(self.scheduled_for) if self.scheduled_for else None
         }

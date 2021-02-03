@@ -51,7 +51,7 @@ class IntervalField(Field):
         if valuelist:
             self.data = isodate.parse_duration(valuelist[0])
         else:
-            self.data = timedelta()
+            self.data = None
 
 
 def cache_header(max_age, **ckwargs):
@@ -108,7 +108,7 @@ def rest_endpoint(
 
             form_data = form.from_json(request.get_json())  # type: ignore
             if not form_data.validate_on_submit():
-                abort(make_response('Form validation failed', 400))
+                abort(make_response('Form validation failed: ' + str(form_data.errors), 400))
 
             if request.method == 'POST' and 'POST' in methods:
                 model_instance = func(form_data)
