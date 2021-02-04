@@ -26,3 +26,8 @@ class Config:
     CACHE_KEY_PREFIX = 'redis_flask_cache'
     CACHE_REDIS_HOST = REDIS_URL.rsplit(':', 1)[0]
     CACHE_REDIS_PORT = REDIS_URL.rsplit(':', 1)[1]
+
+
+# Settings for rq-worker
+REDIS_URL = Config.REDIS_URL
+
