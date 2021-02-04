@@ -1,7 +1,7 @@
 from app.schoology.types import Realm
 from datetime import datetime
 from json.decoder import JSONDecodeError
-from typing import Dict, List, cast
+from typing import Any, Dict, List, cast
 from app.exts import cache, oauth_client as oauth
 from app.main.models import User
 
@@ -75,4 +75,5 @@ def post_update(realm: str, body: str, attachments: List[Dict]):
         'body': body,
         'attachments': attachments
     }
+
     oauth.schoology.post(f'/{realm}/updates', json=data)

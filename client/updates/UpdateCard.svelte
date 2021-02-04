@@ -4,27 +4,36 @@ import '@smui/button/bare.css';
 import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
 import type { Update } from '../api/types';
-import { updates } from '../stores';
+import { time, updates } from '../stores';
+import { sleep } from '../utility/async';
 
 export let update: Update;
 export let selected: boolean;
 
+
+let posted = false;
 $: scheduled = (update.job?.scheduled_for || update.job?.scheduled_in);
 let scheduledText = '';
 $: if (scheduled) {
     if (update.job?.scheduled_in) {
         scheduledText = update.job.scheduled_in;
-        console.log(update);
     } else if (update.job?.scheduled_for) {
-        scheduledText = moment.duration(moment(update.job.scheduled_for).diff(moment())).humanize(true);
+        const duration = moment.duration(moment(update.job.scheduled_for).diff($time));
+        if (duration.asMilliseconds() <= 0) {
+            posted = true;
+            sleep(750).then(() => updates.reset());
+        } else {
+            scheduledText = duration.humanize(true);
+        }
     }
 }
 
 const dispatch = createEventDispatcher();
 
-function deleteUpdate() {
+function deleteUpdate(confirm: boolean) {
     dispatch('delete');
     // TODO launch confirm dialog
+    
     updates.delete(update, 'id');
 }
 
@@ -35,15 +44,16 @@ function cancelUpdate() {
 
 </script>
 
-<div class="card" class:selected>
+<div class="card" class:selected class:posted>
     <p>
         <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">chat</Icon>
-        {update.body}
+        {@html update.body}
     </p>
     {#if scheduled}
         <p style="display: flex; align-items: center;">
             <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">schedule</Icon>
             {'Posts ' + scheduledText}
+
         </p>
     {/if}
     <Group style="width: 100%; margin-top: auto">
@@ -51,7 +61,7 @@ function cancelUpdate() {
         {#if scheduled }
             <Button on:click={cancelUpdate}><Icon class="material-icons">cancel</Icon><Label>Cancel</Label></Button>
         {:else}    
-            <Button on:click={deleteUpdate}><Icon class="material-icons">delete</Icon><Label>Delete</Label></Button>
+            <Button on:click={() => deleteUpdate(true)}><Icon class="material-icons">delete</Icon><Label>Delete</Label></Button>
         {/if}
     </Group>
 </div>
@@ -79,5 +89,18 @@ p {
 
 .card.selected {
     box-shadow: 0px 0px 0px 2px lightskyblue;
+}
+
+.card.posted {
+    animation: green-flash 500ms ease backwards;
+}
+
+@keyframes green-flash {
+    50% {
+        background-color: rgb(109, 221, 109);
+    }
+    100% {
+        background-color: white;
+    }
 }
 </style>

@@ -19,6 +19,9 @@ class Update(db.Model):
         cascade='all, delete-orphan'
     )
 
+    def post(self):
+        pass
+
     def to_json(self):
         return {
             'id': self.id,

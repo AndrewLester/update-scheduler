@@ -95,6 +95,7 @@ function handleUpdateDelete(update: Update) {
     </slot>
     <slot slot="bottombar">
         {#if savedUpdates.length !== 0}
+            <!-- Must use separate in and out transitions because delay parameter is dynamic -->
             <div
                 in:fly={{ y: 50, duration: 250, delay: bottombarTransitionDelay }}
                 out:fly={{ y: 50, duration: 250, delay: bottombarTransitionDelay }}>
@@ -119,6 +120,7 @@ function handleUpdateDelete(update: Update) {
     </slot>
     <slot slot="right-sidebar">
         {#if scheduledUpdates.length !== 0}
+            <!-- Must use separate in and out transitions because delay parameter is dynamic -->
             <div
                 in:fly={{ x: 50, duration: 250, delay: rightSidebarTransitionDelay }}
                 out:fly={{ x: 100, duration: 250, delay: rightSidebarTransitionDelay }}

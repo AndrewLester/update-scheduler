@@ -1,7 +1,7 @@
 from typing import Union
 from app.update_scheduler.models import ScheduledJob, Update
 from app.schoology.api import post_update
-from app.exts import db
+from app.exts import db, oauth_client as oauth
 from datetime import datetime, timedelta
 from rq import Queue
 import pytz
