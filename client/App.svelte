@@ -33,44 +33,29 @@ let layout: Layout | undefined;
 let api: Networking | undefined;
 let selectedUpdate: Update = getNewUpdate();
 
-let scheduledUpdates = [] as Update[];
-let savedUpdates = [] as Update[];
-let rightSidebarTransitionDelay: number = 0;
-let bottombarTransitionDelay: number = 0;
+$: scheduledUpdates = $updates.filter(
+    (update) => update.job?.scheduled_for || update.job?.scheduled_in
+);
+$: savedUpdates = $updates.filter(
+    (update) => !(update.job?.scheduled_for || update.job?.scheduled_in)
+);
+
 let gridAreas: GridArea = 'minimal';
 
 $: {
-    const _scheduledUpdates = $updates.filter(
-        (update) => update.job?.scheduled_for || update.job?.scheduled_in
-    );
-    const _savedUpdates = $updates.filter(
-        (update) => !(update.job?.scheduled_for || update.job?.scheduled_in)
-    );
-
-    let _gridAreas: GridArea;
-    if (_scheduledUpdates.length === 0 && _savedUpdates.length == 0) {
-        _gridAreas = 'minimal';
-    } else if (_scheduledUpdates.length === 0) {
-        _gridAreas = 'bottombar';
-    } else if (_savedUpdates.length === 0) {
-        _gridAreas = 'rightsidebar';
+    if (scheduledUpdates.length === 0 && savedUpdates.length == 0) {
+        gridAreas = 'minimal';
+    } else if (scheduledUpdates.length === 0) {
+        gridAreas = 'bottombar';
+    } else if (savedUpdates.length === 0) {
+        gridAreas = 'rightsidebar';
     } else {
-        _gridAreas = 'maximum';
+        gridAreas = 'maximum';
     }
-
-    // Set transition delays before updating scheduled & saved updates so
-    // the new delays can be used in subsequent transitions
-    rightSidebarTransitionDelay = layout?.getElementTransitionDelay('right-sidebar', _gridAreas) ?? 0;
-    bottombarTransitionDelay = layout?.getElementTransitionDelay('bottombar', _gridAreas) ?? 0;
-    console.log('Rightbar delay:', rightSidebarTransitionDelay, 'Bottombar delay:', bottombarTransitionDelay);
-
-    tick().then(() => {
-        scheduledUpdates = _scheduledUpdates;
-        savedUpdates = _savedUpdates;
-        gridAreas = _gridAreas;
-    });
 }
 
+$: rightSidebarTransitionDelay = layout?.getElementTransitionDelay('right-sidebar', gridAreas) ?? 0;
+$: bottombarTransitionDelay = layout?.getElementTransitionDelay('bottombar', gridAreas) ?? 0;
 
 onMount(() => {
     api = networking.mountNetworking(csrf_token);

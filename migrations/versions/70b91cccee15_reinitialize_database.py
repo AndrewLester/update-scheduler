@@ -44,16 +44,16 @@ def upgrade():
     )
     op.create_table('update',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('realm_type', sa.String(), nullable=False),
+    sa.Column('realm_type', sa.String(length=15), nullable=False),
     sa.Column('realm_id', sa.String(length=30), nullable=False),
-    sa.Column('body', sa.String(), nullable=False),
-    sa.Column('attachments', sa.String(), nullable=False),
-    sa.Column('user_id', sa.String(), nullable=False),
+    sa.Column('body', sa.Text(), nullable=False),
+    sa.Column('attachments', sa.Text(), nullable=False),
+    sa.Column('user_id', sa.String(length=30), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name='fk_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('scheduled_job',
-    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('id', sa.String(length=35), nullable=False),
     sa.Column('scheduled_at', sa.DateTime(), nullable=False),
     sa.Column('scheduled_in', sa.Interval(), nullable=True),
     sa.Column('scheduled_for', sa.DateTime(), nullable=True),
