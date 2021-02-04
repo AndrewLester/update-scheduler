@@ -49,7 +49,7 @@ def upgrade():
     sa.Column('body', sa.Text(), nullable=False),
     sa.Column('attachments', sa.Text(), nullable=False),
     sa.Column('user_id', sa.String(length=30), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name='fk_user_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name='fk_user_id_update'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('scheduled_job',
@@ -58,7 +58,7 @@ def upgrade():
     sa.Column('scheduled_in', sa.Interval(), nullable=True),
     sa.Column('scheduled_for', sa.DateTime(), nullable=True),
     sa.Column('update_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['update_id'], ['update.id'], name='fk_update_id'),
+    sa.ForeignKeyConstraint(['update_id'], ['update.id'], name='fk_update_id_scheduled_job'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
