@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+import os
 import logging
 from logging.config import fileConfig
 
@@ -72,10 +73,15 @@ def run_migrations_online():
                 directives[:] = []
                 logger.info('No changes in schema detected.')
 
+    connect_args = {}
+    if os.environ.get('DATABASE_URL'):
+        connect_args = {'ssl': {'ca': '.mysqlclient/cleardb-ca.pem', 'cipher': 'SSL_CIPHER'}}
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix='sqlalchemy.',
         poolclass=pool.NullPool,
+        connect_args=connect_args
     )
 
     with connectable.connect() as connection:
