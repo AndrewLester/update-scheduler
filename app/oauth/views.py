@@ -55,7 +55,7 @@ def authorize():
 
     user_data = oauth.schoology.get('users/me').json()
 
-    user = User.query.filter_by(username=user_data['username']).first()
+    user = User.query.get(user_data['uid'])
     if user is None:
         user = User(
             id=user_data['uid'],
