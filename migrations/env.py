@@ -75,7 +75,7 @@ def run_migrations_online():
 
     connect_args = {}
     if os.environ.get('DATABASE_URL'):
-        connect_args = {'ssl': {'ca': '.mysqlclient/cleardb-ca.pem', 'cipher': 'SSL_CIPHER'}}
+        connect_args = {'ssl': {'ca': '../.mysqlclient/cleardb-ca.pem', 'cipher': 'DHE-RSA-AES128-GCM-SHA256:AES128-SHA:@SECLEVEL=1'}}
 
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
