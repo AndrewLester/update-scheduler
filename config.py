@@ -12,6 +12,7 @@ class Config:
     # ClearDB's idle limit is 90 seconds, so set the recycle to be under 90
     if os.environ.get('DATABASE_URL'):
         SQLALCHEMY_POOL_SIZE = 3
+        SQLALCHEMY_MAX_OVERFLOW = 3
         SQLALCHEMY_POOL_RECYCLE = 55
         SQLALCHEMY_POOL_TIMEOUT = 5
         SSL_CIPHER = 'DHE-RSA-AES128-GCM-SHA256:AES128-SHA:@SECLEVEL=1'
