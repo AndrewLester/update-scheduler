@@ -1,58 +1,60 @@
 <script lang="ts">
 import Button, { Label } from '@smui/button/bare';
 import '@smui/button/bare.css';
-import Textfield from '@smui/textfield/bare';
-import '@smui/textfield/bare.css';
+import { afterUpdate, tick } from 'svelte';
 import type { Update } from '../api/types';
+import { isScheduled } from '../api/types';
 import { getNewUpdate } from '../App.svelte';
-import { updates } from '../stores';
+import { time, updates } from '../stores';
 import TextEditor from '../utility/components/TextEditor.svelte';
 import UpdateTimePicker from './UpdateTimePicker.svelte';
 
 export let update: Update;
 
-$: id = update.id;
-let value: string = '';
 let editor: TextEditor | undefined;
+let timePicker: UpdateTimePicker | undefined;
 let updateMinusJob: Update;
-$: scheduled = update.job?.id !== '';
+$: scheduled = isScheduled(update);
 $: {
     let { job, ...partialUpdate } = update;
     updateMinusJob = { ...partialUpdate, job: null };
 }
+
 const getUpdateBody = () => update.body;
-$: if (editor && id) {
+$: idChanged = update.id;
+$: if (editor && timePicker && idChanged) {
     editor.setContent(getUpdateBody());
+    timePicker.clear();
 }
 
 async function save(updateData: Update) {
     if (updateData.id === -1) {
-        const newUpdate = await updates.create(updateData);
-        // Error creating update
-        if (editor) editor.clear();
-        if (!newUpdate) return;
-
-        update = newUpdate;
+        updates.create(updateData);
     } else {
-        updates.update(updateData, 'id');
+        // No need to await this because it can happen while the editor page is clearing
+        // Since it just syncs the job id that was created
+        updates.update(updateData, 'id').then(() => updates.sync(updateData, 'id'));
     }
 
-    if (editor) editor.clear();
+    if (editor && timePicker) {
+        editor.clear();
+        timePicker.clear();
+    }
+
+    // Wait for editor to clear
+    await tick();
     update = getNewUpdate();
 }
 </script>
-
-
 
 <div class="editor">
     <div class="button-row" style="margin-bottom: 5px; gap: 15px;">
         <Button class="new-button" on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>New Update</Label></Button>
         <h3>Create and Schedule an Update</h3>
     </div>
-    <!-- <Textfield fullwidth textarea bind:value={update.body} label="Write update" input$aria-controls="helper-text-fullwidth-textarea" input$aria-describedby="helper-text-fullwidth-textarea" /> -->
     <TextEditor placeholder={'Write update'} bind:content={update.body} bind:this={editor} />
     <div class="button-row">
-        <UpdateTimePicker bind:update={update} />
+        <UpdateTimePicker bind:update={update} bind:this={timePicker} />
         <div class="save-buttons">
             <Button on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>Save</Label></Button>
             {#if !scheduled }

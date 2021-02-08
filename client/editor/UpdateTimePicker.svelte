@@ -1,29 +1,48 @@
 <script lang="ts">
 import type { Update } from '../api/types';
+import { momentToSchoologyTime, schoologyTimeToMoment } from '../api/types';
 import '@smui/button/bare.css';
 import Select, { Option } from '@smui/select/bare';
 import '@smui/select/bare.css';
 import Flatpickr from '../utility/components/Flatpickr.svelte';
 import type { Instance } from 'flatpickr/dist/types/instance';
 import 'flatpickr/dist/flatpickr.css';
+import moment from 'moment';
 
 export let update: Update;
 
-$: if (!update.job) {
-    update.job = { id: '', scheduled_for: undefined, scheduled_in: undefined }
+$: if (update.job === null) {
+    update.job = { id: '' };
+}
+let flatpicker: Instance;
+let scheduledFor = update.job?.scheduled_for;
+let scheduledIn = update.job?.scheduled_in;
+
+$: {
+    update.job!.scheduled_in = undefined;
+    update.job!.scheduled_for = scheduledFor;
 }
 
-let flatpicker: Instance;
-let scheduledAt: string;
-
-let scheduledIn: string;
-$: if (update.job) {
-    update.job.scheduled_for = scheduledAt;
+$: {
+    update.job!.scheduled_for = undefined;
+    update.job!.scheduled_in = scheduledIn;
+}
+$: if (update.id) {
+    if (update.job?.scheduled_for !== undefined) {
+        flatpicker.setDate(update.job.scheduled_for, true);
+    } else if (update.job?.scheduled_in !== undefined) {
+        const createdAt = schoologyTimeToMoment(update.job.scheduled_at!);
+        const postAt = momentToSchoologyTime(moment(createdAt).add(update.job.scheduled_in));
+        flatpicker.setDate(postAt, true);
+    }
 }
 
 let selectValue = 'on';
 $: scheduledUpdateRelative = update.job?.scheduled_in || selectValue == 'in';
 
+export function clear() {
+    flatpicker.clear();
+}
 
 const flatpickrOptions = {
     enableTime: true,
@@ -43,9 +62,10 @@ const flatpickrOptions = {
     <div class="picker-text">
         {#if scheduledUpdateRelative }
             <!-- Duration picker -->
+            <input bind:value={scheduledIn} />
         {:else}
             <!-- Datetime picker -->
-            <Flatpickr options={flatpickrOptions} bind:flatpicker bind:formattedValue={scheduledAt} name="date" />
+            <Flatpickr options={flatpickrOptions} bind:fp={flatpicker} bind:formattedValue={scheduledFor} name="date" />
         {/if}
     </div>
 </div>

@@ -18,6 +18,7 @@ import { onMount, tick } from 'svelte';
 import type { Networking } from './api/network';
 import * as networking from './api/network';
 import type { Update } from './api/types';
+import { isScheduled } from './api/types';
 import UpdateEditor from './editor/UpdateEditor.svelte';
 import CardList from './layouts/CardList.svelte';
 import Layout from './layouts/Layout.svelte';
@@ -26,18 +27,18 @@ import Sidebar from './layouts/Sidebar.svelte';
 import RealmChooser from './realms/RealmChooser.svelte';
 import { realms, updates } from './stores';
 import UpdateCard from './updates/UpdateCard.svelte';
-import { fly, slide } from 'svelte/transition';
-import { sleep } from './utility/async';
+import { fly } from 'svelte/transition';
 
 let layout: Layout | undefined;
 let api: Networking | undefined;
 let selectedUpdate: Update = getNewUpdate();
+$: console.log('Selected update:', selectedUpdate);
 
 $: scheduledUpdates = $updates.filter(
-    (update) => update.job?.scheduled_for || update.job?.scheduled_in
+    (update) => isScheduled(update)
 );
 $: savedUpdates = $updates.filter(
-    (update) => !(update.job?.scheduled_for || update.job?.scheduled_in)
+    (update) => !isScheduled(update)
 );
 
 let gridAreas: GridArea = 'minimal';
@@ -91,8 +92,8 @@ function handleUpdateDelete(update: Update) {
                     let:item>
                     <UpdateCard
                         update={item}
-                        selected={item === selectedUpdate}
-                        on:edit={() => (selectedUpdate = item)}
+                        selected={item.id === selectedUpdate.id}
+                        on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
                         on:delete={() => handleUpdateDelete(item)} />
                 </CardList>
             </div>
@@ -116,9 +117,9 @@ function handleUpdateDelete(update: Update) {
                         items={scheduledUpdates}
                         let:item>
                         <UpdateCard
-                            selected={item === selectedUpdate}
+                            selected={item.id === selectedUpdate.id}
                             update={item}
-                            on:edit={() => (selectedUpdate = item)}
+                            on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
                             on:delete={() => handleUpdateDelete(item)} />
                     </CardList>
                 </Sidebar>

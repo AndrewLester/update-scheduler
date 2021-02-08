@@ -82,8 +82,8 @@ ModelType = TypeVar('ModelType', bound=db.Model)  # type: ignore
 def rest_endpoint(
     blueprint: Blueprint,
     route: str,
-    model: Type[ModelType],
-    form: Type[FormType],
+    model: Type[ModelType],  # type: ignore
+    form: Type[FormType],  # type: ignore
     methods: Set[HTTPMethod],
 ) -> Callable:
     def decorator(func: Callable[[FormType], Union[ModelType, NoReturn]]) -> Callable[[int], Any]:
@@ -91,14 +91,18 @@ def rest_endpoint(
         @functools.wraps(func)
         def wrapper(id: Optional[int] = None):
             if request.method == 'GET' and 'GET' in methods:
-                return jsonify(
-                    [
-                        instance.to_json()
-                        for instance in model.query.filter_by(  # type: ignore
-                            user_id=current_user.id
-                        ).all()
-                    ]
-                )
+                if id is not None:
+                    model_instance = model.query.get_or_404(id)  # type: ignore
+                    return jsonify(**model_instance.to_json())
+                else:
+                    return jsonify(
+                        [
+                            instance.to_json()
+                            for instance in model.query.filter_by(  # type: ignore
+                                user_id=current_user.id
+                            ).all()
+                        ]
+                    )
 
             if request.method == 'DELETE' and 'DELETE' in methods and id is not None:
                 model_instance = model.query.get_or_404(id)  # type: ignore
@@ -135,7 +139,7 @@ def rest_endpoint(
         blueprint.add_url_rule(
             route + '/<int:id>',
             view_func=wrapper,
-            methods=[method for method in methods if method in {'PUT', 'DELETE'}],
+            methods=[method for method in methods if method in {'PUT', 'DELETE', 'GET'}],
         )
 
         return wrapper

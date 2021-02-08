@@ -1,5 +1,5 @@
 <script>
-import { onMount, createEventDispatcher } from 'svelte';
+import { onMount, createEventDispatcher, onDestroy } from 'svelte';
 import flatpickr from 'flatpickr';
 const hooks = new Set([
     'onChange',
@@ -11,14 +11,13 @@ const hooks = new Set([
     'onValueUpdate',
     'onDayCreate',
 ]);
-export let value = '',
-    formattedValue = '',
-    element = null,
-    dateFormat = null;
+export let value = '';
+export let formattedValue = '';
+export let element = null;
+export let dateFormat = null;
 export let options = {};
-export let input = undefined,
-    fp = undefined;
-export { fp as flatpickr };
+export let input = undefined
+export let fp;
 $: if (fp) {
     fp.setDate(value, false, dateFormat);
 }
@@ -28,10 +27,10 @@ onMount(() => {
         elem,
         Object.assign(addHooks(options), element ? { wrap: true } : {})
     );
-    return () => {
-        fp.destroy();
-    };
 });
+
+onDestroy(() => fp.destroy());
+
 const dispatch = createEventDispatcher();
 $: if (fp) {
     for (const [key, val] of Object.entries(addHooks(options))) {
@@ -68,9 +67,7 @@ function stripOn(hook) {
 }
 </script>
 
-<slot>
-    <input bind:this={input} {...$$restProps} />
-</slot>
+<input bind:this={input} {...$$restProps} />
 
 <style>
 input {

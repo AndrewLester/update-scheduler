@@ -3,6 +3,7 @@ import moment from 'moment';
 
 export interface ScheduledJob {
     id: string,
+    scheduled_at?: string,
     scheduled_for?: string,
     scheduled_in?: string
 }
@@ -20,6 +21,10 @@ export interface Realm {
     id: string,
     name: string,
     realm_type: string
+}
+
+export function isScheduled(update: Update): boolean {
+    return !!update.job?.id;
 }
 
 const schoologyTimestampFormat = 'YYYY-MM-DD HH:mm:ss';

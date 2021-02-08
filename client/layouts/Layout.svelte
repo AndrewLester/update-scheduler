@@ -174,7 +174,7 @@ export function getElementTransitionDelay(
 <style>
 main {
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-columns: 1fr minmax(0, 3fr) 1fr;
     grid-template-rows: minmax(0, 2fr) 1.25fr;
     grid-template-areas:
         'left-sidebar main main'

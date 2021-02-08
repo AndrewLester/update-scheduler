@@ -126,7 +126,7 @@ function mapByKey<T>(objects: Set<T>, objectDiscriminator: ObjectDiscriminator<T
     return mappedObjects;
 }
 
-export class QueryNetworkStore<T, Args extends {[index: string]: string}> extends ReadableNetworkStore<Map<T[keyof T], KeyMap<T>>> {
+export class QueryNetworkStore<T, Args extends { [index: string]: string }> extends ReadableNetworkStore<Map<T[keyof T], KeyMap<T>>> {
     private objectDiscriminator: ObjectDiscriminator<T>;
     private objectId: keyof T;
 
@@ -149,10 +149,10 @@ export class QueryNetworkStore<T, Args extends {[index: string]: string}> extend
         const mappedObjects = mapByKey<T>(objects, this.objectDiscriminator, this.objectId);
 
         this.store.update((map) => {
-            for (let [ k, v ] of mappedObjects) {
+            for (let [k, v] of mappedObjects) {
                 const objectMap = map.get(k) ?? new Map<T[keyof T], T>();
                 v.forEach((mappedV, mappedK) => objectMap.set(mappedK, mappedV));
-                map.set(k, objectMap);    
+                map.set(k, objectMap);
             }
             return map;
         });
@@ -193,6 +193,34 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
         fetchErrorHandler: ErrorHandler = () => { }
     ) {
         super(endpoint, defaultValue, fetchErrorHandler);
+    }
+
+    async sync(
+        element: ElementType<T>,
+        discriminator: keyof ElementType<T>
+    ): Promise<ElementType<T> | undefined> {
+        if (!this.api) throw new Error('Networking not loaded');
+
+        try {
+            const synced: ElementType<T> = await this.api.get(
+                this.endpoint + `/${element[discriminator]}`
+            );
+
+            this.store.update((current) => {
+                const updated = [
+                    synced,
+                    ...current.filter((elem) => {
+                        return elem[discriminator] !== element[discriminator];
+                    }),
+                ];
+
+                return updated as any;
+            });
+
+            return synced;
+        } catch (e) {
+            this.fetchErrorHandler(e);
+        }
     }
 
     async create(element: ElementType<T>): Promise<ElementType<T> | undefined> {
@@ -252,6 +280,6 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
     }
 
     async delete(element: ElementType<T>, key: keyof ElementType<T>) {
-        return this.deleteByKey(key, element[key]);
+        await this.deleteByKey(key, element[key]);
     }
 }

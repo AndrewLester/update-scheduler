@@ -4,19 +4,23 @@ import '@smui/button/bare.css';
 import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
 import type { Update } from '../api/types';
-import { time, updates } from '../stores';
+import { isScheduled } from '../api/types';
+import RealmOption from '../realms/RealmOption.svelte';
+import { realms, time, updates } from '../stores';
 import { sleep } from '../utility/async';
+import tippy from '../utility/tippy';
 
 export let update: Update;
 export let selected: boolean;
 
-
 let posted = false;
-$: scheduled = (update.job?.scheduled_for || update.job?.scheduled_in);
+$: scheduled = isScheduled(update);
+$: realmName = $realms.find((realm) => realm.id === update.realm_id)?.name;
 let scheduledText = '';
+
 $: if (scheduled) {
     if (update.job?.scheduled_in) {
-        scheduledText = update.job.scheduled_in;
+        scheduledText = moment.duration(update.job.scheduled_in).humanize(true);
     } else if (update.job?.scheduled_for) {
         const duration = moment.duration(moment(update.job.scheduled_for).diff($time));
         if (duration.asMilliseconds() <= 0) {
@@ -26,6 +30,16 @@ $: if (scheduled) {
             scheduledText = duration.humanize(true);
         }
     }
+}
+
+$: realmNameTippyProps = { 
+    content: realmName,
+    placement: 'right',
+    arrow: true,
+    duration: [100, 100],
+    animation: 'shift-away-subtle',
+    touch: ['hold', 450],
+    trigger: 'mouseenter'
 }
 
 const dispatch = createEventDispatcher();
@@ -45,7 +59,7 @@ function cancelUpdate() {
 </script>
 
 <div class="card" class:selected class:posted>
-    <p>
+    <p style="display: flex;">
         <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">chat</Icon>
         {@html update.body}
     </p>
@@ -53,7 +67,12 @@ function cancelUpdate() {
         <p style="display: flex; align-items: center;">
             <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">schedule</Icon>
             {'Posts ' + scheduledText}
-
+        </p>
+    {:else}
+        <p style="display: flex; align-items: center;"
+            use:tippy={realmNameTippyProps}>
+            <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">group</Icon>
+            {realmName}
         </p>
     {/if}
     <Group style="width: 100%; margin-top: auto">
@@ -85,6 +104,10 @@ p {
     vertical-align: middle;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+p.one-line {
+    white-space: nowrap;
 }
 
 .card.selected {

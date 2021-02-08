@@ -1,6 +1,4 @@
 <script lang="ts">
-import { onMount } from 'svelte';
-
 import { quill } from '../quill';
 
 export let content: string;
@@ -24,7 +22,6 @@ const options = {
 
 export function setContent(newContent: string) {
     if (editor && editor.firstElementChild) {
-        console.log('setting editor contents');
         editor.firstElementChild.innerHTML = newContent;
     }
 }
