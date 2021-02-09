@@ -45,6 +45,7 @@ export function clear() {
     height: 100px;
     font-family: inherit;
     font-size: inherit;
+    
 }
 /* .editor :global(.ql-editor) {
     height: 100% !important;

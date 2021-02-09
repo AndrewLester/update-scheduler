@@ -1,6 +1,8 @@
 <script lang="ts">
 import Button, { Group, Icon, Label } from '@smui/button/bare';
 import '@smui/button/bare.css';
+import Dialog, {Title, Content, Actions, InitialFocus} from '@smui/dialog/bare';
+import '@smui/dialog/bare.css';
 import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
 import type { Update } from '../api/types';
@@ -13,11 +15,12 @@ import tippy from '../utility/tippy';
 export let update: Update;
 export let selected: boolean;
 
+let confirmDeleteDialog: Dialog;
 let posted = false;
 $: scheduled = isScheduled(update);
 $: realmName = $realms.find((realm) => realm.id === update.realm_id)?.name;
 let scheduledText = '';
-
+const resetJob = () => update.job = null;
 $: if (scheduled) {
     if (update.job?.scheduled_in) {
         scheduledText = moment.duration(update.job.scheduled_in).humanize(true);
@@ -25,6 +28,7 @@ $: if (scheduled) {
         const duration = moment.duration(moment(update.job.scheduled_for).diff($time));
         if (duration.asMilliseconds() <= 0) {
             posted = true;
+            resetJob();
             sleep(750).then(() => updates.reset());
         } else {
             scheduledText = duration.humanize(true);
@@ -45,8 +49,12 @@ $: realmNameTippyProps = {
 const dispatch = createEventDispatcher();
 
 function deleteUpdate(confirm: boolean) {
+    if (confirm) {
+        confirmDeleteDialog.open();
+        return;
+    }
+
     dispatch('delete');
-    // TODO launch confirm dialog
     
     updates.delete(update, 'id');
 }
@@ -56,9 +64,27 @@ function cancelUpdate() {
     updates.update(update, 'id');
 }
 
+function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
+    if (e.detail.action === 'delete') {
+        deleteUpdate(false);
+    }
+}
+
 </script>
 
 <div class="card" class:selected class:posted>
+    <Dialog bind:this={confirmDeleteDialog} on:MDCDialog:closed={confirmDialogHandler}>
+        <Title>Confirm Deletion</Title>
+        <Content>Are you sure you want to delete this saved update?</Content>
+        <Actions>
+            <Button action="delete">
+                <Label>DELETE</Label>
+            </Button>
+            <Button action="cancel" default use={[InitialFocus]}>
+                <Label>CANCEL</Label>
+            </Button>
+        </Actions>
+    </Dialog>
     <p style="display: flex;">
         <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">chat</Icon>
         {@html update.body}
@@ -104,10 +130,6 @@ p {
     vertical-align: middle;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-p.one-line {
-    white-space: nowrap;
 }
 
 .card.selected {

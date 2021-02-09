@@ -28,6 +28,7 @@ import RealmChooser from './realms/RealmChooser.svelte';
 import { realms, updates } from './stores';
 import UpdateCard from './updates/UpdateCard.svelte';
 import { fly } from 'svelte/transition';
+import NotificationDisplay from './notifications/NotificationDisplay.svelte';
 
 let layout: Layout | undefined;
 let api: Networking | undefined;
@@ -127,6 +128,7 @@ function handleUpdateDelete(update: Update) {
         {/if}
     </slot>
 </Layout>
+<NotificationDisplay options={{ timeout: 2500, width: '200px' }} />
 
 <style>
 :root {
