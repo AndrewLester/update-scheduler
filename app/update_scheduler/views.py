@@ -107,7 +107,7 @@ def scheduled_formdata_to_time(
     when a return value is necessary.
     """
     if scheduled_for is not None:
-        return scheduled_for.astimezone(pytz.timezone(current_user.timezone))
+        return pytz.timezone(current_user.timezone).localize(scheduled_for)
     elif scheduled_in is not None:
         return scheduled_in.tdelta if isinstance(scheduled_in, Duration) else scheduled_in
     abort(400)
