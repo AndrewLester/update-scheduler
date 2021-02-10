@@ -72,6 +72,9 @@ def authorize():
         oauth_token=token['oauth_token'],
         oauth_token_secret=token['oauth_token_secret'],
     )
+    if user.oauth_token is not None:
+        db.session.delete(user.oauth_token)
+        db.session.commit()
     user.oauth_token = oauth_token
 
     db.session.add(user)  # type: ignore

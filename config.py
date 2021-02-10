@@ -20,7 +20,6 @@ class Config:
 
     SCHOOLOGY_CLIENT_ID = os.environ.get('CONSUMER_KEY')
     SCHOOLOGY_CLIENT_SECRET = os.environ.get('CONSUMER_SECRET')
-    SCHOOLOGY_CLIENT_KWARGS = {}
 
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://localhost:6379'
     CACHE_REDIS_URL = REDIS_URL
@@ -29,6 +28,7 @@ class Config:
     CACHE_KEY_PREFIX = 'redis_flask_cache'
     CACHE_REDIS_HOST = REDIS_URL.rsplit(':', 1)[0]
     CACHE_REDIS_PORT = REDIS_URL.rsplit(':', 1)[1]
+    CACHE_IGNORE_ERRORS = True
 
 
 # Settings for rq-worker

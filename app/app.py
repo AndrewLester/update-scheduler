@@ -1,8 +1,9 @@
-import functools
 from typing import Optional
+
+import dill
 from rq import Queue
 import redis
-from flask import Flask, render_template, jsonify, flash
+from flask import Flask, render_template, jsonify, flash, g
 from flask.cli import load_dotenv
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
@@ -19,6 +20,7 @@ def create_app(config=Config):
     app.redis = redis.from_url(app.config['REDIS_URL'])
     app.redis_queue = Queue(
         name=app.config['APP_NAME'].lower().replace(' ', '-'),
+        serializer=dill,  # type: ignore
         connection=app.redis
     )
 
@@ -36,20 +38,19 @@ def create_app(config=Config):
 
 def register_extensions(app: Flask):
     login.init_app(app)
-    login.login_view = 'main.login'  #type: ignore
+    login.login_view = 'main.login'  # type: ignore
     db.init_app(app)
+    cache.init_app(app, config=app.config)
     with app.app_context():
         if db.engine.url.drivername == 'sqlite':
             migrate.init_app(app, db, render_as_batch=True)
         else:
             migrate.init_app(app, db)
-    oauth_client.init_app(app)
-    csrf.init_app(app)
-    cache.init_app(app, config=app.config)
 
-    def fetch_token(name) -> Optional[dict]:
+    def fetch_token(name: str) -> Optional[dict]:
+        user_id = getattr(current_user, 'id', False) or g.user_id
         item = oauth.models.OAuth1Token.query.filter_by(
-            name=name, user_id=getattr(current_user, 'id', False)
+            name=name, user_id=user_id
         ).first()
         
         return item.to_token()
@@ -62,8 +63,9 @@ def register_extensions(app: Flask):
         access_token_url='https://api.schoology.com/v1/oauth/access_token',
         authorize_url='https://www.schoology.com/oauth/authorize',
         client_id=app.config['SCHOOLOGY_CLIENT_ID'],
-        client_key=app.config['SCHOOLOGY_CLIENT_SECRET']
+        client_secret=app.config['SCHOOLOGY_CLIENT_SECRET']
     )
+    csrf.init_app(app)
 
 
 def register_blueprints(app):
@@ -74,7 +76,7 @@ def register_blueprints(app):
 
 def register_errorhandlers(app):
     app.register_error_handler(404, lambda _: (render_template('404.html'), 404))
-    app.register_error_handler(CSRFError, lambda error: (jsonify({'reason': error.description}), 400))
+    app.register_error_handler(CSRFError, lambda error: (jsonify(errors=[error.description]), 400))
 
     def internal_error(error):
         db.session.rollback()  # type: ignore

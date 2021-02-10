@@ -4,6 +4,7 @@ from flask_login.utils import login_required
 from isodate.duration import Duration
 import pytz
 from rq.job import Job
+from rq.exceptions import NoSuchJobError
 from app.update_scheduler.scheduler import schedule_update
 from typing import NoReturn, Optional, Union
 from app.update_scheduler.forms import UpdateForm
@@ -75,8 +76,11 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
         update.attachments = form.attachments.data
 
         if update.job is not None:
-            job = Job.fetch(update.job.id, connection=current_app.redis)
-            if job:
+            try:
+                job = Job.fetch(update.job.id, connection=current_app.redis)
+            except NoSuchJobError:
+                db.session.delete(update.job)
+            else:
                 job.cancel()
 
         if form.job.scheduled_for.data or form.job.scheduled_in.data:

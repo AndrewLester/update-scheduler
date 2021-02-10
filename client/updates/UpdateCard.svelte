@@ -6,6 +6,7 @@ import '@smui/dialog/bare.css';
 import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
 import type { Update } from '../api/types';
+import { schoologyTimeToMoment } from '../api/types';
 import { isScheduled } from '../api/types';
 import RealmOption from '../realms/RealmOption.svelte';
 import { realms, time, updates } from '../stores';
@@ -25,11 +26,11 @@ $: if (scheduled) {
     if (update.job?.scheduled_in) {
         scheduledText = moment.duration(update.job.scheduled_in).humanize(true);
     } else if (update.job?.scheduled_for) {
-        const duration = moment.duration(moment(update.job.scheduled_for).diff($time));
-        if (duration.asMilliseconds() <= 0) {
+        const duration = moment.duration(schoologyTimeToMoment(update.job.scheduled_for).diff($time));
+        if (duration.asMilliseconds() <= 0 && !posted) {
             posted = true;
             resetJob();
-            sleep(750).then(() => updates.reset());
+            sleep(1500).then(() => updates.reset());
         } else {
             scheduledText = duration.humanize(true);
         }

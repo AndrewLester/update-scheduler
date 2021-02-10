@@ -51,22 +51,22 @@ p {
     margin-left: auto;
 }
 
-.realm-image[data-realm='section'] {
+.realm-image[data-realm='sections'] {
     background-position-y: -29px;
 }
 
-.realm-image[data-realm='group'] {
+.realm-image[data-realm='groups'] {
     background-position-y: -59px;
 }
 
-.realm-image[data-realm='user'] {
+.realm-image[data-realm='users'] {
     background-position-y: -179px;
 }
 
-.realm-image[data-realm='school'] {
+.realm-image[data-realm='schools'] {
     background-position-y: -209px;
 }
-.realm-image[data-realm='district'] {
+.realm-image[data-realm='districts'] {
     width: 27px;
     background-position-y: -209px;
     background-repeat: repeat-x;

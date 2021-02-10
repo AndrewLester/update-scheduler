@@ -13,7 +13,7 @@ class ScheduledJob(FlaskForm):
 
 class UpdateForm(FlaskForm):
     id = IntegerField(validators=[Required()])
-    realm_type = StringField(validators=[Required(), Regexp('(course|group|school|district|section)')])
+    realm_type = StringField(validators=[Required(), Regexp('(courses|groups|schools|districts|sections)')])
     realm_id = StringField(validators=[Required()])
     body = StringField(validators=[Required()])
     attachments = StringField(default='')

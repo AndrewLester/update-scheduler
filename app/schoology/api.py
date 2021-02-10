@@ -1,3 +1,4 @@
+from flask import current_app
 from app.schoology.types import Realm
 from datetime import datetime
 from json.decoder import JSONDecodeError
@@ -45,24 +46,24 @@ def schoology_to_datetime(string: str, tz: LocalizableTz) -> datetime:
 @cache.memoize(timeout=900)
 def get_user_realms(user: User) -> List[Realm]:
     sections: List[Realm] = [
-        {'id': section['id'], 'name': section['course_title'], 'realm_type': 'section'}
+        {'id': section['id'], 'name': section['course_title'], 'realm_type': 'sections'}
         for section in oauth.schoology.get(
             f'users/{user.id}/sections'
         ).json()['section']
     ]
     groups: List[Realm] = [
-        {'id': group['id'], 'name': group['title'], 'realm_type': 'group'}
+        {'id': group['id'], 'name': group['title'], 'realm_type': 'groups'}
         for group in oauth.schoology.get(
             f'users/{user.id}/groups'
         ).json()['group']
     ]
     school: List[Realm] = (
-        [{'id': user.building_id, 'name': 'School', 'realm_type': 'school'}]
+        [{'id': user.building_id, 'name': 'School', 'realm_type': 'schools'}]
         if user.building_id
         else []
     )
     district: List[Realm] = (
-        [{'id': user.school_id, 'name': 'District', 'realm_type': 'district'}]
+        [{'id': user.school_id, 'name': 'District', 'realm_type': 'districts'}]
         if user.school_id
         else []
     )
@@ -71,9 +72,10 @@ def get_user_realms(user: User) -> List[Realm]:
 
 
 def post_update(realm: str, body: str, attachments: List[Dict]):
-    data = {
+    data: Dict[Any, Any] = {
         'body': body,
-        'attachments': attachments
     }
+    if attachments:
+        data['attachments'] = attachments
 
-    oauth.schoology.post(f'/{realm}/updates', json=data)
+    oauth.schoology.post(f'{realm}/updates', json=data)

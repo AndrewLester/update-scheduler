@@ -9,6 +9,7 @@
     "@popperjs/core": "^2.5.3",
     "@smui/button": "^2.0.0-beta.0",
     "@smui/checkbox": "^2.0.0-beta.0",
+    "@smui/dialog": "^2.0.0-beta.0",
     "@smui/icon-button": "^2.0.0-beta.0",
     "@smui/menu-surface": "^2.0.0-beta.0",
     "@smui/select": "^2.0.0-beta.0",
