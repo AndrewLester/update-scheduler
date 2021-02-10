@@ -53,7 +53,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('scheduled_job',
-    sa.Column('id', sa.String(length=35), nullable=False),
+    sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('scheduled_at', sa.DateTime(), nullable=False),
     sa.Column('scheduled_in', sa.Interval(), nullable=True),
     sa.Column('scheduled_for', sa.DateTime(), nullable=True),

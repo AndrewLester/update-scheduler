@@ -16,8 +16,6 @@ def post_update_task(realm: str, body: str, attachments: List[Dict]):
     job = get_current_job()
 
     with app.app_context():
-        print('Job: ' + str(job))
-        print('Job_id: ' + job.id)
         scheduled_job = ScheduledJob.query.get(job.id)
         update = scheduled_job.update
         g.user_id = update.user_id
