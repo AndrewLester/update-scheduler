@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from flask.globals import current_app
 from flask_login.utils import login_required
 from isodate.duration import Duration
@@ -107,7 +107,11 @@ def scheduled_formdata_to_time(
     when a return value is necessary.
     """
     if scheduled_for is not None:
-        return pytz.timezone(current_user.timezone).localize(scheduled_for)
+        user_tz = pytz.timezone(current_user.timezone)
+        dt = user_tz.localize(scheduled_for)
+        if dt < pytz.utc.localize(datetime.utcnow()).astimezone(user_tz):
+            abort(400)
+        return dt
     elif scheduled_in is not None:
         return scheduled_in.tdelta if isinstance(scheduled_in, Duration) else scheduled_in
     abort(400)
