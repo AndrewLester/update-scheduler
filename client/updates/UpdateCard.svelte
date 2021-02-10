@@ -1,14 +1,14 @@
 <script lang="ts">
 import Button, { Group, Icon, Label } from '@smui/button/bare';
 import '@smui/button/bare.css';
-import Dialog, {Title, Content, Actions, InitialFocus} from '@smui/dialog/bare';
+import Dialog from '@smui/dialog/Dialog.svelte';
+import {Title, Content, Actions, InitialFocus} from '@smui/dialog/bare';
 import '@smui/dialog/bare.css';
 import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
 import type { Update } from '../api/types';
 import { schoologyTimeToMoment } from '../api/types';
 import { isScheduled } from '../api/types';
-import RealmOption from '../realms/RealmOption.svelte';
 import { realms, time, updates } from '../stores';
 import { sleep } from '../utility/async';
 import tippy from '../utility/tippy';

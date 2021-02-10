@@ -1,3 +1,5 @@
+# Expose environment variables (primarily for the rq worker)
+. .env
 npm run build
 redis-server ~/.local/etc/redis.conf &
 rq worker update-scheduler --with-scheduler &
