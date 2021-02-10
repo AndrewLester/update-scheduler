@@ -23,17 +23,23 @@ $: realmName = $realms.find((realm) => realm.id === update.realm_id)?.name;
 let scheduledText = '';
 const resetJob = () => update.job = null;
 $: if (scheduled) {
+    let timeUntilPost: moment.Duration;
     if (update.job?.scheduled_in) {
-        scheduledText = moment.duration(update.job.scheduled_in).humanize(true);
+        const postsAt = schoologyTimeToMoment(update.job.scheduled_at!)
+            .add(moment.duration(update.job.scheduled_in));
+        timeUntilPost = moment.duration(postsAt.diff($time));
     } else if (update.job?.scheduled_for) {
-        const duration = moment.duration(schoologyTimeToMoment(update.job.scheduled_for).diff($time));
-        if (duration.asMilliseconds() <= 0 && !posted) {
-            posted = true;
-            resetJob();
-            sleep(1500).then(() => updates.reset());
-        } else {
-            scheduledText = duration.humanize(true);
-        }
+        timeUntilPost = moment.duration(schoologyTimeToMoment(update.job.scheduled_for).diff($time));
+    }
+    
+    // Only continually try to reset updates for 5 seconds. Also, duration MUST be = to something
+    if (timeUntilPost!.asMilliseconds() <= 0 && timeUntilPost!.asMilliseconds() >= -5000) {
+        posted = true;
+        resetJob();
+        sleep(1500).then(() => updates.reset());
+    } else {
+        const postVerb = timeUntilPost!.asMilliseconds() >= 0 ? 'Posts ' : 'Posted '
+        scheduledText = postVerb + timeUntilPost!.humanize(true);
     }
 }
 
@@ -93,7 +99,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
     {#if scheduled}
         <p style="display: flex; align-items: center;">
             <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">schedule</Icon>
-            {'Posts ' + scheduledText}
+            {scheduledText}
         </p>
     {:else}
         <p style="display: flex; align-items: center;"
