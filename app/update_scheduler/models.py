@@ -35,7 +35,7 @@ class Update(db.Model):
 class ScheduledJob(db.Model):
     __tablename__ = 'scheduled_job'
 
-    id = db.Column(db.String(35), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     # Both in UTC
     scheduled_at = db.Column(db.DateTime, nullable=False)
     scheduled_in = db.Column(db.Interval)
