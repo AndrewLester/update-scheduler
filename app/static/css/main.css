@@ -107,18 +107,18 @@ input {
     transition: opacity 200ms ease-out 200ms;
 }
 
-fieldset span::after {
+fieldset.input span::after {
     content: attr(data-text);
     position: relative;
     display: inline-block;
     opacity: 0;
 }
 
-input:placeholder-shown:not(:focus) + legend span::after {
+fieldset.input input:placeholder-shown:not(:focus) + legend span::after {
     content: '';
 }
 
-input:placeholder-shown:not(:focus) + legend span::before {
+fieldset.input input:placeholder-shown:not(:focus) + legend span::before {
     /* Calculate ratio from old font size to new font size to put into scale transform */
     transform: translateY(calc(var(--input-font-size) + 3.5px)) scale(1);
     color: gray;
@@ -126,20 +126,20 @@ input:placeholder-shown:not(:focus) + legend span::before {
     padding-left: 2px;
 }
 
-input:not(:focus):not(:placeholder-shown) + legend span::before {
+fieldset.input input:not(:focus):not(:placeholder-shown) + legend span::before {
     color: gray;
 }
 
-input:placeholder-shown:not(:focus) + legend {
+fieldset.input input:placeholder-shown:not(:focus) + legend {
     padding: 0px;
 }
 
-input::placeholder {
+fieldset.input input::placeholder {
     transition: opacity 150ms;
     opacity: 0;
 }
 
-input:focus::placeholder {
+fieldset.input input:focus::placeholder {
     opacity: 1;
 }
 @keyframes rotate {

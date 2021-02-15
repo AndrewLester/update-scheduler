@@ -1,11 +1,11 @@
 <script lang="ts">
 import Button, { Label } from '@smui/button/bare';
 import '@smui/button/bare.css';
-import { afterUpdate, tick } from 'svelte';
+import { tick } from 'svelte';
 import type { Update } from '../api/types';
 import { isScheduled } from '../api/types';
 import { getNewUpdate } from '../App.svelte';
-import { time, updates } from '../stores';
+import { updates } from '../stores';
 import TextEditor from '../utility/components/TextEditor.svelte';
 import UpdateTimePicker from './UpdateTimePicker.svelte';
 
@@ -36,6 +36,19 @@ async function save(updateData: Update) {
         updates.update(updateData, 'id').then(() => updates.sync(updateData, 'id'));
     }
 
+    await resetUpdate();
+}
+
+function handleNewUpdate() {
+    if (update.id >= 0) {
+        save(scheduled ? update : updateMinusJob);
+        return;
+    }
+    
+    resetUpdate();
+}
+
+async function resetUpdate() {
     if (editor && timePicker) {
         editor.clear();
         timePicker.clear();
@@ -43,13 +56,14 @@ async function save(updateData: Update) {
 
     // Wait for editor to clear
     await tick();
+
     update = getNewUpdate();
 }
 </script>
 
 <div class="editor">
     <div class="button-row" style="margin-bottom: 5px; gap: 15px;">
-        <Button class="new-button" on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>New Update</Label></Button>
+        <Button class="new-button" on:click={handleNewUpdate} variant="outlined"><Label>New Update</Label></Button>
         <h3>Create and Schedule an Update</h3>
     </div>
     <TextEditor placeholder={'Write update'} bind:content={update.body} bind:this={editor} />

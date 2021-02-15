@@ -15,6 +15,7 @@ export let value = '';
 export let formattedValue = '';
 export let element = null;
 export let dateFormat = null;
+export let placeholder = '';
 export let options = {};
 export let input = undefined
 export let fp;
@@ -67,12 +68,12 @@ function stripOn(hook) {
 }
 </script>
 
-<input bind:this={input} {...$$restProps} />
+<input bind:this={input} {...$$restProps} {placeholder} />
 
 <style>
 input {
     font-size: inherit;
-    width: 250px;
+    width: 258px;
     border-radius: 10px;
     border: 1px solid gray;
     padding: 5px 10px;

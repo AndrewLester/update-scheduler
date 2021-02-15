@@ -2,7 +2,6 @@
 import Checkbox from '@smui/checkbox/bare.js';
 import '@smui/checkbox/bare.css';
 import type { Realm } from '../api/types';
-import { slide } from 'svelte/transition';
 
 export let realm: Realm;
 export let selected: boolean;

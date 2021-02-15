@@ -2,7 +2,7 @@
 import Button, { Group, Icon, Label } from '@smui/button/bare';
 import '@smui/button/bare.css';
 import Dialog from '@smui/dialog/Dialog.svelte';
-import {Title, Content, Actions, InitialFocus} from '@smui/dialog/bare';
+import { Title, Content, Actions, InitialFocus } from '@smui/dialog/bare';
 import '@smui/dialog/bare.css';
 import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
@@ -10,7 +10,6 @@ import type { Update } from '../api/types';
 import { schoologyTimeToMoment } from '../api/types';
 import { isScheduled } from '../api/types';
 import { realms, time, updates } from '../stores';
-import { sleep } from '../utility/async';
 import tippy from '../utility/tippy';
 
 export let update: Update;
@@ -21,37 +20,42 @@ let posted = false;
 $: scheduled = isScheduled(update);
 $: realmName = $realms.find((realm) => realm.id === update.realm_id)?.name;
 let scheduledText = '';
-const resetJob = () => update.job = null;
+const resetJob = () => (update.job = null);
 $: if (scheduled) {
-    let timeUntilPost: moment.Duration;
+    let timeUntilPost: moment.Duration | undefined;
     if (update.job?.scheduled_in) {
-        const postsAt = schoologyTimeToMoment(update.job.scheduled_at!)
-            .add(moment.duration(update.job.scheduled_in));
+        const postsAt = schoologyTimeToMoment(update.job.scheduled_at!).add(
+            moment.duration(update.job.scheduled_in)
+        );
         timeUntilPost = moment.duration(postsAt.diff($time));
     } else if (update.job?.scheduled_for) {
-        timeUntilPost = moment.duration(schoologyTimeToMoment(update.job.scheduled_for).diff($time));
+        timeUntilPost = moment.duration(
+            schoologyTimeToMoment(update.job.scheduled_for).diff($time)
+        );
     }
-    
-    // Only continually try to reset updates for 5 seconds. Also, duration MUST be = to something
-    if (timeUntilPost!.asMilliseconds() <= 0 && timeUntilPost!.asMilliseconds() >= -5000) {
-        posted = true;
-        resetJob();
-        sleep(1500).then(() => updates.reset());
+
+    if (timeUntilPost !== undefined) {
+        if (timeUntilPost.asMilliseconds() <= 0) {
+            posted = true;
+            resetJob();
+        } else {
+            scheduledText = 'Posts ' + timeUntilPost.humanize(true);
+        }
     } else {
-        const postVerb = timeUntilPost!.asMilliseconds() >= 0 ? 'Posts ' : 'Posted '
-        scheduledText = postVerb + timeUntilPost!.humanize(true);
+        // TOOD: Fix update resetting after post
+        updates.reset();
     }
 }
 
-$: realmNameTippyProps = { 
+$: realmNameTippyProps = {
     content: realmName,
     placement: 'right',
     arrow: true,
     duration: [100, 100],
     animation: 'shift-away-subtle',
     touch: ['hold', 450],
-    trigger: 'mouseenter'
-}
+    trigger: 'mouseenter',
+};
 
 const dispatch = createEventDispatcher();
 
@@ -62,7 +66,7 @@ function deleteUpdate(confirm: boolean) {
     }
 
     dispatch('delete');
-    
+
     updates.delete(update, 'id');
 }
 
@@ -76,11 +80,12 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
         deleteUpdate(false);
     }
 }
-
 </script>
 
 <div class="card" class:selected class:posted>
-    <Dialog bind:this={confirmDeleteDialog} on:MDCDialog:closed={confirmDialogHandler}>
+    <Dialog
+        bind:this={confirmDeleteDialog}
+        on:MDCDialog:closed={confirmDialogHandler}>
         <Title>Confirm Deletion</Title>
         <Content>Are you sure you want to delete this saved update?</Content>
         <Actions>
@@ -93,27 +98,49 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
         </Actions>
     </Dialog>
     <p style="display: flex;">
-        <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">chat</Icon>
+        <Icon
+            class="material-icons"
+            style="float: left; margin-right: 5px; font-size: 23px">
+            chat
+        </Icon>
         {@html update.body}
     </p>
     {#if scheduled}
         <p style="display: flex; align-items: center;">
-            <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">schedule</Icon>
+            <Icon
+                class="material-icons"
+                style="float: left; margin-right: 5px; font-size: 23px">
+                schedule
+            </Icon>
             {scheduledText}
         </p>
     {:else}
-        <p style="display: flex; align-items: center;"
+        <p
+            style="display: flex; align-items: center;"
             use:tippy={realmNameTippyProps}>
-            <Icon class="material-icons" style="float: left; margin-right: 5px; font-size: 23px">group</Icon>
+            <Icon
+                class="material-icons"
+                style="float: left; margin-right: 5px; font-size: 23px">
+                group
+            </Icon>
             {realmName}
         </p>
     {/if}
     <Group style="width: 100%; margin-top: auto">
-        <Button on:click={() => dispatch('edit')} disabled={selected}><Icon class="material-icons">edit</Icon><Label>Edit</Label></Button>
-        {#if scheduled }
-            <Button on:click={cancelUpdate}><Icon class="material-icons">cancel</Icon><Label>Cancel</Label></Button>
-        {:else}    
-            <Button on:click={() => deleteUpdate(true)}><Icon class="material-icons">delete</Icon><Label>Delete</Label></Button>
+        <Button on:click={() => dispatch('edit')} disabled={selected}>
+            <Icon class="material-icons">edit</Icon>
+            <Label>Edit</Label>
+        </Button>
+        {#if scheduled}
+            <Button on:click={cancelUpdate}>
+                <Icon class="material-icons">cancel</Icon>
+                <Label>Cancel</Label>
+            </Button>
+        {:else}
+            <Button on:click={() => deleteUpdate(true)}>
+                <Icon class="material-icons">delete</Icon>
+                <Label>Delete</Label>
+            </Button>
         {/if}
     </Group>
 </div>

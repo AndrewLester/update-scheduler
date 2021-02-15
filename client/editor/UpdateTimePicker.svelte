@@ -5,6 +5,7 @@ import '@smui/button/bare.css';
 import Select, { Option } from '@smui/select/bare';
 import '@smui/select/bare.css';
 import Flatpickr from '../utility/components/Flatpickr.svelte';
+import DurationPicker from '../utility/components/DurationPicker.svelte';
 import type { Instance } from 'flatpickr/dist/types/instance';
 import 'flatpickr/dist/flatpickr.css';
 import moment from 'moment';
@@ -14,34 +15,38 @@ export let update: Update;
 $: if (update.job === null) {
     update.job = { id: '' };
 }
-let flatpicker: Instance;
+let flatpicker: Instance | undefined;
+let durationPicker: DurationPicker | undefined;
 let scheduledFor = update.job?.scheduled_for;
 let scheduledIn = update.job?.scheduled_in;
+let scheduledUpdateRelative = !!update.job?.scheduled_in;
+let selectValue = scheduledUpdateRelative ? 'in' : 'on';
+$: update.job!.scheduled_for = scheduledFor;
+$: update.job!.scheduled_in = scheduledIn;
+$: scheduledUpdateRelative = selectValue === 'in';
 
+// React to changes in `update`
 $: {
-    update.job!.scheduled_in = undefined;
-    update.job!.scheduled_for = scheduledFor;
-}
-
-$: {
-    update.job!.scheduled_for = undefined;
-    update.job!.scheduled_in = scheduledIn;
-}
-$: if (update.id) {
-    if (update.job?.scheduled_for !== undefined) {
-        flatpicker.setDate(update.job.scheduled_for, true);
-    } else if (update.job?.scheduled_in !== undefined) {
-        const createdAt = schoologyTimeToMoment(update.job.scheduled_at!);
-        const postAt = momentToSchoologyTime(moment(createdAt).add(update.job.scheduled_in));
-        flatpicker.setDate(postAt, true);
+    if (!!update.job?.scheduled_in) {
+        selectValue = 'in';
+    } else {
+        selectValue = 'on';
     }
 }
 
-let selectValue = 'on';
-$: scheduledUpdateRelative = update.job?.scheduled_in || selectValue == 'in';
+// React to scheduled_for changes. Not necessary for scheduled_in
+$: if (update.id) {
+    if (update.job?.scheduled_for !== undefined && flatpicker) {
+        flatpicker.setDate(update.job.scheduled_for, true);
+    }
+}
 
 export function clear() {
-    flatpicker.clear();
+    if (flatpicker) {
+        flatpicker.clear();
+    } else if (durationPicker) {
+        durationPicker.clear();
+    }
 }
 
 const flatpickrOptions = {
@@ -49,7 +54,14 @@ const flatpickrOptions = {
     altInput: true,
     altFormat: 'F j, Y at h:i K',
     dateFormat: 'Y-m-d H:i:S',
-    minDate: 'today'
+    minDate: 'today',
+    position: 'below left',
+    static: true,
+    onOpen: handleFlatpickrOpen
+}
+
+async function handleFlatpickrOpen(_, __, fp) {
+    fp.calendarContainer.scrollIntoView({ behavior: 'smooth' });
 }
 </script>
 
@@ -62,10 +74,15 @@ const flatpickrOptions = {
     <div class="picker-text">
         {#if scheduledUpdateRelative }
             <!-- Duration picker -->
-            <input bind:value={scheduledIn} />
+            <DurationPicker bind:scheduledIn bind:this={durationPicker} scheduledAt={update.job?.scheduled_at} />
         {:else}
             <!-- Datetime picker -->
-            <Flatpickr options={flatpickrOptions} bind:fp={flatpicker} bind:formattedValue={scheduledFor} name="date" />
+            <Flatpickr
+                options={flatpickrOptions}
+                placeholder={'Choose a date'}
+                bind:fp={flatpicker}
+                bind:formattedValue={scheduledFor}
+                name="date" />
         {/if}
     </div>
 </div>
@@ -83,7 +100,7 @@ const flatpickrOptions = {
     margin: 0px 10px;
 }
 
-.picker :global(.select-width) {
+.picker > :global(.select) :global(.select-width) {
     width: 75px;
     min-width: 75px;
 }

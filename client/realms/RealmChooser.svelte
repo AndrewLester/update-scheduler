@@ -64,7 +64,8 @@ function selectRealm(realm: Realm) {
     display: flex;
     flex-flow: column nowrap;
     max-height: 100%;
-    min-height: 50px;
+    min-height: 80px;
+    width: 100%;
     padding: 0px 10px;
     overflow-y: auto;
 }
