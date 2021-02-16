@@ -3,6 +3,7 @@ from app.update_scheduler.models import ScheduledJob, Update
 from app.exts import db
 from datetime import datetime, timedelta
 from rq import Queue
+from app.main.models import User
 import pytz
 
 
@@ -27,7 +28,7 @@ def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update
             update.body,
             update.attachments
         )
-    user_timezone = pytz.timezone(update.user.timezone)
+    user_timezone = pytz.timezone(User.query.get(update.user_id).timezone)
     scheduled_at = pytz.utc.localize(cast(datetime, job.created_at or datetime.utcnow())).astimezone(user_timezone)
 
     scheduled_job = ScheduledJob(

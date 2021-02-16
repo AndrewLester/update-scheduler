@@ -22,7 +22,6 @@ import NotificationDisplay from './notifications/NotificationDisplay.svelte';
 let layout: Layout | undefined;
 let api: Networking | undefined;
 let selectedUpdate: Update = getNewUpdate();
-$: console.log(selectedUpdate);
 
 $: scheduledUpdates = $updates.filter(
     (update) => isScheduled(update)
