@@ -1,6 +1,9 @@
 # type: ignore
+from app.schoology.api import datetime_to_schoology
 from typing import Dict
 from app.exts import db
+import isodate
+from datetime import datetime
 
 
 class Update(db.Model):
@@ -37,7 +40,7 @@ class ScheduledJob(db.Model):
 
     id = db.Column(db.String(36), primary_key=True)
     # Both in UTC
-    scheduled_at = db.Column(db.DateTime, nullable=False)
+    scheduled_at: datetime = db.Column(db.DateTime, nullable=False)
     scheduled_in = db.Column(db.Interval)
     scheduled_for = db.Column(db.DateTime)
     update_id = db.Column(db.Integer, db.ForeignKey('update.id', name='fk_update_id'), nullable=False)
@@ -45,7 +48,7 @@ class ScheduledJob(db.Model):
     def to_json(self):
         return {
             'id': self.id,
-            'scheduled_at': str(self.scheduled_at),
-            'scheduled_in': str(self.scheduled_in) if self.scheduled_in else None,
-            'scheduled_for': str(self.scheduled_for) if self.scheduled_for else None
+            'scheduled_at': datetime_to_schoology(self.scheduled_at),
+            'scheduled_in': isodate.duration_isoformat(self.scheduled_in) if self.scheduled_in else None,
+            'scheduled_for': datetime_to_schoology(self.scheduled_for) if self.scheduled_for else None
         }

@@ -8,36 +8,39 @@ import Flatpickr from '../utility/components/Flatpickr.svelte';
 import DurationPicker from '../utility/components/DurationPicker.svelte';
 import type { Instance } from 'flatpickr/dist/types/instance';
 import 'flatpickr/dist/flatpickr.css';
-import moment from 'moment';
+import { tick } from 'svelte';
 
 export let update: Update;
 
 $: if (update.job === null) {
     update.job = { id: '' };
 }
+$: id = update.id;
 let flatpicker: Instance | undefined;
+const getFlatPicker = () => flatpicker!;
 let durationPicker: DurationPicker | undefined;
 let scheduledFor = update.job?.scheduled_for;
 let scheduledIn = update.job?.scheduled_in;
 let scheduledUpdateRelative = !!update.job?.scheduled_in;
 let selectValue = scheduledUpdateRelative ? 'in' : 'on';
-$: update.job!.scheduled_for = scheduledFor;
+const getScheduledFor = () => update.job?.scheduled_for!;
+const getScheduledIn = () => update.job?.scheduled_in;
+// $: update.job!.scheduled_for = scheduledFor;
 $: update.job!.scheduled_in = scheduledIn;
 $: scheduledUpdateRelative = selectValue === 'in';
-
+// Clear the flatpicker object that was bound to the element once the element is gone
+$: if (scheduledUpdateRelative) flatpicker = undefined;
+$: console.log('Update sheduled for:', update.job?.scheduled_for, 'Update scheduled in:', update.job?.scheduled_in, 'Scheduled Update relative:', scheduledUpdateRelative, 'Select value:', selectValue);
 // React to changes in `update`
-$: {
-    if (!!update.job?.scheduled_in) {
+$: if (id) {
+    if (isUpdateRelative()) {
         selectValue = 'in';
+        scheduledIn = getScheduledIn();
     } else {
         selectValue = 'on';
-    }
-}
-
-// React to scheduled_for changes. Not necessary for scheduled_in
-$: if (update.id) {
-    if (update.job?.scheduled_for !== undefined && flatpicker) {
-        flatpicker.setDate(update.job.scheduled_for, true);
+        tick().then(() => {
+            getFlatPicker().setDate(getScheduledFor(), true);
+        });
     }
 }
 
@@ -47,6 +50,10 @@ export function clear() {
     } else if (durationPicker) {
         durationPicker.clear();
     }
+}
+
+function isUpdateRelative() {
+    return !!update.job?.scheduled_in;
 }
 
 const flatpickrOptions = {

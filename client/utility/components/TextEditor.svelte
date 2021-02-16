@@ -9,7 +9,7 @@ let editor: HTMLElement | undefined;
 const options = {
     modules: {
         toolbar: [
-            [{ 'size': ['small', false, 'large', 'huge'] }],
+            [{ header: [1, 2, 3, false] }],
             ['bold', 'italic', 'underline', 'strike'],
             [{ 'color': [] }, { 'background': [] }],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
@@ -40,7 +40,7 @@ export function clear() {
 <style>
 .editor {
     resize: vertical;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: visible;
     height: 100px;
     font-family: inherit;

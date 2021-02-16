@@ -11,6 +11,7 @@ import { schoologyTimeToMoment } from '../api/types';
 import { isScheduled } from '../api/types';
 import { realms, time, updates } from '../stores';
 import tippy from '../utility/tippy';
+import 'tippy.js/animations/shift-away-subtle.css';
 
 export let update: Update;
 export let selected: boolean;
@@ -49,6 +50,16 @@ $: if (scheduled) {
 
 $: realmNameTippyProps = {
     content: realmName,
+    placement: 'right',
+    arrow: true,
+    duration: [100, 100],
+    animation: 'shift-away-subtle',
+    touch: ['hold', 450],
+    trigger: 'mouseenter',
+};
+
+const updateBodyTippyProps = {
+    content: 'Certain styles might not be visible',
     placement: 'right',
     arrow: true,
     duration: [100, 100],
@@ -97,7 +108,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
             </Button>
         </Actions>
     </Dialog>
-    <p style="display: flex;">
+    <p use:tippy={updateBodyTippyProps} class="body">
         <Icon
             class="material-icons"
             style="float: left; margin-right: 5px; font-size: 23px">
@@ -106,7 +117,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
         {@html update.body}
     </p>
     {#if scheduled}
-        <p style="display: flex; align-items: center;">
+        <p>
             <Icon
                 class="material-icons"
                 style="float: left; margin-right: 5px; font-size: 23px">
@@ -115,15 +126,14 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
             {scheduledText}
         </p>
     {:else}
-        <p
-            style="display: flex; align-items: center;"
+        <p  class="one-line"
             use:tippy={realmNameTippyProps}>
             <Icon
                 class="material-icons"
                 style="float: left; margin-right: 5px; font-size: 23px">
                 group
             </Icon>
-            {realmName}
+            {realmName ?? 'Loading...'}
         </p>
     {/if}
     <Group style="width: 100%; margin-top: auto">
@@ -151,7 +161,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
     flex-flow: column nowrap;
     align-items: stretch;
     height: 100px;
-    width: 175px;
+    width: auto;
     max-height: 100%;
     border-radius: 5px;
     background: white;
@@ -160,10 +170,23 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
 p {
     max-height: 100%;
     padding: 5px 10px;
-    overflow-wrap: break-word;
-    vertical-align: middle;
     overflow: hidden;
     text-overflow: ellipsis;
+    overflow-wrap: break-word;
+}
+
+p > :global(*) {
+    vertical-align: top;
+}
+
+p.one-line {
+    white-space: nowrap;
+}
+
+p.body :global(*:not(i)) {
+    margin: 0px !important;
+    padding: 0px !important;
+    font-size: 16px !important;
 }
 
 .card.selected {

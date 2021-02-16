@@ -36,3 +36,14 @@ export function schoologyTimeToMoment(schoologyTimestamp: string): moment.Moment
 export function momentToSchoologyTime(momentInstance: moment.Moment): string {
     return momentInstance.format(schoologyTimestampFormat);
 }
+
+export function getNewUpdate(): Update {
+    return {
+        id: -1,
+        body: '',
+        attachments: '',
+        realm_id: '',
+        realm_type: '',
+        job: null,
+    };
+}

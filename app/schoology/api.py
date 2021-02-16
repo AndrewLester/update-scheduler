@@ -43,6 +43,10 @@ def schoology_to_datetime(string: str, tz: LocalizableTz) -> datetime:
     return tz.localize(time)
 
 
+def datetime_to_schoology(time: datetime) -> str:
+    return time.strftime('%Y-%m-%d %H:%M:%S')
+
+
 @cache.memoize(timeout=900)
 def get_user_realms(user: User) -> List[Realm]:
     sections: List[Realm] = [

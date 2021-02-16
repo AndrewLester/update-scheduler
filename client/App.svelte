@@ -1,16 +1,5 @@
 <script lang="ts" context="module">
 declare const csrf_token: string;
-
-export function getNewUpdate(): Update {
-    return {
-        id: -1,
-        body: '',
-        attachments: '',
-        realm_id: '',
-        realm_type: '',
-        job: null,
-    };
-}
 </script>
 
 <script lang="ts">
@@ -32,7 +21,6 @@ import NotificationDisplay from './notifications/NotificationDisplay.svelte';
 
 let layout: Layout | undefined;
 let api: Networking | undefined;
-let selectedUpdate: Update = getNewUpdate();
 
 $: scheduledUpdates = $updates.filter(
     (update) => isScheduled(update)
@@ -77,7 +65,7 @@ function handleUpdateDelete(update: Update) {
 
 <Layout areas={gridAreas} bind:this={layout}>
     <slot slot="main">
-        <UpdateEditor bind:update={selectedUpdate} />
+        <UpdateEditor update={selectedUpdate} />
     </slot>
     <slot slot="bottombar">
         {#if savedUpdates.length !== 0}
@@ -132,5 +120,6 @@ function handleUpdateDelete(update: Update) {
 <style>
 :root {
     --main-background-color: lightgray;
+    --mdc-theme-primary: #29b6f6;
 }
 </style>

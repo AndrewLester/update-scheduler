@@ -2,6 +2,8 @@
 import Select, { Option } from '@smui/select/bare';
 import '@smui/select/bare.css';
 import moment from 'moment';
+import { schoologyTimeToMoment } from '../../api/types';
+import { time } from '../../stores';
 
 export let scheduledAt: string | undefined;
 export let scheduledIn: string;
@@ -10,6 +12,16 @@ type DurationType = 'minute' | 'hour' | 'day';
 
 let selectValue: DurationType = scheduledIn ? getTimeUnit(moment.duration(scheduledIn)) : 'minute';
 let inputValue: number | undefined = scheduledIn ? moment.duration(scheduledIn).as(selectValue) : undefined;
+const getScheduledIn = () => scheduledIn;
+// Runs when the update being edited is changed
+$: console.log(scheduledAt, getScheduledIn());
+$: if (scheduledAt && getScheduledIn()) {
+    console.log(getScheduledIn());
+    const scheduledAtMoment = schoologyTimeToMoment(scheduledAt);
+    const scheduledInDuration = moment.duration(getScheduledIn());
+    const postTime = scheduledAtMoment.add(scheduledInDuration);
+    inputValue =  moment.duration(postTime.diff($time)).as(selectValue)
+}
 
 $: if (inputValue) {
     scheduledIn = moment.duration(inputValue, selectValue).toISOString();
