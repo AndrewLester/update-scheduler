@@ -28,13 +28,17 @@ $: {
 }
 
 async function save(updateData: Update) {
+    let returnedData: Update | undefined;
     if (updateData.id === -1) {
-        updates.create({ ...updateData, body });
+        returnedData = await updates.create({ ...updateData, body });
     } else {
         // No need to await this because it can happen while the editor page is clearing
         // Since it just syncs the job id that was created
-        await updates.update({ ...updateData, body }, 'id').then(() => updates.sync('id', update.id));
+        returnedData = await updates.update({ ...updateData, body }, 'id').then(() => updates.sync('id', update.id));
     }
+
+    // There was an error
+    if (!returnedData) return;
 
     resetUpdate();
 }
