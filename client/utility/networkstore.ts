@@ -196,21 +196,21 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
     }
 
     async sync(
-        element: ElementType<T>,
-        discriminator: keyof ElementType<T>
+        key: keyof ElementType<T>,
+        value: ElementType<T>[typeof key]
     ): Promise<ElementType<T> | undefined> {
         if (!this.api) throw new Error('Networking not loaded');
 
         try {
             const synced: ElementType<T> = await this.api.get(
-                this.endpoint + `/${element[discriminator]}`
+                this.endpoint + `/${value}`
             );
 
             this.store.update((current) => {
                 const updated = [
                     synced,
                     ...current.filter((elem) => {
-                        return elem[discriminator] !== element[discriminator];
+                        return elem[key] !== value;
                     }),
                 ];
 

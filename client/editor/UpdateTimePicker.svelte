@@ -1,60 +1,28 @@
 <script lang="ts">
-import type { Update } from '../api/types';
-import { momentToSchoologyTime, schoologyTimeToMoment } from '../api/types';
+import type { ScheduledJob, Update } from '../api/types';
 import '@smui/button/bare.css';
 import Select, { Option } from '@smui/select/bare';
 import '@smui/select/bare.css';
 import Flatpickr from '../utility/components/Flatpickr.svelte';
 import DurationPicker from '../utility/components/DurationPicker.svelte';
-import type { Instance } from 'flatpickr/dist/types/instance';
 import 'flatpickr/dist/flatpickr.css';
-import { tick } from 'svelte';
 
-export let update: Update;
+export let job: ScheduledJob;
 
-$: if (update.job === null) {
-    update.job = { id: '' };
-}
-$: id = update.id;
-let flatpicker: Instance | undefined;
-const getFlatPicker = () => flatpicker!;
+let flatpicker: Flatpickr;
 let durationPicker: DurationPicker | undefined;
-let scheduledFor = update.job?.scheduled_for;
-let scheduledIn = update.job?.scheduled_in;
-let scheduledUpdateRelative = !!update.job?.scheduled_in;
+let scheduledUpdateRelative = !!job.scheduled_in;
 let selectValue = scheduledUpdateRelative ? 'in' : 'on';
-const getScheduledFor = () => update.job?.scheduled_for!;
-const getScheduledIn = () => update.job?.scheduled_in;
-// $: update.job!.scheduled_for = scheduledFor;
-$: update.job!.scheduled_in = scheduledIn;
-$: scheduledUpdateRelative = selectValue === 'in';
-// Clear the flatpicker object that was bound to the element once the element is gone
-$: if (scheduledUpdateRelative) flatpicker = undefined;
-$: console.log('Update sheduled for:', update.job?.scheduled_for, 'Update scheduled in:', update.job?.scheduled_in, 'Scheduled Update relative:', scheduledUpdateRelative, 'Select value:', selectValue);
-// React to changes in `update`
-$: if (id) {
-    if (isUpdateRelative()) {
-        selectValue = 'in';
-        scheduledIn = getScheduledIn();
-    } else {
-        selectValue = 'on';
-        tick().then(() => {
-            getFlatPicker().setDate(getScheduledFor(), true);
-        });
-    }
-}
 
-export function clear() {
+$: if (job.scheduled_for && !scheduledUpdateRelative) {
+    job.scheduled_in = undefined;
     if (flatpicker) {
-        flatpicker.clear();
-    } else if (durationPicker) {
-        durationPicker.clear();
+        flatpicker.setDate(job.scheduled_for, true);
     }
 }
+$: if (job.scheduled_in && scheduledUpdateRelative) job.scheduled_for = undefined;
 
-function isUpdateRelative() {
-    return !!update.job?.scheduled_in;
-}
+$: scheduledUpdateRelative = selectValue === 'in';
 
 const flatpickrOptions = {
     enableTime: true,
@@ -81,14 +49,14 @@ async function handleFlatpickrOpen(_, __, fp) {
     <div class="picker-text">
         {#if scheduledUpdateRelative }
             <!-- Duration picker -->
-            <DurationPicker bind:scheduledIn bind:this={durationPicker} scheduledAt={update.job?.scheduled_at} />
+            <DurationPicker bind:duration={job.scheduled_in} bind:this={durationPicker} durationStart={job.scheduled_at} />
         {:else}
             <!-- Datetime picker -->
             <Flatpickr
                 options={flatpickrOptions}
                 placeholder={'Choose a date'}
-                bind:fp={flatpicker}
-                bind:formattedValue={scheduledFor}
+                bind:this={flatpicker}
+                bind:formattedValue={job.scheduled_for}
                 name="date" />
         {/if}
     </div>

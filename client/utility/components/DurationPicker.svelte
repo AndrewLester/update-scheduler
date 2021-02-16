@@ -2,29 +2,30 @@
 import Select, { Option } from '@smui/select/bare';
 import '@smui/select/bare.css';
 import moment from 'moment';
-import { schoologyTimeToMoment } from '../../api/types';
+import { momentToSchoologyTime, schoologyTimeToMoment } from '../../api/types';
 import { time } from '../../stores';
 
-export let scheduledAt: string | undefined;
-export let scheduledIn: string;
+export let duration: string;
+export let durationStart: string | undefined;
 
 type DurationType = 'minute' | 'hour' | 'day';
 
-let selectValue: DurationType = scheduledIn ? getTimeUnit(moment.duration(scheduledIn)) : 'minute';
-let inputValue: number | undefined = scheduledIn ? moment.duration(scheduledIn).as(selectValue) : undefined;
-const getScheduledIn = () => scheduledIn;
-// Runs when the update being edited is changed
-$: console.log(scheduledAt, getScheduledIn());
-$: if (scheduledAt && getScheduledIn()) {
-    console.log(getScheduledIn());
-    const scheduledAtMoment = schoologyTimeToMoment(scheduledAt);
-    const scheduledInDuration = moment.duration(getScheduledIn());
-    const postTime = scheduledAtMoment.add(scheduledInDuration);
-    inputValue =  moment.duration(postTime.diff($time)).as(selectValue)
+let inputValue: number | undefined = undefined;
+let selectValue: DurationType = duration ? getTimeUnit(moment.duration(duration)) : 'minute';
+
+$: minutes = moment($time).seconds(0).milliseconds(0)
+if (duration) {
+    if (durationStart) {
+        const scheduledAtMoment = schoologyTimeToMoment(durationStart);
+        const scheduledInDuration = moment.duration(duration);
+        const postTime = scheduledAtMoment.add(scheduledInDuration);
+        inputValue = Math.round(moment.duration(postTime.diff(minutes)).as(selectValue));
+    }
+    // TODO: Handle case with no durationStart
 }
 
 $: if (inputValue) {
-    scheduledIn = moment.duration(inputValue, selectValue).toISOString();
+    duration = moment.duration(inputValue, selectValue).toISOString();
 }
 
 export function clear() {
@@ -32,8 +33,14 @@ export function clear() {
     selectValue = 'minute';
 }
 
-function getTimeUnit(duration: moment.Duration): DurationType {
-    return duration.humanize().split(' ')[1] as DurationType;
+function getTimeUnit(durationMoment: moment.Duration): DurationType {
+    if (durationMoment.asDays() % 1 === 0) {
+        return 'day';
+    } else if (durationMoment.asHours() % 1 === 0) {
+        return 'hour';
+    } else {
+        return 'minute';
+    }
 }
 
 function pluralize(word: string, quantity: number) {
@@ -45,7 +52,7 @@ function pluralize(word: string, quantity: number) {
 </script>
 
 <div class="duration-picker">
-    <input class="duration-input" bind:value={inputValue} type="number" placeholder="Enter a duration" />
+    <input class="duration-input" bind:value={inputValue} type="number" placeholder="Enter a duration" max="1000" min="0" />
     <Select variant="filled" bind:value={selectValue} class="select" anchor$class="select-width select-height" menu$class="select-width">
         <Option value="minute">{pluralize('minute', inputValue ?? 0)}</Option>
         <Option value="hour">{pluralize('hour', inputValue ?? 0)}</Option>

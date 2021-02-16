@@ -18,7 +18,7 @@ export let dateFormat = null;
 export let placeholder = '';
 export let options = {};
 export let input = undefined
-export let fp;
+let fp;
 $: if (fp) {
     fp.setDate(value, false, dateFormat);
 }
@@ -30,7 +30,9 @@ onMount(() => {
     );
 });
 
-onDestroy(() => fp.destroy());
+onDestroy(() => {
+    if (fp) fp.destroy();
+});
 
 const dispatch = createEventDispatcher();
 $: if (fp) {
@@ -65,6 +67,10 @@ function updateValue(newValue, dateStr) {
 }
 function stripOn(hook) {
     return hook.charAt(2).toLowerCase() + hook.substring(3);
+}
+
+export function setDate(date, triggerChange) {
+    fp.setDate(date, triggerChange);
 }
 </script>
 

@@ -1,10 +1,8 @@
 <script lang="ts">
 import Button, { Label } from '@smui/button/bare';
 import '@smui/button/bare.css';
-import { tick } from 'svelte';
 import type { Update } from '../api/types';
-import { isScheduled } from '../api/types';
-import { getNewUpdate } from '../App.svelte';
+import { getNewUpdate, isScheduled } from '../api/types';
 import { updates } from '../stores';
 import TextEditor from '../utility/components/TextEditor.svelte';
 import UpdateTimePicker from './UpdateTimePicker.svelte';
@@ -14,29 +12,31 @@ export let update: Update;
 let editor: TextEditor | undefined;
 let timePicker: UpdateTimePicker | undefined;
 let updateMinusJob: Update;
+const getUpdateBody = () => update.body;
+let body = '';
+$: id = update.id;
+$: if (id && editor) editor.setContent(getUpdateBody());
+
+$: if (update.job === null) {
+    update.job = { id: '' };
+}
+$: job = update.job!;
 $: scheduled = isScheduled(update);
 $: {
     let { job, ...partialUpdate } = update;
     updateMinusJob = { ...partialUpdate, job: null };
 }
 
-const getUpdateBody = () => update.body;
-$: idChanged = update.id;
-$: if (editor && timePicker && idChanged) {
-    editor.setContent(getUpdateBody());
-    timePicker.clear();
-}
-
 async function save(updateData: Update) {
     if (updateData.id === -1) {
-        updates.create(updateData);
+        updates.create({ ...updateData, body });
     } else {
         // No need to await this because it can happen while the editor page is clearing
         // Since it just syncs the job id that was created
-        updates.update(updateData, 'id').then(() => updates.sync(updateData, 'id'));
+        await updates.update({ ...updateData, body }, 'id').then(() => updates.sync('id', update.id));
     }
 
-    await resetUpdate();
+    resetUpdate();
 }
 
 function handleNewUpdate() {
@@ -49,14 +49,6 @@ function handleNewUpdate() {
 }
 
 async function resetUpdate() {
-    if (editor && timePicker) {
-        editor.clear();
-        timePicker.clear();
-    }
-
-    // Wait for editor to clear
-    await tick();
-
     update = getNewUpdate();
 }
 </script>
@@ -66,13 +58,17 @@ async function resetUpdate() {
         <Button class="new-button" on:click={handleNewUpdate} variant="outlined"><Label>New Update</Label></Button>
         <h3>Create and Schedule an Update</h3>
     </div>
-    <TextEditor placeholder={'Write update'} bind:content={update.body} bind:this={editor} />
+    <TextEditor placeholder={'Write update'} bind:content={body} bind:this={editor} />
     <div class="button-row">
-        <UpdateTimePicker bind:update={update} bind:this={timePicker} />
+        {#key id}
+            <UpdateTimePicker {job} bind:this={timePicker} />
+        {/key}
         <div class="save-buttons">
             <Button on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>Save</Label></Button>
             {#if !scheduled }
                 <Button on:click={() => save(update)} variant="raised"><Label>Save and Schedule</Label></Button>
+            {:else}
+                <Button on:click={() => update = getNewUpdate()} variant="outlined"><Label>Discard Edit</Label></Button>
             {/if}
         </div>
     </div>

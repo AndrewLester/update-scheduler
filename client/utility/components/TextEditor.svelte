@@ -1,10 +1,16 @@
 <script lang="ts">
+import { onMount } from 'svelte';
+
 import { quill } from '../quill';
 
 export let content: string;
 export let placeholder: string;
 
 let editor: HTMLElement | undefined;
+
+onMount(() => {
+    editor!.firstElementChild!.innerHTML = content;
+});
 
 const options = {
     modules: {

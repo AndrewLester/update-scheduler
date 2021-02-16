@@ -7,7 +7,7 @@ import { onMount, tick } from 'svelte';
 import type { Networking } from './api/network';
 import * as networking from './api/network';
 import type { Update } from './api/types';
-import { isScheduled } from './api/types';
+import { getNewUpdate, isScheduled } from './api/types';
 import UpdateEditor from './editor/UpdateEditor.svelte';
 import CardList from './layouts/CardList.svelte';
 import Layout from './layouts/Layout.svelte';
@@ -21,6 +21,8 @@ import NotificationDisplay from './notifications/NotificationDisplay.svelte';
 
 let layout: Layout | undefined;
 let api: Networking | undefined;
+let selectedUpdate: Update = getNewUpdate();
+$: console.log(selectedUpdate);
 
 $: scheduledUpdates = $updates.filter(
     (update) => isScheduled(update)
@@ -65,7 +67,7 @@ function handleUpdateDelete(update: Update) {
 
 <Layout areas={gridAreas} bind:this={layout}>
     <slot slot="main">
-        <UpdateEditor update={selectedUpdate} />
+        <UpdateEditor bind:update={selectedUpdate} />
     </slot>
     <slot slot="bottombar">
         {#if savedUpdates.length !== 0}

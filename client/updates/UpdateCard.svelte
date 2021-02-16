@@ -8,7 +8,7 @@ import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
 import type { Update } from '../api/types';
 import { schoologyTimeToMoment } from '../api/types';
-import { isScheduled } from '../api/types';
+import { isScheduled, momentToSchoologyTime } from '../api/types';
 import { realms, time, updates } from '../stores';
 import tippy from '../utility/tippy';
 import 'tippy.js/animations/shift-away-subtle.css';
@@ -50,6 +50,22 @@ $: if (scheduled) {
 
 $: realmNameTippyProps = {
     content: realmName,
+    placement: 'right',
+    arrow: true,
+    duration: [100, 100],
+    animation: 'shift-away-subtle',
+    touch: ['hold', 450],
+    trigger: 'mouseenter',
+};
+
+$: postTimeInfo =
+    update.job?.scheduled_for
+    ? 'Posts at: ' + update.job?.scheduled_for
+    : 'Posts at: ' +
+        schoologyTimeToMoment(update.job?.scheduled_at!)
+            .add(moment.duration(update.job?.scheduled_in)).format('YYYY-MM-DD HH:mm:ss');
+$: postTimeTippyProps = {
+    content: postTimeInfo,
     placement: 'right',
     arrow: true,
     duration: [100, 100],
@@ -117,7 +133,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
         {@html update.body}
     </p>
     {#if scheduled}
-        <p>
+        <p class="one-line" use:tippy={postTimeTippyProps}>
             <Icon
                 class="material-icons"
                 style="float: left; margin-right: 5px; font-size: 23px">
@@ -162,6 +178,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
     align-items: stretch;
     height: 100px;
     width: auto;
+    max-width: 175px;
     max-height: 100%;
     border-radius: 5px;
     background: white;
@@ -169,7 +186,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
 
 p {
     max-height: 100%;
-    padding: 5px 10px;
+    padding: 5px 5px;
     overflow: hidden;
     text-overflow: ellipsis;
     overflow-wrap: break-word;

@@ -1,6 +1,6 @@
-from typing import Union
+from typing import Union, cast
 from app.update_scheduler.models import ScheduledJob, Update
-from app.exts import db, oauth_client as oauth
+from app.exts import db
 from datetime import datetime, timedelta
 from rq import Queue
 import pytz
@@ -27,10 +27,12 @@ def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update
             update.body,
             update.attachments
         )
-    
+    user_timezone = pytz.timezone(update.user.timezone)
+    scheduled_at = pytz.utc.localize(cast(datetime, job.created_at or datetime.utcnow())).astimezone(user_timezone)
+
     scheduled_job = ScheduledJob(
         id=job.id,
-        scheduled_at=job.created_at,
+        scheduled_at=scheduled_at,
         scheduled_in=dt if isinstance(dt, timedelta) else None,
         scheduled_for=dt if isinstance(dt, datetime) else None
     )
