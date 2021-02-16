@@ -31,7 +31,7 @@ function selectRealm(realm: Realm) {
             {/if}
         </div>
     {/key}
-    <h4>Realm List</h4>
+    <h4 style="margin-top: 10px;">Realm List</h4>
     <div class="realm-list">
         {#each realms.filter((realm) => realm.id !== update.realm_id) as realm (realm.id)}
             <div
@@ -41,7 +41,7 @@ function selectRealm(realm: Realm) {
                 <RealmOption {realm} on:click={() => selectRealm(realm)} />
             </div>
         {:else}
-            {#each new Array(10).fill(0) as _ }
+            {#each new Array(5).fill(0) as _ }
                 <SkeletonLayout>
                     <RealmOption realm={{ id: 'load', name: '_'.repeat(Math.random() * 10 + 5), realm_type: 'course'}} />
                 </SkeletonLayout>
@@ -70,8 +70,23 @@ function selectRealm(realm: Realm) {
     overflow-y: auto;
 }
 
+.selected-realm {
+    min-height: 40px;
+    line-height: 40px;
+}
+
+.selected-realm > * {
+    vertical-align: middle;
+}
+
 h3, h4 {
     margin: 0px auto;
     text-align: center;
 }
+
+h4 {
+    margin: 5px auto;
+    font-weight: bold;
+}
+
 </style>

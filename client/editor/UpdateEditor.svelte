@@ -50,6 +50,8 @@ function handleNewUpdate() {
 
 async function resetUpdate() {
     update = getNewUpdate();
+    editor?.clear();
+    timePicker?.clear();
 }
 </script>
 

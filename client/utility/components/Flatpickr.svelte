@@ -72,6 +72,10 @@ function stripOn(hook) {
 export function setDate(date, triggerChange) {
     fp.setDate(date, triggerChange);
 }
+
+export function clear() {
+    fp.clear();
+}
 </script>
 
 <input bind:this={input} {...$$restProps} {placeholder} />

@@ -5,15 +5,16 @@ import moment, { Moment } from 'moment';
 import * as notifier from './notifications/notifier';
 
 
-function errorHandler(error: object | string, _) {
-    if (typeof error === 'string' || 'message' in error) {
-        console.log('message' in (error as any));
-        notifier.danger(typeof error === 'object' ? (error as any).message : error, 2000);
-    } else if ('errors' in error) {
-        notifier.danger('One or more required fields were missing', 2000);
-    } else {
-        notifier.danger('An error occured', 2000);
-    }
+function errorHandler(error: Error, _) {
+    try {
+        const json = JSON.parse(error.message);
+        const errors = json.errors;
+
+        notifier.danger('Missing required fields: ' + Object.keys(errors).join(', '), 2000);
+        return;
+    } catch (e) { }
+
+    notifier.danger('An error occured. Check your update\'s post time.', 2000);
 }
 
 

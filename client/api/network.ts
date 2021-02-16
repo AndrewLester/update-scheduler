@@ -27,7 +27,7 @@ export function mountNetworking(csrfToken: string): Networking {
         if (!res.ok) {
             const json = await res.json();
             if (json.errors) {
-                throw new Error(json);
+                throw new Error(JSON.stringify(json));
             }
             throw new Error(`Request failed with error: ${res.statusText}`);
         }

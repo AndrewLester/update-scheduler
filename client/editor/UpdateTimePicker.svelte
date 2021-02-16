@@ -38,6 +38,11 @@ const flatpickrOptions = {
 async function handleFlatpickrOpen(_, __, fp) {
     fp.calendarContainer.scrollIntoView({ behavior: 'smooth' });
 }
+
+export function clear() {
+    if (flatpicker) flatpicker.clear();
+    if (durationPicker) durationPicker.clear();
+}
 </script>
 
 <div class="picker">

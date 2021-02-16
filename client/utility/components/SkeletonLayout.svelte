@@ -20,18 +20,23 @@ export let simple = false;
     height: 100%;
     margin: 0px;
 }
-.wrapper :global(input[type='text']),
+.wrapper :global(svg) {
+    visibility: hidden;
+}
+.wrapper :global(input),
 .wrapper :global(p),
 .wrapper :global(legend),
 .wrapper :global(div:empty),
 .wrapper :global(label),
 .wrapper :global(span),
+.wrapper :global(svg),
 :global(.skeleton-bar) {
     /* Color transparent hides text, but allows the text to define the width and height */
     max-height: 20px;
     color: transparent;
     opacity: 1;
     border-radius: 3px;
+    border: none;
     overflow: hidden;
     transform: none;
     background-repeat: no-repeat;
