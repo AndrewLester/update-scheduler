@@ -3,15 +3,22 @@ import type { Realm, Update } from "../api/types";
 import RealmOption from "./RealmOption.svelte";
 import { fade, slide } from "svelte/transition";
 import { flip } from "svelte/animate";
+import Icon from '@smui/textfield/icon/index';
+import Textfield from '@smui/textfield/bare';
+import '@smui/textfield/bare.css';
 import SkeletonLayout from "../utility/components/SkeletonLayout.svelte";
 
 
 export let realms: Realm[];
 export let update: Update;
 
+let search = '';
+
 function selectRealm(realm: Realm) {
     update.realm_id = realm.id;
     update.realm_type = realm.realm_type;
+
+    search = '';
 }
 
 </script>
@@ -32,20 +39,33 @@ function selectRealm(realm: Realm) {
         </div>
     {/key}
     <h4 style="margin-top: 10px;">Realm List</h4>
+    <div>
+        <Textfield label="Search" withLeadingIcon bind:value={search}>
+            <Icon class="material-icons">search</Icon>
+        </Textfield>
+    </div>
     <div class="realm-list">
-        {#each realms.filter((realm) => realm.id !== update.realm_id) as realm (realm.id)}
+        {#each realms
+            .filter((realm) => realm.id !== update.realm_id)
+            .filter((realm) => realm.name.toUpperCase().includes(search.toUpperCase())) as realm (realm.id)}
             <div
-                animate:flip={{ delay: 100 }}
+                animate:flip={{ duration: 200 }}
                 in:fade={{ duration: 200 }}
                 out:slide={{ duration: 200 }}>
                 <RealmOption {realm} on:click={() => selectRealm(realm)} />
             </div>
         {:else}
-            {#each new Array(5).fill(0) as _ }
-                <SkeletonLayout>
-                    <RealmOption realm={{ id: 'load', name: '_'.repeat(Math.random() * 10 + 5), realm_type: 'course'}} />
-                </SkeletonLayout>
-            {/each}
+            {#if realms.length !== 0}
+                <div style="margin-top: 10px; text-align: center; font-style: italic">
+                    No realms found
+                </div>
+            {:else}
+                {#each new Array(5).fill(0) as _ }
+                    <SkeletonLayout>
+                        <RealmOption realm={{ id: 'load', name: '_'.repeat(Math.random() * 10 + 5), realm_type: 'course'}} />
+                    </SkeletonLayout>
+                {/each}
+            {/if}
         {/each}
     </div>
 </div>
