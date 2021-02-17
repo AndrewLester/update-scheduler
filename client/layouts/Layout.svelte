@@ -167,7 +167,7 @@ export function getElementTransitionDelay(
         <slot name="left-sidebar" />
     </div>
     <div class="right-sidebar">
-        <slot name="right-sidebar" delay={5000} />
+        <slot name="right-sidebar" />
     </div>
 </main>
 

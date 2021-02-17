@@ -72,7 +72,7 @@ function selectRealm(realm: Realm) {
 
 .selected-realm {
     min-height: 40px;
-    line-height: 40px;
+    height: auto;
 }
 
 .selected-realm > * {

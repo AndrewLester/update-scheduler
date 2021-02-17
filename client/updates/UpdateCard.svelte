@@ -206,6 +206,10 @@ p.body :global(*:not(i)) {
     font-size: 16px !important;
 }
 
+p.body {
+    max-height: 40px;
+}
+
 .card.selected {
     box-shadow: 0px 0px 0px 2px lightskyblue;
 }

@@ -8,7 +8,7 @@ export let selected: boolean;
 
 </script>
 
-<div class="realm-option">
+<div class="realm-option" class:selected>
     <div class="realm-image" data-realm={realm.realm_type}></div>
     <p>{realm.name}</p>
     <div class="checkbox-wrapper">
