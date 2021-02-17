@@ -7,18 +7,24 @@ import Icon from '@smui/textfield/icon/index';
 import Textfield from '@smui/textfield/bare';
 import '@smui/textfield/bare.css';
 import SkeletonLayout from "../utility/components/SkeletonLayout.svelte";
+import { sleep } from '../utility/async';
 
 
 export let realms: Realm[];
 export let update: Update;
 
 let search = '';
+let searchInput = '';
+$: (async () => {
+    await sleep(50);
+    search = searchInput;
+})();
 
 function selectRealm(realm: Realm) {
     update.realm_id = realm.id;
     update.realm_type = realm.realm_type;
 
-    search = '';
+    searchInput = '';
 }
 
 </script>
@@ -40,14 +46,13 @@ function selectRealm(realm: Realm) {
     {/key}
     <h4 style="margin-top: 10px;">Realm List</h4>
     <div>
-        <Textfield label="Search" withLeadingIcon bind:value={search}>
+        <Textfield label="Search" withLeadingIcon bind:value={searchInput}>
             <Icon class="material-icons">search</Icon>
         </Textfield>
     </div>
     <div class="realm-list">
         {#each realms
-            .filter((realm) => realm.id !== update.realm_id)
-            .filter((realm) => realm.name.toUpperCase().includes(search.toUpperCase())) as realm (realm.id)}
+            .filter((realm) => realm.id !== update.realm_id && realm.name.toUpperCase().includes(search.toUpperCase())) as realm (realm.id)}
             <div
                 animate:flip={{ duration: 200 }}
                 in:fade={{ duration: 200 }}
