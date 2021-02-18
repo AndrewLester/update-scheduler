@@ -83,6 +83,7 @@ function selectRealm(realm: Realm) {
     height: 100%;
     width: 100%;
     padding: 20px 10px;
+    padding-bottom: 0px;
 }
 
 .realm-list {

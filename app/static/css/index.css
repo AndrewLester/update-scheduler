@@ -1,6 +1,5 @@
 main {
     display: flex;
-    flex-flow: row nowrap;
     align-items: center;
     width: 100vw;
     height: calc(100vh - var(--header-height));
@@ -9,6 +8,9 @@ main {
 
 main > section {
     width: 50%;
+    flex: 1 1 auto;
+    min-width: 300px;
+    max-width: 650px;
 }
 
 h1 {

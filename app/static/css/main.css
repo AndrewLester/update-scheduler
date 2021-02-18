@@ -198,6 +198,7 @@ fieldset.input input:focus::placeholder {
     cursor: pointer;
     font-size: 15px;
     height: 40px;
+    margin-top: 15px;
     transition: all 0.15s ease;
 }
 .small-button:hover, .small-button:focus {

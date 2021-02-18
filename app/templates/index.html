@@ -9,6 +9,19 @@
     <section>
         <h1>Schedule your Schoology updates</h1>
         <p class="main-description">Update scheduler lets you write, edit, and schedule your schoology updates from one place, without having to worry about accessing your computer to post them.</p>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('update_scheduler.scheduler') }}">
+                <button class="small-button">
+                    Start scheduling updates
+                </button>
+            </a>
+        {% else %}
+            <a href="{{ url_for('update_scheduler.scheduler') }}">
+                <button class="small-button">
+                    Sign in to schedule updates
+                </button>
+            </a>
+        {% endif %}
     </section>
     <section>
         <img src="" alt="">
