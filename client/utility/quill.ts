@@ -11,6 +11,7 @@ function quill(node: HTMLElement, options) {
         },
         placeholder: 'Type something...',
         theme: 'snow', // or 'bubble'
+        bounds: node,
         ...options
     });
     const container = node.getElementsByClassName('ql-editor')[0];

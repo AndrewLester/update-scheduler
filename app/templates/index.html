@@ -1,7 +1,17 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
 {% block content %}
 <main>
-    <h1>Hi</h1>
+    <section>
+        <h1>Schedule your Schoology updates</h1>
+        <p class="main-description">Update scheduler lets you write, edit, and schedule your schoology updates from one place, without having to worry about accessing your computer to post them.</p>
+    </section>
+    <section>
+        <img src="" alt="">
+    </section>
 </main>
 {% endblock %}

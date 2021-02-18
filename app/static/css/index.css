@@ -1,0 +1,20 @@
+main {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: 100vw;
+    height: calc(100vh - var(--header-height));
+    padding: 50px 100px;
+}
+
+main > section {
+    width: 50%;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+p.main-description {
+    font-size: 18px;
+}

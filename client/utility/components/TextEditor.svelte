@@ -23,7 +23,7 @@ const options = {
         ]
     },
     placeholder: placeholder,
-    theme: 'snow',
+    theme: 'snow'
 };
 
 export function setContent(newContent: string) {
@@ -53,7 +53,4 @@ export function clear() {
     font-size: inherit;
     
 }
-/* .editor :global(.ql-editor) {
-    height: 100% !important;
-}  */
 </style>
