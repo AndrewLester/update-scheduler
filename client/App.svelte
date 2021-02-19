@@ -18,11 +18,16 @@ import { realms, updates } from './stores';
 import UpdateCard from './updates/UpdateCard.svelte';
 import { fly } from 'svelte/transition';
 import NotificationDisplay from './notifications/NotificationDisplay.svelte';
+import NavigationDrawer from './utility/components/NavigationDrawer.svelte';
+import IconButton, {Icon} from '@smui/icon-button/bare';
+import '@smui/icon-button/bare.css';
 
 let layout: Layout | undefined;
 let api: Networking | undefined;
 let selectedUpdate: Update = getNewUpdate();
+let screenWidth: number | undefined;
 
+$: mobile = screenWidth && screenWidth < 1050;
 $: scheduledUpdates = $updates.filter(
     (update) => isScheduled(update)
 );
@@ -31,9 +36,13 @@ $: savedUpdates = $updates.filter(
 );
 
 let gridAreas: GridArea = 'minimal';
+let realmDrawerOpen = false;
+let updateDrawerOpen = false;
 
 $: {
-    if (scheduledUpdates.length === 0 && savedUpdates.length == 0) {
+    if (mobile) {
+        gridAreas = 'mobile';
+    } else if (scheduledUpdates.length === 0 && savedUpdates.length == 0) {
         gridAreas = 'minimal';
     } else if (scheduledUpdates.length === 0) {
         gridAreas = 'bottombar';
@@ -64,16 +73,28 @@ function handleUpdateDelete(update: Update) {
 }
 </script>
 
+<svelte:window bind:innerWidth={screenWidth}></svelte:window>
+
 <Layout areas={gridAreas} bind:this={layout}>
     <slot slot="main">
+        {#if mobile}
+            <div class="mobile-drawer-buttons">
+                <IconButton on:click={() => realmDrawerOpen = !realmDrawerOpen}>
+                    <Icon class="material-icons">group</Icon>
+                </IconButton>
+                <IconButton on:click={() => updateDrawerOpen = !updateDrawerOpen}>
+                    <Icon class="material-icons">schedule_send</Icon>
+                </IconButton>
+            </div>
+        {/if}
         <UpdateEditor bind:update={selectedUpdate} />
     </slot>
     <slot slot="bottombar">
         {#if savedUpdates.length !== 0}
             <!-- Must use separate in and out transitions because delay parameter is dynamic -->
             <div
-                in:fly={{ y: 50, duration: 250, delay: bottombarTransitionDelay }}
-                out:fly={{ y: 50, duration: 250, delay: bottombarTransitionDelay }}>
+                in:fly={{ y: 50, duration: 300, delay: bottombarTransitionDelay }}
+                out:fly={{ y: 50, duration: 300, delay: bottombarTransitionDelay }}>
                 <CardList
                     header={'Saved Updates'}
                     horizontal
@@ -115,6 +136,38 @@ function handleUpdateDelete(update: Update) {
             </div>
         {/if}
     </slot>
+
+    <slot slot="drawer">
+        {#if mobile}
+            <NavigationDrawer bind:open={realmDrawerOpen}>
+                <RealmChooser bind:update={selectedUpdate} realms={$realms} />
+            </NavigationDrawer>
+            <NavigationDrawer bind:open={updateDrawerOpen} right>
+                <CardList
+                    header={'Saved Updates'}
+                    horizontal
+                    items={savedUpdates}
+                    let:item>
+                    <UpdateCard
+                        update={item}
+                        selected={item.id === selectedUpdate.id}
+                        on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
+                        on:delete={() => handleUpdateDelete(item)} />
+                </CardList>
+                <CardList
+                    header={'Scheduled Updates'}
+                    horizontal
+                    items={scheduledUpdates}
+                    let:item>
+                    <UpdateCard
+                        selected={item.id === selectedUpdate.id}
+                        update={item}
+                        on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
+                        on:delete={() => handleUpdateDelete(item)} />
+                </CardList>
+            </NavigationDrawer>
+        {/if}
+    </slot>
 </Layout>
 <NotificationDisplay options={{ timeout: 2500, width: '200px' }} />
 
@@ -122,5 +175,13 @@ function handleUpdateDelete(update: Update) {
 :root {
     --main-background-color: lightgray;
     --mdc-theme-primary: #29b6f6;
+}
+
+.mobile-drawer-buttons {
+    position: absolute;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    width: 100%;
 }
 </style>

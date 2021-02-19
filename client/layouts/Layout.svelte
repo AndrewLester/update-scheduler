@@ -1,9 +1,22 @@
 <script lang="ts" context="module">
 export const gridAreas = {
+    mobile: {
+        areas: `"main main main"
+                "main main main"`,
+        transitions: [] as Transition[],
+        rank: -1
+    },
     minimal: {
         areas: `"left-sidebar main main"
                 "left-sidebar main main"`,
-        transitions: [] as Transition[],
+        transitions: [
+            {
+                original: 'left-sidebar',
+                replacement: 'main',
+                duration: 0,
+                transitionFunction: leftSidebarTransition
+            }
+        ] as Transition[],
         rank: 0,
     },
     rightsidebar: {
@@ -56,7 +69,7 @@ export const gridAreas = {
             },
         ] as Transition[],
         rank: 2,
-    },
+    }
 };
 
 export type GridArea = keyof typeof gridAreas;
@@ -67,9 +80,11 @@ import { setContext, tick } from 'svelte';
 
 import {
     bottomBarTransition,
-    rightSidebarTransition,
+leftSidebarTransition,
+        rightSidebarTransition,
 } from './layout_transitions';
 import type { Transition } from './layout_transitions';
+
 
 export let areas: GridArea;
 
@@ -82,7 +97,7 @@ let main: HTMLElement;
 $: (async () => {
     if (main) {
         let delayedTransitionElements = [] as HTMLElement[];
-
+        
         if (gridAreas[areas].rank == gridAreas[getCurrentAreas()].rank) {
             for (const transition of gridAreas[areas].transitions) {
                 tick().then(() => {
@@ -98,10 +113,13 @@ $: (async () => {
                     delayedTransitionElements.push(replacementElement);
                 });
             }
-
+            
+            displayNewElements();
             await layoutOutTransitions();
         } else if (gridAreas[areas].rank < gridAreas[getCurrentAreas()].rank) {
             await layoutOutTransitions();
+        } else {
+            displayNewElements();
         }
 
         // Setting main.style directly causes a cyclical state update
@@ -136,10 +154,20 @@ async function layoutOutTransitions() {
                 originalElement,
                 replacementElement,
                 transition.duration
-            )
+            ).then(() => {
+                originalElement.style.display = 'none';
+            })
         );
     }
     await Promise.all(transitions);
+}
+
+function displayNewElements() {
+    for (const transition of gridAreas[areas].transitions) {
+        const originalElement = main.querySelector('.' + transition.original) as HTMLElement;
+        // Reset the original's display to initial in case it was hidden by a display none
+        originalElement.style.display = 'initial';
+    }
 }
 
 export function getElementTransitionDelay(
@@ -157,6 +185,7 @@ export function getElementTransitionDelay(
 </script>
 
 <main bind:this={main} class={areas}>
+    <slot name="drawer" />
     <div class="main">
         <slot name="main" />
     </div>
@@ -173,6 +202,7 @@ export function getElementTransitionDelay(
 
 <style>
 main {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr minmax(0, 3fr) 1fr;
     grid-template-rows: minmax(0, 2fr) 1.25fr;
@@ -192,7 +222,7 @@ main > * {
     width: 100%;
 }
 
-.bottombar:empty {
+main > .bottombar, main > .right-sidebar {
     display: none;
 }
 

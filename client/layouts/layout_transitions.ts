@@ -9,6 +9,10 @@ export interface Transition {
     duration: number
 }
 
+export async function leftSidebarTransition(original: HTMLElement, replacement: HTMLElement, duration: number) {
+    original.style.display = 'none';
+}
+
 export async function bottomBarTransition(original: HTMLElement, replacement: HTMLElement, duration: number) {
     await dimensionPropertyTransition(original, replacement, duration, 'height');
 }

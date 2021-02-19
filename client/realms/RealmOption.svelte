@@ -48,9 +48,9 @@ p {
 }
 
 .checkbox-wrapper.disabled {
-    display: none;
-    height: 30px;
-    width: 30px;
+    visibility: hidden;
+    height: 40px;
+    width: 40px;
 }
 
 .realm-option > :last-child {

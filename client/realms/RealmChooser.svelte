@@ -65,9 +65,9 @@ function selectRealm(realm: Realm) {
                     No realms found
                 </div>
             {:else}
-                {#each new Array(5).fill(0) as _ }
+                {#each new Array(6).fill(0) as _ }
                     <SkeletonLayout>
-                        <RealmOption realm={{ id: 'load', name: '_'.repeat(Math.random() * 10 + 5), realm_type: 'course'}} disabled />
+                        <RealmOption realm={{ id: 'load', name: '_'.repeat(Math.random() * 15 + 7), realm_type: 'course'}} disabled />
                     </SkeletonLayout>
                 {/each}
             {/if}
