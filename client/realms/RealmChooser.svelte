@@ -67,7 +67,7 @@ function selectRealm(realm: Realm) {
             {:else}
                 {#each new Array(5).fill(0) as _ }
                     <SkeletonLayout>
-                        <RealmOption realm={{ id: 'load', name: '_'.repeat(Math.random() * 10 + 5), realm_type: 'course'}} />
+                        <RealmOption realm={{ id: 'load', name: '_'.repeat(Math.random() * 10 + 5), realm_type: 'course'}} disabled />
                     </SkeletonLayout>
                 {/each}
             {/if}
@@ -87,6 +87,7 @@ function selectRealm(realm: Realm) {
 }
 
 .realm-list {
+    position: relative;
     display: flex;
     flex-flow: column nowrap;
     max-height: 100%;
