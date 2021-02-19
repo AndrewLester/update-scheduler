@@ -11,7 +11,7 @@ export let items: any[];
 export let horizontal = false;
 </script>
 
-<div class="card-list">
+<div class="card-list" class:horizontal>
     <h3>{header}</h3>
     {#if items}
         <div class="scrollable" class:horizontal>
@@ -43,10 +43,18 @@ export let horizontal = false;
     border-radius: 10px;
 }
 
+.card-list.horizontal {
+    padding: 10px 1em;
+}
+
 .card-list > h3 {
     margin-top: 0px;
     text-align: center;
     color: black;
+}
+
+.card-list.horizontal > h3 {
+    margin-bottom: 10px;
 }
 
 .scrollable {

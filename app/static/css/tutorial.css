@@ -39,6 +39,7 @@ ol.step-list {
 
 ol.step-list > li {
     counter-increment: listCounter;
+    margin-bottom: 5px;
 }
 
 ol.step-list > li::before {
@@ -50,4 +51,8 @@ ol.step-list > span.detail {
     font-size: 16px;
     padding-left: 10px;
     font-style: italic;
+}
+
+ul > li {
+    margin-bottom: 5px;
 }

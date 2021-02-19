@@ -213,7 +213,7 @@ main {
     height: calc(100vh - var(--header-height));
     overflow: hidden;
     width: 100vw;
-    padding: 20px 0px;
+    padding: 10px 0px;
     background-color: var(--main-background-color);
 }
 

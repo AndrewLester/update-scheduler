@@ -41,12 +41,12 @@ async function save(updateData: Update) {
         returnedData = await updates.update({ ...updateData, body }, 'id').then(() => updates.sync('id', update.id));
     }
 
+    // There was an error
+    if (!returnedData) return;
+
     if (isMobile()) {
         notification.info('Saved update', 2000);
     }
-
-    // There was an error
-    if (!returnedData) return;
 
     resetUpdate();
 }

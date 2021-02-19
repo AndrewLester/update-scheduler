@@ -113,5 +113,9 @@ def scheduled_formdata_to_time(
             abort(400)
         return dt
     elif scheduled_in is not None:
-        return scheduled_in.tdelta if isinstance(scheduled_in, Duration) else scheduled_in
+        tdelta = scheduled_in.tdelta if isinstance(scheduled_in, Duration) else scheduled_in
+        # If the timedelta refers to the past
+        if tdelta < timedelta():
+            abort(400)
+        return tdelta
     abort(400)

@@ -124,7 +124,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
             </Button>
         </Actions>
     </Dialog>
-    <p use:tippy={updateBodyTippyProps} class="body">
+    <p use:tippy={updateBodyTippyProps} class="body one-line">
         <Icon
             class="material-icons"
             style="float: left; margin-right: 5px; font-size: 23px">

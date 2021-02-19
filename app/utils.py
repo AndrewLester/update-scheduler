@@ -35,7 +35,8 @@ import isodate
 from app.exts import cache, db
 
 
-HTTPMethod = Union[Literal['POST'], Literal['GET'], Literal['PUT'], Literal['DELETE']]
+HTTPMethod = Union[Literal['POST'], Literal['GET'],
+                   Literal['PUT'], Literal['DELETE']]
 Validator = Callable[[FlaskForm, Field], None]
 
 
@@ -72,7 +73,7 @@ def cache_header(max_age, **ckwargs):
 
         return wrapper
 
-    return decorator  
+    return decorator
 
 
 FormType = TypeVar('FormType', bound=Form)
@@ -133,13 +134,15 @@ def rest_endpoint(
         blueprint.add_url_rule(
             route,
             view_func=wrapper,
-            methods=[method for method in methods if method in {'GET', 'POST'}],
+            methods=[method for method in methods if method in {
+                'GET', 'POST'}],
         )
         # Route for identifying REST requests
         blueprint.add_url_rule(
             route + '/<int:id>',
             view_func=wrapper,
-            methods=[method for method in methods if method in {'PUT', 'DELETE', 'GET'}],
+            methods=[method for method in methods if method in {
+                'PUT', 'DELETE', 'GET'}],
         )
 
         return wrapper

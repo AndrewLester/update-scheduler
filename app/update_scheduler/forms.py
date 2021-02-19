@@ -13,9 +13,9 @@ class ScheduledJob(FlaskForm):
 
 class UpdateForm(FlaskForm):
     id = IntegerField(validators=[Required()])
-    realm_type = StringField(validators=[Required(), Regexp('(courses|groups|schools|districts|sections)')])
-    realm_id = StringField(validators=[Required()])
-    body = StringField(validators=[Required()])
+    realm_type = StringField('Update course type', validators=[Required(), Regexp('(courses|groups|schools|districts|sections)')])
+    realm_id = StringField('Update course ID', validators=[Required()])
+    body = StringField('Update body', validators=[Required()])
     attachments = StringField(default='')
 
-    job = FormField(ScheduledJob)
+    job = FormField(ScheduledJob, label='Post time')
