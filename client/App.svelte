@@ -3,7 +3,7 @@ declare const csrf_token: string;
 </script>
 
 <script lang="ts">
-import { onMount, tick } from 'svelte';
+import { onMount, setContext, tick } from 'svelte';
 import type { Networking } from './api/network';
 import * as networking from './api/network';
 import type { Update } from './api/types';
@@ -26,6 +26,8 @@ let layout: Layout | undefined;
 let api: Networking | undefined;
 let selectedUpdate: Update = getNewUpdate();
 let screenWidth: number | undefined;
+
+setContext('mobile', () => mobile);
 
 // TODO: Make mobile reactive after allowing layout to change from
 // mobile to normal using transitions. Remove it from onMount

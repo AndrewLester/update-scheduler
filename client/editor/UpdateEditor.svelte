@@ -1,13 +1,17 @@
 <script lang="ts">
 import Button, { Label } from '@smui/button/bare';
 import '@smui/button/bare.css';
+import { getContext } from 'svelte';
 import type { Update } from '../api/types';
 import { getNewUpdate, isScheduled } from '../api/types';
+import * as notification from '../notifications/notifier';
 import { updates } from '../stores';
 import TextEditor from '../utility/components/TextEditor.svelte';
 import UpdateTimePicker from './UpdateTimePicker.svelte';
 
 export let update: Update;
+
+const isMobile = getContext<() => boolean>('mobile');
 
 let editor: TextEditor | undefined;
 let timePicker: UpdateTimePicker | undefined;
@@ -35,6 +39,10 @@ async function save(updateData: Update) {
         // No need to await this because it can happen while the editor page is clearing
         // Since it just syncs the job id that was created
         returnedData = await updates.update({ ...updateData, body }, 'id').then(() => updates.sync('id', update.id));
+    }
+
+    if (isMobile()) {
+        notification.info('Saved update', 2000);
     }
 
     // There was an error
