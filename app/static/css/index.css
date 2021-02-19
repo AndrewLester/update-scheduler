@@ -1,5 +1,6 @@
 main {
     display: flex;
+    flex-flow: row wrap;
     gap: 0px 20px;
     align-items: center;
     width: 100vw;

@@ -9,7 +9,8 @@ export let right = false;
 
 </script>
 
-<Drawer variant="modal" bind:open class="{right ? 'right': ''}" style="top: var(--header-height);">
+<Drawer variant="modal" bind:open class="{right ? 'right': ''}"
+        style="top: var(--header-height); height: calc(100vh - var(--header-height));">
     <div class="drawer-wrapper">
         <div class="icon-button-wrapper" class:right>
             <IconButton on:click={() => open = false}>

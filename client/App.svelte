@@ -66,6 +66,12 @@ onMount(() => {
     updates.reset();
 });
 
+function handleUpdateEdit(update: Update) {
+    selectedUpdate = JSON.parse(JSON.stringify(update));
+    updateDrawerOpen = false
+    realmDrawerOpen = false;
+}
+
 function handleUpdateDelete(update: Update) {
     if (update.id === selectedUpdate.id) {
         selectedUpdate = getNewUpdate();
@@ -103,7 +109,7 @@ function handleUpdateDelete(update: Update) {
                     <UpdateCard
                         update={item}
                         selected={item.id === selectedUpdate.id}
-                        on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
+                        on:edit={() => handleUpdateEdit(item)}
                         on:delete={() => handleUpdateDelete(item)} />
                 </CardList>
             </div>
@@ -129,7 +135,7 @@ function handleUpdateDelete(update: Update) {
                         <UpdateCard
                             selected={item.id === selectedUpdate.id}
                             update={item}
-                            on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
+                            on:edit={() => handleUpdateEdit(item)}
                             on:delete={() => handleUpdateDelete(item)} />
                     </CardList>
                 </Sidebar>
@@ -143,28 +149,30 @@ function handleUpdateDelete(update: Update) {
                 <RealmChooser bind:update={selectedUpdate} realms={$realms} />
             </NavigationDrawer>
             <NavigationDrawer bind:open={updateDrawerOpen} right>
-                <CardList
-                    header={'Saved Updates'}
-                    horizontal
-                    items={savedUpdates}
-                    let:item>
-                    <UpdateCard
-                        update={item}
-                        selected={item.id === selectedUpdate.id}
-                        on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
-                        on:delete={() => handleUpdateDelete(item)} />
-                </CardList>
-                <CardList
-                    header={'Scheduled Updates'}
-                    horizontal
-                    items={scheduledUpdates}
-                    let:item>
-                    <UpdateCard
-                        selected={item.id === selectedUpdate.id}
-                        update={item}
-                        on:edit={() => (selectedUpdate = JSON.parse(JSON.stringify(item)))}
-                        on:delete={() => handleUpdateDelete(item)} />
-                </CardList>
+                <div style="display: flex; flex-direction: column;">
+                    <CardList
+                        header={'Saved Updates'}
+                        horizontal
+                        items={savedUpdates}
+                        let:item>
+                        <UpdateCard
+                            update={item}
+                            selected={item.id === selectedUpdate.id}
+                            on:edit={() => handleUpdateEdit(item)}
+                            on:delete={() => handleUpdateDelete(item)} />
+                    </CardList>
+                    <CardList
+                        header={'Scheduled Updates'}
+                        horizontal
+                        items={scheduledUpdates}
+                        let:item>
+                        <UpdateCard
+                            selected={item.id === selectedUpdate.id}
+                            update={item}
+                            on:edit={() => handleUpdateEdit(item)}
+                            on:delete={() => handleUpdateDelete(item)} />
+                    </CardList>
+                </div>
             </NavigationDrawer>
         {/if}
     </slot>

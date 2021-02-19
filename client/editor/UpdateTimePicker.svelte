@@ -70,6 +70,7 @@ export function clear() {
 <style>
 .picker {
     display: flex;
+    flex-flow: row wrap;
     align-items: center;
     gap: 5px 0px;
     margin: 10px 0px;

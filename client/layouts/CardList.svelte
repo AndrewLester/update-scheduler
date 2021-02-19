@@ -13,18 +13,22 @@ export let horizontal = false;
 
 <div class="card-list">
     <h3>{header}</h3>
-    <div class="scrollable" class:horizontal>
-        <div class="container">
-            {#each items as item (item.id)}
-                <div class="item"
-                    in:scale|local={{ start: 0.6, easing: backOut, duration: 250 }}
-                    out:scale|local={{ start: 0.6, easing: cubicIn, duration: 250 }}
-                    animate:flip={{ duration: 350 }}>
-                    <slot {item} />
-                </div>
-            {/each}
+    {#if items}
+        <div class="scrollable" class:horizontal>
+            <div class="container">
+                {#each items as item (item.id)}
+                    <div class="item"
+                        in:scale|local={{ start: 0.6, easing: backOut, duration: 250 }}
+                        out:scale|local={{ start: 0.6, easing: cubicIn, duration: 250 }}
+                        animate:flip={{ duration: 350 }}>
+                        <slot {item} />
+                    </div>
+                {/each}
+            </div>
         </div>
-    </div>
+    {:else}
+        <p style="font-style: italic;">No items</p>
+    {/if}
 </div>
 
 <style>
