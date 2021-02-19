@@ -27,7 +27,9 @@ let api: Networking | undefined;
 let selectedUpdate: Update = getNewUpdate();
 let screenWidth: number | undefined;
 
-$: mobile = screenWidth && screenWidth < 1050;
+// TODO: Make mobile reactive after allowing layout to change from
+// mobile to normal using transitions. Remove it from onMount
+let mobile = false;
 $: scheduledUpdates = $updates.filter(
     (update) => isScheduled(update)
 );
@@ -64,6 +66,8 @@ onMount(() => {
 
     updates.setAPI(api);
     updates.reset();
+
+    mobile = !!screenWidth && screenWidth < 1050;
 });
 
 function handleUpdateEdit(update: Update) {
