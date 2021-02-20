@@ -30,7 +30,7 @@ function selectRealm(realm: Realm) {
 </script>
 
 <div class="realm-chooser">
-    <h3 class:mobile>Choose a Destination for this Update</h3>
+    <h3>Choose a Destination for this Update</h3>
     <h4>Selected Realm</h4>
     {#key update.realm_id}
         <div class="selected-realm" in:fade={{ duration: 200 }}>
