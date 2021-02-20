@@ -14,7 +14,7 @@
         <p>Logging in to Update Scheduler is the first step to scheduling your Schoology updates.</p>
         <ol class="step-list">
             <li>Go to <a href="{{ url_for('main.login') }}">{{ url_for('main.login', _external=True) }}</a> and follow the steps from there.</li>
-            <li>Schedule updates from the scheduling page at <a href="{{ url_for('update_scheduler.scheduler') }}">{{ url_for('main.login', _external=True) }}</a>.</li>
+            <li>Schedule updates from the scheduling page at <a href="{{ url_for('update_scheduler.scheduler') }}">{{ url_for('update_scheduler.scheduler', _external=True) }}</a>.</li>
         </ol>
         <h2>Creating an update</h2>
         <p>There are two steps to scheduling a Schoology update, and the first happens to be writing and saving one. Yes, you can draft and save your updates independently from scheduling them while still in the same place.</p>

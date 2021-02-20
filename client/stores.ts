@@ -10,6 +10,11 @@ function errorHandler(error: Error, _) {
         const json = JSON.parse(error.message);
         const errors = json.errors;
 
+        if (typeof errors === 'string') {
+            notifier.danger('An error occured. Try refreshing the page.');
+            return;
+        }
+
         notifier.danger('Missing required fields: ' + Object.keys(errors).join(', '), 2000);
         return;
     } catch (e) { }
