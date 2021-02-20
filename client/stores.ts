@@ -11,7 +11,7 @@ function errorHandler(error: Error, _) {
         const errors = json.errors;
 
         if (typeof errors === 'string') {
-            notifier.danger('An error occured. Try refreshing the page.');
+            notifier.danger('An error occured. Try refreshing the page.', 2000);
             return;
         }
 
