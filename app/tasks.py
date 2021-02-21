@@ -17,6 +17,10 @@ def post_update_task(realm: str, body: str, attachments: List[Dict]):
 
     with app.app_context():
         scheduled_job = ScheduledJob.query.get(job.id)
+        if scheduled_job is None:
+            app.logger.error(f'Scheduled job with id {job.id} could not be found when trying to post')
+            return
+
         update = scheduled_job.update
         g.user_id = update.user_id
 

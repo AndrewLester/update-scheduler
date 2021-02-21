@@ -1,3 +1,4 @@
+from logging import Logger
 from typing import Optional
 
 import dill

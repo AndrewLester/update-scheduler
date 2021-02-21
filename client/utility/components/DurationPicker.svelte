@@ -19,7 +19,7 @@ if (duration) {
         const scheduledAtMoment = schoologyTimeToMoment(durationStart);
         const scheduledInDuration = moment.duration(duration);
         const postTime = scheduledAtMoment.add(scheduledInDuration);
-        inputValue = Math.round(moment.duration(postTime.diff(minutes)).as(selectValue));
+        inputValue = moment.duration(postTime.diff(minutes)).as(selectValue).toFixed(2);
     }
     // TODO: Handle case with no durationStart
 }

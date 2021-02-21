@@ -83,6 +83,10 @@ function handleUpdateDelete(update: Update) {
         selectedUpdate = getNewUpdate();
     }
 }
+
+function handleUpdateCancel(update: Update) {
+    handleUpdateDelete(update);
+}
 </script>
 
 <svelte:window bind:innerWidth={screenWidth}></svelte:window>
@@ -142,7 +146,7 @@ function handleUpdateDelete(update: Update) {
                             selected={item.id === selectedUpdate.id}
                             update={item}
                             on:edit={() => handleUpdateEdit(item)}
-                            on:delete={() => handleUpdateDelete(item)} />
+                            on:cancel={() => handleUpdateCancel(item)} />
                     </CardList>
                 </Sidebar>
             </div>

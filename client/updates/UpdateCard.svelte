@@ -98,6 +98,8 @@ function deleteUpdate(confirm: boolean) {
 }
 
 function cancelUpdate() {
+    dispatch('cancel');
+
     update.job = null;
     updates.update(update, 'id');
 }
