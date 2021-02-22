@@ -19,7 +19,7 @@ if (duration) {
         const scheduledAtMoment = schoologyTimeToMoment(durationStart);
         const scheduledInDuration = moment.duration(duration);
         const postTime = scheduledAtMoment.add(scheduledInDuration);
-        inputValue = moment.duration(postTime.diff(minutes)).as(selectValue).toFixed(2);
+        inputValue = parseFloat(moment.duration(postTime.diff(minutes)).as(selectValue).toFixed(2));
     }
     // TODO: Handle case with no durationStart
 }
@@ -34,9 +34,9 @@ export function clear() {
 }
 
 function getTimeUnit(durationMoment: moment.Duration): DurationType {
-    if (durationMoment.asDays() % 1 === 0) {
+    if (durationMoment.asHours() > 24) {
         return 'day';
-    } else if (durationMoment.asHours() % 1 === 0) {
+    } else if (durationMoment.asMinutes() > 60) {
         return 'hour';
     } else {
         return 'minute';
