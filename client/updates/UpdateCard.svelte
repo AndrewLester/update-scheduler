@@ -40,7 +40,7 @@ $: if (scheduled) {
             posted = true;
             resetJob();
         } else {
-            scheduledText = 'Posts ' + timeUntilPost.humanize(true);
+            scheduledText = 'Posts ' + timeUntilPost.humanize(true, {ss: 0});
         }
     } else {
         // TOOD: Fix update resetting after post
