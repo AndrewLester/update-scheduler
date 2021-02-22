@@ -241,22 +241,22 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
     async update(element: ElementType<T>, discriminator: keyof ElementType<T>) {
         if (!this.api) throw new Error('Networking not loaded');
 
-        this.store.update((current) => {
-            const updated = [
-                element,
-                ...current.filter((elem) => {
-                    return elem[discriminator] !== element[discriminator];
-                }),
-            ];
-
-            return updated as any;
-        });
-
         try {
             await this.api.put(
                 this.endpoint + `/${element[discriminator]}`,
                 element
             );
+
+            this.store.update((current) => {
+                const updated = [
+                    element,
+                    ...current.filter((elem) => {
+                        return elem[discriminator] !== element[discriminator];
+                    }),
+                ];
+    
+                return updated as any;
+            });
         } catch (e) {
             this.fetchErrorHandler(e);
         }
