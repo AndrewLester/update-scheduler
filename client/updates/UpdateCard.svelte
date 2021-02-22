@@ -38,6 +38,7 @@ $: if (scheduled) {
     if (timeUntilPost !== undefined) {
         if (timeUntilPost.asMilliseconds() <= 0) {
             posted = true;
+            scheduledText = 'Just posted';
             resetJob();
         } else {
             scheduledText = 'Posts ' + timeUntilPost.humanize(true, {ss: 0});

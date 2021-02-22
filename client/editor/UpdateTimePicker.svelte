@@ -76,6 +76,10 @@ export function clear() {
     margin: 10px 0px;
 }
 
+.picker-text:first-child {
+    margin-left: 0px;
+}
+
 .picker > * {
     margin: 0px 10px;
 }
