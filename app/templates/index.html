@@ -2,7 +2,11 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/flashed_messages.css') }}">
+<style>
+:root {
+    --flashed-messages-display: block;
+}
+</style>
 {% endblock %}
 
 {% block content %}
