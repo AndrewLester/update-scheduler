@@ -15,8 +15,8 @@ def load_user(id):
 
 class User(UserMixin, db.Model):
     id = db.Column(db.String(36), primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(120))
     building_id = db.Column(db.String(36))
     school_id = db.Column(db.String(36))
     timezone = db.Column(db.String(120))
