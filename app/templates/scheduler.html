@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block head %}
+<script>window.csrf_token = "{{ csrf_token() }}";</script>
 <script type="module" src="/scheduler/bundle/build/main.js" defer></script>
-<script>const csrf_token = "{{ csrf_token() }}";</script>
 <style>
     :root {
         --header-height: 50px;

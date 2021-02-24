@@ -57,8 +57,8 @@ $: {
     }
 }
 
-$: rightSidebarTransitionDelay = layout?.getElementTransitionDelay('right-sidebar', gridAreas) ?? 0;
-$: bottombarTransitionDelay = layout?.getElementTransitionDelay('bottombar', gridAreas) ?? 0;
+$: rightSidebarTransitionDelay = layout ? layout.getElementTransitionDelay('right-sidebar', gridAreas) || 0 : 0;
+$: bottombarTransitionDelay = layout ? layout.getElementTransitionDelay('bottombar', gridAreas) || 0 : 0;
 
 onMount(() => {
     api = networking.mountNetworking(csrf_token);

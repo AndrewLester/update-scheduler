@@ -19,19 +19,19 @@ export let selected: boolean;
 let confirmDeleteDialog: Dialog;
 let posted = false;
 $: scheduled = isScheduled(update);
-$: realmName = $realms.find((realm) => realm.id === update.realm_id)?.name;
+$: realmName = ($realms.find((realm) => realm.id === update.realm_id) || {}).name;
 let scheduledText = '';
 const resetJob = () => (update.job = null);
 $: if (scheduled) {
     let timeUntilPost: moment.Duration | undefined;
-    if (update.job?.scheduled_in) {
-        const postsAt = schoologyTimeToMoment(update.job.scheduled_at!).add(
-            moment.duration(update.job.scheduled_in)
+    if (update.job!.scheduled_in) {
+        const postsAt = schoologyTimeToMoment(update.job!.scheduled_at!).add(
+            moment.duration(update.job!.scheduled_in)
         );
         timeUntilPost = moment.duration(postsAt.diff($time));
-    } else if (update.job?.scheduled_for) {
+    } else if (update.job!.scheduled_for) {
         timeUntilPost = moment.duration(
-            schoologyTimeToMoment(update.job.scheduled_for).diff($time)
+            schoologyTimeToMoment(update.job!.scheduled_for).diff($time)
         );
     }
 
@@ -59,12 +59,16 @@ $: realmNameTippyProps = {
     trigger: 'mouseenter',
 };
 
-$: postTimeInfo =
-    update.job?.scheduled_for
-    ? 'Posts at: ' + update.job?.scheduled_for
-    : 'Posts at: ' +
-        schoologyTimeToMoment(update.job?.scheduled_at!)
-            .add(moment.duration(update.job?.scheduled_in)).format('YYYY-MM-DD HH:mm:ss');
+let postTimeInfo: string;
+$: if (scheduled) {
+    if (update.job!.scheduled_for) {
+        postTimeInfo = 'Posts at: ' + update.job!.scheduled_for;
+    } else {
+        postTimeInfo = 'Posts at: ' +
+            schoologyTimeToMoment(update.job!.scheduled_at!)
+            .add(moment.duration(update.job!.scheduled_in)).format('YYYY-MM-DD HH:mm:ss');
+    }
+}
 $: postTimeTippyProps = {
     content: postTimeInfo,
     placement: 'right',
@@ -152,7 +156,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
                 style="float: left; margin-right: 5px; font-size: 23px">
                 group
             </Icon>
-            {realmName ?? 'Loading...'}
+            {realmName || 'Loading...'}
         </p>
     {/if}
     <Group style="width: 100%; margin-top: auto">

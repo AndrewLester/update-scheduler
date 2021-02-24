@@ -180,7 +180,7 @@ export function getElementTransitionDelay(
     const transition = newAreas.transitions.find(
         (t) => t.original === layoutArea
     );
-    return transition?.duration;
+    return transition ? transition.duration : undefined;
 }
 </script>
 

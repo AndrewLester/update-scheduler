@@ -71,7 +71,7 @@ export class ReadableNetworkStore<T> implements Readable<T> {
             this._loaded = true;
             this.store.set(value);
         } catch (e) {
-            const retryTimeDef = retryTime ?? 2500;
+            const retryTimeDef = retryTime || 2500;
 
             this.fetchErrorHandler(e, retryTimeDef);
             await sleep(retryTimeDef).then(() => this.reset(retryTimeDef * 2));
@@ -117,7 +117,7 @@ function mapByKey<T>(objects: Set<T>, objectDiscriminator: ObjectDiscriminator<T
 
     for (let object of objects) {
         for (let key of objectDiscriminator(object)) {
-            const objectMap = mappedObjects.get(key) ?? new Map();
+            const objectMap = mappedObjects.has(key) ? mappedObjects.get(key)! : new Map();
             objectMap.set(object[objectIdentifier], object);
             mappedObjects.set(key, objectMap);
         }
@@ -150,7 +150,7 @@ export class QueryNetworkStore<T, Args extends { [index: string]: string }> exte
 
         this.store.update((map) => {
             for (let [k, v] of mappedObjects) {
-                const objectMap = map.get(k) ?? new Map<T[keyof T], T>();
+                const objectMap = map.has(k) ? map.get(k)! : new Map<T[keyof T], T>();
                 v.forEach((mappedV, mappedK) => objectMap.set(mappedK, mappedV));
                 map.set(k, objectMap);
             }
@@ -178,7 +178,7 @@ export class QueryNetworkStore<T, Args extends { [index: string]: string }> exte
         try {
             await this.query(queryArgs);
         } catch (e) {
-            const retryTimeDef = retryTime ?? 2500;
+            const retryTimeDef = retryTime || 2500;
 
             this.fetchErrorHandler(e, retryTimeDef);
             await sleep(retryTimeDef).then(() => this.reset(retryTimeDef * 2, queryArgs));

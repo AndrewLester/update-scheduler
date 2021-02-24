@@ -54,9 +54,9 @@ function pluralize(word: string, quantity: number) {
 <div class="duration-picker">
     <input class="duration-input" bind:value={inputValue} type="number" placeholder="Enter a duration" max="1000" min="0" />
     <Select variant="filled" bind:value={selectValue} class="select" anchor$class="select-width select-height" menu$class="select-width">
-        <Option value="minute">{pluralize('minute', inputValue ?? 0)}</Option>
-        <Option value="hour">{pluralize('hour', inputValue ?? 0)}</Option>
-        <Option value="day">{pluralize('day', inputValue ?? 0)}</Option>
+        <Option value="minute">{pluralize('minute', inputValue || 0)}</Option>
+        <Option value="hour">{pluralize('hour', inputValue || 0)}</Option>
+        <Option value="day">{pluralize('day', inputValue || 0)}</Option>
     </Select>
 </div>
 

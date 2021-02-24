@@ -62,8 +62,9 @@ function handleNewUpdate() {
 
 async function resetUpdate() {
     update = getNewUpdate();
-    editor?.clear();
-    timePicker?.clear();
+
+    if (editor) editor.clear();
+    if (timePicker) timePicker.clear();
 }
 </script>
 
