@@ -31,7 +31,8 @@ def create_app(config=Config):
     app.shell_context_processor(lambda: {
         'db': db, 'User': main.models.User, 'Update': update_scheduler.models.Update,
         'OAuth1Token': oauth.models.OAuth1Token,
-        'ScheduledJob': update_scheduler.models.ScheduledJob
+        'ScheduledJob': update_scheduler.models.ScheduledJob,
+        'Attachment': update_scheduler.models.Attachment
     })
 
     return app
