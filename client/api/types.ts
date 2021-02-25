@@ -8,13 +8,23 @@ export interface ScheduledJob {
     scheduled_in?: string
 }
 
+
+export interface Attachment {
+    id: number,
+    type: 'file' | 'link' | 'video',
+    title?: string,
+    url: string,
+    thumbnail?: string
+}
+
+
 export interface Update {
     id: number,
     realm_type: string,
     realm_id: string,
     body: string,
-    attachments: string,
-    job: ScheduledJob | null
+    job: ScheduledJob | null,
+    attachments: Attachment[]
 }
 
 export interface Realm {
@@ -41,7 +51,7 @@ export function getNewUpdate(): Update {
     return {
         id: -1,
         body: '',
-        attachments: '',
+        attachments: [],
         realm_id: '',
         realm_type: '',
         job: null,

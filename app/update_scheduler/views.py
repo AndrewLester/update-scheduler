@@ -7,7 +7,7 @@ from rq.job import Job
 from rq.exceptions import NoSuchJobError
 from app.update_scheduler.scheduler import schedule_update
 from typing import NoReturn, Optional, Union
-from app.update_scheduler.forms import UpdateForm
+from app.update_scheduler.forms import Attachment, UpdateForm
 from app.utils import rest_endpoint
 from app.exts import db
 
@@ -51,12 +51,18 @@ def realms():
 @login_required
 def updates(form: UpdateForm) -> Union[Update, NoReturn]:
     update = Update.query.get(form.id.data)
+
+    attachments = []
+    print(form.attachments)
+    if len(form.attachments) > 0:
+        attachments = [Attachment(attachment) for attachment in form.attachments]
+
     if update is None:
         update = Update(
             realm_type=form.realm_type.data,
             realm_id=form.realm_id.data,
             body=form.body.data,
-            attachments=form.attachments.data,
+            attachments=attachments,
             user_id=current_user.id
         )
 
@@ -73,7 +79,7 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
         update.realm_type = form.realm_type.data
         update.realm_id = form.realm_id.data
         update.body = form.body.data
-        update.attachments = form.attachments.data
+        update.attachments = attachments
 
         if update.job is not None:
             try:
