@@ -10,7 +10,7 @@ function errorHandler(error: Error, _) {
         const json = JSON.parse(error.message);
         const errors = json.errors;
 
-        if (typeof errors === 'string') {
+        if (errors.length === 0 || typeof errors[0] === 'string') {
             notifier.danger('An error occured. Try refreshing the page.', 2000);
             return;
         }
