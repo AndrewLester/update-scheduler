@@ -24,7 +24,8 @@ def post_update_task(realm: str, body: str, attachments: List[Dict]):
         update = scheduled_job.update
         g.user_id = update.user_id
 
-        post_update(realm, body, attachments)
+        res = post_update(realm, body, attachments)
+        app.logger.info('Posted update with response code: ' + str(res.status_code))
 
         job.cleanup(0)
         db.session.delete(update)  # type: ignore

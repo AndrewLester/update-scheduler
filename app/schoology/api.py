@@ -82,4 +82,4 @@ def post_update(realm: str, body: str, attachments: List[Dict]):
     if attachments:
         data['attachments'] = attachments
 
-    oauth.schoology.post(f'{realm}/updates', json=data)
+    return oauth.schoology.post(f'{realm}/updates', json=data)

@@ -24,7 +24,7 @@ export interface Realm {
 }
 
 export function isScheduled(update: Update): boolean {
-    return !!update.job && !!update.job.id;
+    return update.job !== null && update.job.id !== '';
 }
 
 const schoologyTimestampFormat = 'YYYY-MM-DD HH:mm:ss';

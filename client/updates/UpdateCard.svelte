@@ -24,12 +24,12 @@ let scheduledText = '';
 const resetJob = () => (update.job = null);
 $: if (scheduled) {
     let timeUntilPost: moment.Duration | undefined;
-    if (update.job!.scheduled_in) {
+    if (update.job && update.job!.scheduled_in) {
         const postsAt = schoologyTimeToMoment(update.job!.scheduled_at!).add(
             moment.duration(update.job!.scheduled_in)
         );
         timeUntilPost = moment.duration(postsAt.diff($time));
-    } else if (update.job!.scheduled_for) {
+    } else if (update.job && update.job!.scheduled_for) {
         timeUntilPost = moment.duration(
             schoologyTimeToMoment(update.job!.scheduled_for).diff($time)
         );
@@ -44,7 +44,6 @@ $: if (scheduled) {
             scheduledText = 'Posts ' + timeUntilPost.humanize(true, {ss: 0});
         }
     } else {
-        // TOOD: Fix update resetting after post
         updates.reset();
     }
 }
@@ -60,7 +59,7 @@ $: realmNameTippyProps = {
 };
 
 let postTimeInfo: string;
-$: if (scheduled) {
+$: if (isScheduled(update)) {
     if (update.job!.scheduled_for) {
         postTimeInfo = 'Posts at: ' + update.job!.scheduled_for;
     } else {
