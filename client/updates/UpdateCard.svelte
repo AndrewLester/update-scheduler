@@ -44,7 +44,8 @@ $: if (scheduled) {
             scheduledText = 'Posts ' + timeUntilPost.humanize(true, {ss: 0});
         }
     } else {
-        updates.reset();
+        // Only try resetting the updates store every 5 seconds because it sends a GET request.
+        if ($time.seconds() % 5 === 0) updates.reset();
     }
 }
 
