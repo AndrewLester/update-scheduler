@@ -7,6 +7,7 @@ import { getNewUpdate, isScheduled } from '../api/types';
 import * as notification from '../notifications/notifier';
 import { updates } from '../stores';
 import TextEditor from '../utility/components/TextEditor.svelte';
+import AttachmentEditor from './AttachmentEditor.svelte';
 import UpdateTimePicker from './UpdateTimePicker.svelte';
 
 export let update: Update;
@@ -75,9 +76,12 @@ async function resetUpdate() {
     </div>
     <TextEditor placeholder={'Write update'} bind:content={body} bind:this={editor} />
     <div class="button-row">
-        {#key id}
-            <UpdateTimePicker {job} bind:this={timePicker} />
-        {/key}
+        <div style="display: flex; flex-flow: column nowrap;">
+            {#key id}
+                <UpdateTimePicker {job} bind:this={timePicker} />
+                <AttachmentEditor bind:attachments={update.attachments} />
+            {/key}
+        </div>
         <div class="save-buttons">
             <Button on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>Save</Label></Button>
             {#if !scheduled }
@@ -109,7 +113,6 @@ h3 {
 .button-row {
     display: flex;
     flex-flow: row wrap;
-    align-items: center;
 }
 
 .save-buttons {
