@@ -6,14 +6,22 @@ from wtforms.validators import NoneOf, Required, Regexp, URL
 
 
 class Attachment(FlaskForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, meta={'csrf': False})
+
     id = IntegerField()
     type = StringField(validators=[Regexp('(file|link|video)')])
     title = StringField()
     url = StringField(validators=[URL()])
-    thumbnail = StringField()
+    image = StringField()
+    icon = StringField()
+    summary = StringField()
 
 
 class ScheduledJob(FlaskForm):
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs, meta={'csrf': False})
+
     id = StringField()
     scheduled_for = DateTimeField()
     scheduled_in = IntervalField()

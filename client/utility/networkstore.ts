@@ -15,7 +15,7 @@ declare type Updater<T> = (value: T) => T;
 /** Cleanup logic callback. */
 declare type Invalidator<T> = (value?: T) => void;
 
-type ElementType<T> = T extends Array<infer U> ? U : never;
+export type ElementType<T> = T extends Array<infer U> ? U : never;
 export type StoreType<T> = T extends Readable<infer U> ? U : never;
 export type ErrorHandler = (error: Error, retryTime?: number) => void;
 

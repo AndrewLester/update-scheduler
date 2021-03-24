@@ -10,7 +10,7 @@ from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
 from app import login, db, migrate, cache, csrf, oauth_client
-from app import update_scheduler, main, oauth
+from app import update_scheduler, main, oauth, cors_anywhere
 from config import Config
 
 
@@ -74,6 +74,7 @@ def register_blueprints(app):
     app.register_blueprint(main.views.blueprint)
     app.register_blueprint(oauth.views.blueprint)
     app.register_blueprint(update_scheduler.views.blueprint)
+    app.register_blueprint(cors_anywhere.views.blueprint)
 
 
 def register_errorhandlers(app):

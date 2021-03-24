@@ -7,12 +7,12 @@ from rq.job import Job
 from rq.exceptions import NoSuchJobError
 from app.update_scheduler.scheduler import schedule_update
 from typing import NoReturn, Optional, Union
-from app.update_scheduler.forms import Attachment, UpdateForm
+from app.update_scheduler.forms import UpdateForm
 from app.utils import rest_endpoint
 from app.exts import db
 
 from flask.templating import render_template
-from app.update_scheduler.models import ScheduledJob, Update
+from app.update_scheduler.models import Attachment, ScheduledJob, Update
 from app.schoology.api import get_user_realms
 from flask import jsonify, abort
 from flask_login import current_user
@@ -53,9 +53,8 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
     update = Update.query.get(form.id.data)
 
     attachments = []
-    print(form.attachments)
-    if len(form.attachments) > 0:
-        attachments = [Attachment(attachment) for attachment in form.attachments]
+    if len(form.attachments.data) > 0:
+        attachments = [Attachment(**attachment) for attachment in form.attachments.data]
 
     if update is None:
         update = Update(
