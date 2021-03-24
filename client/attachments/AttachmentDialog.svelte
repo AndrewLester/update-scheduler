@@ -30,7 +30,6 @@ function dialogActionHandler(e: { detail: { action: 'add' | 'cancel' } }) {
 
     attachments = editableAttachments;
     editing = undefined;
-    editableAttachments = [];
 }
 
 function deleteAttachment(attachment: Attachment) {

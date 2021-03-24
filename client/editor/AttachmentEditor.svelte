@@ -1,10 +1,10 @@
 <script lang="ts">
-import Tab, {Icon as TabIcon, Label as TabLabel} from '@smui/tab';
-import TabBar from '@smui/tab-bar';
-import '@smui/tab-bar/bare.css';
-import '@smui/tab-indicator/bare.css';
-import '@smui/tab-scroller/bare.css';
-import '@smui/tab/bare.css';
+// import Tab, {Icon as TabIcon, Label as TabLabel} from '@smui/tab';
+// import TabBar from '@smui/tab-bar';
+// import '@smui/tab-bar/bare.css';
+// import '@smui/tab-indicator/bare.css';
+// import '@smui/tab-scroller/bare.css';
+// import '@smui/tab/bare.css';
 import Button, { Label, Icon } from '@smui/button/bare';
 import '@smui/button/bare.css';
 import type { Attachment } from '../api/types';
@@ -84,16 +84,16 @@ function save() {
 </script>
 
 <div class="attachment-editor">
-    <TabBar {tabs} let:tab bind:active style="width: 100%;">
+    <!-- <TabBar {tabs} let:tab bind:active style="width: 100%;">
         <Tab {tab}>
             <TabIcon class="material-icons">{tab.icon}</TabIcon>
             <TabLabel>{tab.label}</TabLabel>
         </Tab>
-    </TabBar>
+    </TabBar> -->
     {#if active.label === 'link'}
-        <Textfield withLeadingIcon label="Enter a URL" bind:value={attachment.url}><Icon class="material-icons">link</Icon></Textfield>
+        <Textfield variant="filled" fullwidth label="Enter a URL" bind:value={attachment.url}></Textfield>
     {:else if active.label === 'video'}
-        <Textfield withLeadingIcon label="Enter a URL" bind:value={attachment.url}><Icon class="material-icons">videocam</Icon></Textfield>
+        <Textfield variant="filled" fullwidth label="Enter a URL" bind:value={attachment.url}></Textfield>
     {/if}
     {#if openGraphData}
         <OpenGraphView data={openGraphData} alternativeIcon={active.icon} />

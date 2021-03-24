@@ -60,7 +60,7 @@ $: realmNameTippyProps = {
 };
 
 let postTimeInfo: string;
-$: if (isScheduled(update)) {
+$: if (isScheduled(update) && update.job) {
     if (update.job!.scheduled_for) {
         postTimeInfo = 'Posts at: ' + update.job!.scheduled_for;
     } else {

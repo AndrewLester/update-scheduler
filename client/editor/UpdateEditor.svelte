@@ -87,8 +87,8 @@ async function resetUpdate() {
                         ATTACHMENT{update.attachments.length !== 1 ? 'S' : ''}
                     </Label>
                 </Button>
+                <AttachmentDialog bind:this={attachmentDialog} bind:attachments={update.attachments} />
             {/key}
-            <AttachmentDialog bind:this={attachmentDialog} bind:attachments={update.attachments} />
         </div>
         <div class="save-buttons">
             <Button on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>Save</Label></Button>
