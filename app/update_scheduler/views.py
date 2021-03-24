@@ -54,7 +54,15 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
 
     attachments = []
     if len(form.attachments.data) > 0:
-        attachments = [Attachment(**attachment) for attachment in form.attachments.data]
+        for attachment in form.attachments.data:
+            attachments.append(Attachment(
+                type=attachment['type'],
+                title=attachment['title'],
+                url=attachment['url'],
+                image=attachment['image'],
+                icon=attachment['icon'],
+                summary=attachment['summary']
+            ))
 
     if update is None:
         update = Update(
