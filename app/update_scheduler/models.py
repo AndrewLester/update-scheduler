@@ -65,7 +65,9 @@ class Attachment(db.Model):
     type = db.Column(db.String(5), nullable=False)
     title = db.Column(db.String(200))
     url = db.Column(db.String(300), nullable=False)
-    thumbnail = db.Column(db.Text)
+    summary = db.Column(db.Text)
+    image = db.Column(db.Text)
+    icon = db.Column(db.Text)
     update_id = db.Column(db.Integer, db.ForeignKey(
         'update.id', name='fk_attachment_update_id'), nullable=False)
 
@@ -74,12 +76,17 @@ class Attachment(db.Model):
             'id': self.id,
             'type': self.type,
             'title': self.title,
-            'url': self.url
+            'image': self.image,
+            'icon': self.icon,
+            'url': self.url,
+            'summary': self.summary
         }
     
     def to_schoology_json(self):
         return {
             'type': self.type,
             'title': self.title,
-            'url': self.url
+            'url': self.url,
+            'summary': self.summary,
+            'thumbnail': self.image or self.icon
         }

@@ -4,6 +4,7 @@ import '@smui/button/bare.css';
 import { getContext } from 'svelte';
 import type { Update } from '../api/types';
 import { getNewUpdate, isScheduled } from '../api/types';
+import AttachmentDialog from '../attachments/AttachmentDialog.svelte';
 import * as notification from '../notifications/notifier';
 import { updates } from '../stores';
 import TextEditor from '../utility/components/TextEditor.svelte';
@@ -16,6 +17,7 @@ const isMobile = getContext<() => boolean>('mobile');
 
 let editor: TextEditor | undefined;
 let timePicker: UpdateTimePicker | undefined;
+let attachmentDialog: AttachmentDialog;
 let updateMinusJob: Update;
 const getUpdateBody = () => update.body;
 let body = '';
@@ -76,11 +78,17 @@ async function resetUpdate() {
     </div>
     <TextEditor placeholder={'Write update'} bind:content={body} bind:this={editor} />
     <div class="button-row">
-        <div style="display: flex; flex-flow: column nowrap;">
+        <div class="edit-buttons">
             {#key id}
                 <UpdateTimePicker {job} bind:this={timePicker} />
-                <AttachmentEditor bind:attachments={update.attachments} />
+                <Button variant="outlined" on:click={() => attachmentDialog.open()}>
+                    <Label>
+                        {update.attachments.length ? update.attachments.length : ''}
+                        ATTACHMENT{update.attachments.length !== 1 ? 'S' : ''}
+                    </Label>
+                </Button>
             {/key}
+            <AttachmentDialog bind:this={attachmentDialog} bind:attachments={update.attachments} />
         </div>
         <div class="save-buttons">
             <Button on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>Save</Label></Button>
@@ -113,6 +121,20 @@ h3 {
 .button-row {
     display: flex;
     flex-flow: row wrap;
+    margin-top: 10px;
+}
+
+.button-row > * {
+    display: flex;
+    align-items: center;
+}
+
+.button-row > * > :global(*) {
+    margin: 0px 10px;
+}
+
+.button-row > * > :global(*):first-child {
+    margin: 0px 0px;
 }
 
 .save-buttons {

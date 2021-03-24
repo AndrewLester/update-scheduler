@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@api/*": ["api/*"],
+            "@attachments/*": ["attachments/*"],
+            "@editor/*": ["editor/*"],
+            "@layouts/*": ["layouts/*"],
+            "@notifications/*": ["notifications/*"],
+            "@realms/*": ["realms/*"],
+            "@theme/*": ["theme/*"],
+            "@updates/*": ["updates/*"],
+            "@utility/*": ["utility/*"],
+        }
+    }
+}

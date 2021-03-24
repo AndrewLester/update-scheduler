@@ -14,7 +14,9 @@ export interface Attachment {
     type: 'file' | 'link' | 'video',
     title?: string,
     url: string,
-    thumbnail?: string
+    image?: string,
+    icon?: string,
+    summary?: string
 }
 
 
