@@ -87,6 +87,6 @@ class Attachment(db.Model):
             'type': self.type,
             'title': self.title,
             'url': self.url,
-            'description': self.summary,
-            'thumb': self.image or self.icon
+            'summary': self.summary,
+            'thumbnail': self.image or self.icon
         }
