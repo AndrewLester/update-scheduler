@@ -17,7 +17,8 @@ module.exports = {
             plugins: [
                 require('rollup-plugin-scss')()
             ]
-        }
+        },
+        polyfillNode: true
     },
     plugins: [
         '@snowpack/plugin-svelte',
