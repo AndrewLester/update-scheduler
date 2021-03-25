@@ -80,14 +80,14 @@ async function resetUpdate() {
         <div class="edit-buttons button-row">
             {#key id}
                 <UpdateTimePicker {job} bind:this={timePicker} />
-                <Button variant="outlined" on:click={() => attachmentDialog.open()}>
-                    <Label>
-                        {update.attachments.length ? update.attachments.length : ''}
-                        ATTACHMENT{update.attachments.length !== 1 ? 'S' : ''}
-                    </Label>
-                </Button>
-                <AttachmentDialog bind:this={attachmentDialog} bind:attachments={update.attachments} />
             {/key}
+            <Button variant="outlined" on:click={() => attachmentDialog.open()}>
+                <Label>
+                    {update.attachments.length ? update.attachments.length : ''}
+                    ATTACHMENT{update.attachments.length !== 1 ? 'S' : ''}
+                </Label>
+            </Button>
+            <AttachmentDialog bind:this={attachmentDialog} bind:attachments={update.attachments} />
         </div>
         <div class="save-buttons">
             <Button on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>Save</Label></Button>
