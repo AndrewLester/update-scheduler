@@ -4,7 +4,7 @@ import type { Attachment } from "../api/types";
 import { flip } from 'svelte/animate';
 import Dialog from '@smui/dialog/Dialog.svelte';
 import { Title, Content, Actions, InitialFocus } from '@smui/dialog/bare';
-import List, {Item, Graphic, Text, PrimaryText, SecondaryText, Meta} from '@smui/list/bare';
+import List from '@smui/list/List.svelte';
 import '@smui/list/bare.css';
 import '@smui/dialog/bare.css';
 import IconButton from '@smui/icon-button/bare';
