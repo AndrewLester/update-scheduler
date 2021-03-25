@@ -113,4 +113,33 @@ let iconFailed = false;
 .open-graph-preview .no-data {
     font-style: italic;
 }
+@media (max-width: 1050px) {
+    .open-graph-preview {
+        height: 65px;
+    }
+    .open-graph-icon {
+        height: 65px;
+        width: 65px;
+    }
+    .open-graph-text h3 {
+        font-size: 15px;
+    }
+    .open-graph-text .url {
+        background: transparent;
+    }
+    .open-graph-image {
+        width: 65px;
+        height: 65px;
+    }
+    .open-graph-icon > img {
+        width: 30px;
+        height: 30px;
+    }
+    .open-graph-icon > :global(*) {
+        font-size: 18px;
+    }
+    .open-graph-text .description {
+        -webkit-line-clamp: 1;
+    }
+}
 </style>

@@ -8,7 +8,6 @@ import AttachmentDialog from '../attachments/AttachmentDialog.svelte';
 import * as notification from '../notifications/notifier';
 import { updates } from '../stores';
 import TextEditor from '../utility/components/TextEditor.svelte';
-import AttachmentEditor from './AttachmentEditor.svelte';
 import UpdateTimePicker from './UpdateTimePicker.svelte';
 
 export let update: Update;
@@ -78,7 +77,7 @@ async function resetUpdate() {
     </div>
     <TextEditor placeholder={'Write update'} bind:content={body} bind:this={editor} />
     <div class="button-row">
-        <div class="edit-buttons">
+        <div class="edit-buttons button-row">
             {#key id}
                 <UpdateTimePicker {job} bind:this={timePicker} />
                 <Button variant="outlined" on:click={() => attachmentDialog.open()}>
