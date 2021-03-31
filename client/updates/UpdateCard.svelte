@@ -17,7 +17,10 @@ export let update: Update;
 export let selected: boolean;
 
 let confirmDeleteDialog: Dialog;
+
 let posted = false;
+let resets = 0;
+
 $: scheduled = isScheduled(update);
 $: realmName = ($realms.find((realm) => realm.id === update.realm_id) || {}).name;
 let scheduledText = '';
@@ -45,7 +48,10 @@ $: if (scheduled) {
         }
     } else {
         // Only try resetting the updates store every 5 seconds because it sends a GET request.
-        if ($time.seconds() % 5 === 0) updates.reset();
+        if ($time.seconds() % 5 === 0 && resets < 3) {
+            updates.reset();
+            resets++;
+        }
     }
 }
 
