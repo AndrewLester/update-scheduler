@@ -159,18 +159,18 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
             {realmName || 'Loading...'}
         </p>
     {/if}
-    <Group style="width: 100%; margin-top: auto">
-        <Button on:click={() => dispatch('edit')} disabled={selected}>
+    <Group style="width: 100%; margin-top: auto" variant="outlined">
+        <Button on:click={() => dispatch('edit')} disabled={selected} variant="outlined">
             <Icon class="material-icons">edit</Icon>
             <Label>Edit</Label>
         </Button>
         {#if scheduled}
-            <Button on:click={cancelUpdate}>
+            <Button on:click={cancelUpdate} variant="outlined">
                 <Icon class="material-icons">cancel</Icon>
                 <Label>Cancel</Label>
             </Button>
         {:else}
-            <Button on:click={() => deleteUpdate(true)}>
+            <Button on:click={() => deleteUpdate(true)} variant="outlined">
                 <Icon class="material-icons">delete</Icon>
                 <Label>Delete</Label>
             </Button>

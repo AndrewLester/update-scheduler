@@ -2,6 +2,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 <style>
 :root {
     --flashed-messages-display: block;
@@ -13,7 +14,7 @@
 <main>
     <section>
         <h1>Schedule your Schoology updates</h1>
-        <p class="main-description">Update scheduler lets you write, edit, and schedule your schoology updates from one place, and you don't have to worry about accessing your computer to post them.</p>
+        <p class="main-description">Update scheduler lets you write, edit, and schedule your Schoology updates from one place, and you don't have to worry about accessing your computer to post them.</p>
         {% if current_user.is_authenticated %}
             <a href="{{ url_for('update_scheduler.scheduler') }}">
                 <button class="small-button">
@@ -28,8 +29,11 @@
             </a>
         {% endif %}
     </section>
-    <section>
-        <img class="main-image" src="/static/img/scheduler.png" alt="A picture of the Update Scheduler web application.">
+    <section id="main-image">
+        <video class="main-image" autoplay loop muted poster="/static/img/schedule-example-thumbnail.png">
+            <source src="/static/videos/schedule-example.mp4">
+            <img class="main-image" src="/static/img/schedule-example-thumbnail.png" alt="A picture of the Update Scheduler web application.">
+        </video>
     </section>
 </main>
 {% endblock %}
