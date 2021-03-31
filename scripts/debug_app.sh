@@ -3,6 +3,6 @@
 redis-server ~/.local/etc/redis.conf &
 rq worker update-scheduler --with-scheduler &
 npm run dev &
-flask run --host 0.0.0.0
+flask run --host 0.0.0.0 --with-threads
 
-kill $(jobs -p | tail -r)
+jobs -p | tac | xargs kill

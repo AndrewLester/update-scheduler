@@ -131,7 +131,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
             </Button>
         </Actions>
     </Dialog>
-    <p use:tippy={updateBodyTippyProps} class="body one-line">
+    <p  class="body one-line-parent" use:tippy={updateBodyTippyProps}>
         <Icon
             class="material-icons"
             style="float: left; margin-right: 5px; font-size: 23px">
@@ -205,6 +205,12 @@ p > :global(*) {
 
 p.one-line {
     white-space: nowrap;
+}
+
+p.one-line-parent > :global(p) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 p.body :global(*:not(i)) {

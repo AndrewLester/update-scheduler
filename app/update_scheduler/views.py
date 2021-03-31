@@ -69,9 +69,11 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
             realm_type=form.realm_type.data,
             realm_id=form.realm_id.data,
             body=form.body.data,
-            attachments=attachments,
             user_id=current_user.id
         )
+
+        if attachments:
+            update.attachments = attachments
 
         if form.job.scheduled_for.data or form.job.scheduled_in.data:
             schedule_update(
@@ -86,7 +88,8 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
         update.realm_type = form.realm_type.data
         update.realm_id = form.realm_id.data
         update.body = form.body.data
-        update.attachments = attachments
+        if attachments:
+            update.attachments = attachments
 
         if update.job is not None:
             try:

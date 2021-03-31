@@ -61,7 +61,7 @@ let iconFailed = false;
 }
 .open-graph-text > * {
     flex: 0 1 auto;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 .open-graph-text h3 {
     margin: 5px 0px;
