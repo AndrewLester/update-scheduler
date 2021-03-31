@@ -39,6 +39,10 @@ video.main-image {
 
 @media only screen and (max-width: 600px) {
     main {
-        padding: 50px 10px;
+        padding: 10px 10px;
+        height: auto;
+    }
+    main > section#main-image {
+        max-width: 100%;
     }
 }
