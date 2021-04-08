@@ -229,6 +229,10 @@ p.body {
     max-height: 40px;
 }
 
+p.body.one-line-parent {
+    max-height: 30px;
+}
+
 .card.selected {
     box-shadow: 0px 0px 0px 2px lightskyblue;
 }
