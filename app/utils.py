@@ -107,6 +107,9 @@ def rest_endpoint(
 
             if request.method == 'DELETE' and 'DELETE' in methods and id is not None:
                 model_instance = model.query.get_or_404(id)  # type: ignore
+                if hasattr(model_instance, 'on_delete'):
+                    on_delete = getattr(model_instance, 'on_delete')
+                    on_delete(model_instance)
                 db.session.delete(model_instance)  # type: ignore
                 db.session.commit()  # type: ignore
                 return jsonify(), 204
