@@ -13,8 +13,8 @@
 {% block content %}
 <main>
     <section>
-        <h1>Schedule your Schoology updates</h1>
-        <p class="main-description">Update scheduler lets you write, edit, and schedule your Schoology updates from one place, and you don't have to worry about accessing your computer to post them.</p>
+        <h1>Schedule Your Schoology Updates</h1>
+        <p class="main-description">Update Scheduler lets you write, edit, and schedule your Schoology updates from one place, and you don't have to worry about accessing your computer to post them.</p>
         {% if current_user.is_authenticated %}
             <a href="{{ url_for('update_scheduler.scheduler') }}">
                 <button class="small-button">
