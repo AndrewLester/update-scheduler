@@ -3,12 +3,13 @@ declare const csrf_token: string;
 </script>
 
 <script lang="ts">
+
 import { onMount, setContext, tick } from 'svelte';
 import type { Networking } from './api/network';
 import * as networking from './api/network';
 import type { Update } from './api/types';
 import { getNewUpdate, isScheduled } from './api/types';
-import UpdateEditor from './editor/UpdateEditor.svelte';
+import UpdateEditor from '@editor/UpdateEditor.svelte';
 import CardList from './layouts/CardList.svelte';
 import Layout from './layouts/Layout.svelte';
 import type { GridArea } from './layouts/Layout.svelte';
@@ -20,7 +21,7 @@ import { fly } from 'svelte/transition';
 import NotificationDisplay from './notifications/NotificationDisplay.svelte';
 import NavigationDrawer from './utility/components/NavigationDrawer.svelte';
 import IconButton, {Icon} from '@smui/icon-button/bare';
-import '@smui/icon-button/bare.css';
+
 
 let layout: Layout | undefined;
 let api: Networking | undefined;
@@ -92,7 +93,7 @@ function handleUpdateCancel(update: Update) {
 <svelte:window bind:innerWidth={screenWidth}></svelte:window>
 
 <Layout areas={gridAreas} bind:this={layout}>
-    <slot slot="main">
+    <svelte:fragment slot="main">
         {#if mobile}
             <div class="mobile-drawer-buttons">
                 <IconButton on:click={() => realmDrawerOpen = !realmDrawerOpen}>
@@ -104,8 +105,8 @@ function handleUpdateCancel(update: Update) {
             </div>
         {/if}
         <UpdateEditor bind:update={selectedUpdate} />
-    </slot>
-    <slot slot="bottombar">
+    </svelte:fragment>
+    <svelte:fragment slot="bottombar">
         {#if savedUpdates.length !== 0}
             <!-- Must use separate in and out transitions because delay parameter is dynamic -->
             <div
@@ -124,13 +125,11 @@ function handleUpdateCancel(update: Update) {
                 </CardList>
             </div>
         {/if}
-    </slot>
-    <slot slot="left-sidebar">
-        <Sidebar side={'left'}>
-            <RealmChooser bind:update={selectedUpdate} realms={$realms} />
-        </Sidebar>
-    </slot>
-    <slot slot="right-sidebar">
+    </svelte:fragment>
+    <Sidebar side={'left'} slot="left-sidebar">
+        <RealmChooser bind:update={selectedUpdate} realms={$realms} />
+    </Sidebar>
+    <svelte:fragment slot="right-sidebar">
         {#if scheduledUpdates.length !== 0}
             <!-- Must use separate in and out transitions because delay parameter is dynamic -->
             <div
@@ -151,9 +150,9 @@ function handleUpdateCancel(update: Update) {
                 </Sidebar>
             </div>
         {/if}
-    </slot>
+    </svelte:fragment>
 
-    <slot slot="drawer">
+    <svelte:fragment slot="drawer">
         {#if mobile}
             <NavigationDrawer bind:open={realmDrawerOpen}>
                 <RealmChooser bind:update={selectedUpdate} realms={$realms} />
@@ -185,7 +184,7 @@ function handleUpdateCancel(update: Update) {
                 </div>
             </NavigationDrawer>
         {/if}
-    </slot>
+    </svelte:fragment>
 </Layout>
 <NotificationDisplay options={{ timeout: 2500, width: '200px' }} />
 

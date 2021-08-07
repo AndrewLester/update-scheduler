@@ -1,5 +1,5 @@
 from authlib.common.errors import AuthlibBaseError
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for, current_app
 from flask_login import current_user, login_user, logout_user
 from flask_login.utils import login_required
 
@@ -49,8 +49,9 @@ def login():
 def authorize():
     try:
         token = oauth.schoology.authorize_access_token()
-    except (AuthlibBaseError):
+    except AuthlibBaseError as e:
         flash('Please restart the login procedure...')
+        current_app.logger.error('AuthlibBaseError Subtype: ' + type(e))
         return render_template('500.html'), 500
 
     user_data = oauth.schoology.get('users/me').json()

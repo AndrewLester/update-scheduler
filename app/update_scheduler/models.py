@@ -1,4 +1,5 @@
 # type: ignore
+from flask import current_app
 from app.schoology.api import datetime_to_schoology
 from typing import Dict
 from app.exts import db
@@ -36,6 +37,11 @@ class Update(db.Model):
             'attachments': [attachment.to_json() for attachment in self.attachments],
             'job': self.job.to_json() if self.job else None
         }
+
+    def on_delete(self):
+        if self.job:
+            job = Job.fetch(self.job.id, connection=current_app.redis)
+            job.cancel()
 
 
 class ScheduledJob(db.Model):
