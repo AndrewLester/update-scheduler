@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from sqlalchemy.orm import backref
 
 from app.exts import db, login
+from app.update_scheduler.models import Update
 
 
 @login.user_loader
@@ -14,14 +15,14 @@ def load_user(id):
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.String(36), primary_key=True)
-    username = db.Column(db.String(64))
-    email = db.Column(db.String(120))
-    building_id = db.Column(db.String(36))
-    school_id = db.Column(db.String(36))
-    timezone = db.Column(db.String(120))
-    profile_picture_url = db.Column(db.String(250))
-    updates = db.relationship(
+    id: str = db.Column(db.String(36), primary_key=True)
+    username: str = db.Column(db.String(64))
+    email: str = db.Column(db.String(120))
+    building_id: str = db.Column(db.String(36))
+    school_id: str = db.Column(db.String(36))
+    timezone: str = db.Column(db.String(120))
+    profile_picture_url: str = db.Column(db.String(250))
+    updates: List[Update] = db.relationship(
         'Update',
         backref='user'
     )

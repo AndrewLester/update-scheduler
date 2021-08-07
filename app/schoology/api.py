@@ -68,7 +68,7 @@ def get_user_realms(user: User) -> List[Realm]:
     )
     district: List[Realm] = (
         [{'id': user.school_id, 'name': 'District', 'realm_type': 'districts'}]
-        if user.school_id
+        if user.school_id and user.school_id != user.building_id
         else []
     )
 
