@@ -3,7 +3,6 @@ from flask_login import UserMixin
 from sqlalchemy.orm import backref
 
 from app.exts import db, login
-from app.update_scheduler.models import Update
 
 
 @login.user_loader
@@ -22,7 +21,7 @@ class User(UserMixin, db.Model):
     school_id: str = db.Column(db.String(36))
     timezone: str = db.Column(db.String(120))
     profile_picture_url: str = db.Column(db.String(250))
-    updates: List[Update] = db.relationship(
+    updates = db.relationship(
         'Update',
         backref='user'
     )
