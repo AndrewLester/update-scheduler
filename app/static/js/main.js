@@ -3,7 +3,7 @@ const profileIconImg = document.getElementById('profile-icon-img');
 const profileIcon = profileIconImg ? profileIconImg.parentElement : undefined;
 
 let currentScrollOffset = window.scrollY;
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
     if (window.scrollY > currentScrollOffset) {
         header.classList.remove('shown');
     } else {
@@ -21,3 +21,17 @@ window.addEventListener('click', (e) => {
         profileIcon.classList.toggle('open');
     }
 });
+
+const emailReplacements = {
+    'AT': '@',
+    'DOT': '.',
+};
+const emails = document.getElementsByClassName('email-link');
+
+for (let email of emails) {
+    for (let replacer in emailReplacements) {
+        const replacement = emailReplacements[replacer];
+        email.href = email.href.replace(replacer, replacement);
+        email.textContent = email.textContent.replace(replacer, replacement);
+    }
+}
