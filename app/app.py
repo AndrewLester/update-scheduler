@@ -9,7 +9,7 @@ from flask.cli import load_dotenv
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
-from app import login, db, migrate, cache, csrf, oauth_client
+from app import login, db, migrate, cache, csrf, oauth_client, talisman
 from app import update_scheduler, main, oauth, cors_anywhere
 from config import Config
 
@@ -43,6 +43,7 @@ def register_extensions(app: Flask):
     login.login_view = 'main.login'  # type: ignore
     db.init_app(app)
     cache.init_app(app, config=app.config)
+    talisman.init_app(app)
     with app.app_context():
         if db.engine.url.drivername == 'sqlite':
             migrate.init_app(app, db, render_as_batch=True)
