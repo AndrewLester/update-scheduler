@@ -2,46 +2,58 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     box-sizing: border-box;
 }
+
 h1 {
     font-size: 30px;
 }
+
 h1, h2, h3, h4 {
     font-weight: normal;
 }
+
 body {
     margin: 0px;
     padding: 0px;
 }
+
 textarea {
     outline: none;
     border: 1px solid rgb(128, 128, 128);
     resize: none;
 }
+
 input[type="text"] {
     outline: none;
 }
+
 p {
     margin: 0px;
     line-height: 1.5;
 }
+
 a {
     color: #29b6f6;
     text-decoration: none;
 }
+
 a:hover {
     text-decoration: underline;
 }
+
 fieldset {
     padding: 0px;
 }
+
 main:first-of-type {
     position: relative;
     top: var(--header-height);
 }
+
 p.caption {
     font-size: 15px;
     color: rgb(102, 102, 102);
 }
+
 .spinner {
     animation: rotate 2s linear infinite;
     z-index: 2;
@@ -50,14 +62,14 @@ p.caption {
     width: 24px;
     height: 24px;
 }
-.spinner > .path {
+
+.spinner>.path {
     stroke: rgba(0, 183, 255, 0.979);
     /*stroke-linecap: round;*/
     animation: dash 1.5s ease-in-out infinite;
 }
-fieldset.input,
-span,
-legend {
+
+fieldset.input, span, legend {
     position: relative;
 }
 
@@ -106,6 +118,7 @@ input {
     width: var(--input-width);
     opacity: 1;
     border: none;
+    background-color: transparent;
     transition: opacity 200ms ease-out 200ms;
 }
 
@@ -116,11 +129,11 @@ fieldset.input span::after {
     opacity: 0;
 }
 
-fieldset.input input:placeholder-shown:not(:focus) + legend span::after {
+fieldset.input input:placeholder-shown:not(:focus)+legend span::after {
     content: '';
 }
 
-fieldset.input input:placeholder-shown:not(:focus) + legend span::before {
+fieldset.input input:placeholder-shown:not(:focus)+legend span::before {
     /* Calculate ratio from old font size to new font size to put into scale transform */
     transform: translateY(calc(var(--input-font-size) + 3.5px)) scale(1);
     color: gray;
@@ -128,11 +141,11 @@ fieldset.input input:placeholder-shown:not(:focus) + legend span::before {
     padding-left: 2px;
 }
 
-fieldset.input input:not(:focus):not(:placeholder-shown) + legend span::before {
+fieldset.input input:not(:focus):not(:placeholder-shown)+legend span::before {
     color: gray;
 }
 
-fieldset.input input:placeholder-shown:not(:focus) + legend {
+fieldset.input input:placeholder-shown:not(:focus)+legend {
     padding: 0px;
 }
 
@@ -144,25 +157,28 @@ fieldset.input input::placeholder {
 fieldset.input input:focus::placeholder {
     opacity: 1;
 }
+
 @keyframes rotate {
     100% {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
 }
+
 @keyframes dash {
     0% {
-      stroke-dasharray: 1, 75;
-      stroke-dashoffset: 0;
+        stroke-dasharray: 1, 75;
+        stroke-dashoffset: 0;
     }
     50% {
-      stroke-dasharray: 45, 75;
-      stroke-dashoffset: -18;
+        stroke-dasharray: 45, 75;
+        stroke-dashoffset: -18;
     }
     100% {
-      stroke-dasharray: 45, 75;
-      stroke-dashoffset: -62;
+        stroke-dasharray: 45, 75;
+        stroke-dashoffset: -62;
     }
 }
+
 .icon-button {
     cursor: pointer;
     border: none;
@@ -173,6 +189,7 @@ fieldset.input input:focus::placeholder {
     width: 24px;
     padding: 0px;
 }
+
 .icon-button div {
     position: absolute;
     height: calc(100% * 1.5);
@@ -185,18 +202,21 @@ fieldset.input input:focus::placeholder {
     opacity: 0;
     transform: scale(0);
 }
-.icon-button.active > div {
+
+.icon-button.active>div {
     animation: background-expand 0.15s ease-in-out forwards;
 }
-.icon-button:not(.active) > div {
+
+.icon-button:not(.active)>div {
     animation: background-fade 0.15s ease-in backwards;
 }
+
 .small-button {
     color: white;
     -webkit-tap-highlight-color: transparent;
     background: #4bb6e7;
     border: none;
-    border-radius: 5px; 
+    border-radius: 5px;
     padding: 5px 20px;
     cursor: pointer;
     font-size: 15px;
@@ -205,16 +225,19 @@ fieldset.input input:focus::placeholder {
     box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.3);
     transition: all 250ms ease;
 }
+
 .small-button:hover, .small-button:focus {
     background-color: rgb(94, 193, 240);
     box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.3);
     outline: none;
     -webkit-tap-highlight-color: transparent;
 }
+
 .small-button:active {
     box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.3);
     background-color: #42a4d1;
 }
+
 @keyframes background-expand {
     from {
         opacity: 1;
@@ -225,6 +248,7 @@ fieldset.input input:focus::placeholder {
         opacity: 1;
     }
 }
+
 @keyframes background-fade {
     0% {
         opacity: 1;
