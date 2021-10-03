@@ -1,9 +1,8 @@
-import { readable } from "svelte/store";
-import type { Realm, Update } from "./api/types";
-import { ListNetworkStore, ReadableNetworkStore } from "./utility/networkstore";
+import { readable } from 'svelte/store';
+import type { Realm, Update } from './api/types';
+import { ListNetworkStore, ReadableNetworkStore } from './utility/networkstore';
 import moment, { Moment } from 'moment';
 import * as notifier from './notifications/notifier';
-
 
 function errorHandler(error: Error, _) {
     try {
@@ -15,15 +14,17 @@ function errorHandler(error: Error, _) {
             return;
         }
 
-        notifier.danger('Missing required fields: ' + Object.keys(errors).join(', '), 2000);
+        notifier.danger(
+            'Missing required fields: ' + Object.keys(errors).join(', '),
+            2000
+        );
         return;
-    } catch (e) { }
+    } catch (e) {}
 
-    notifier.danger('An error occured. Check your update\'s post time.', 2000);
+    notifier.danger("An error occured. Check your update's post time.", 2000);
 }
 
-
-const updates = new ListNetworkStore<Update[]>(
+const updates = new ListNetworkStore<Update>(
     '/scheduler/updates',
     [],
     errorHandler

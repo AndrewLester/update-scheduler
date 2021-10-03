@@ -20,6 +20,7 @@
             <nav>
                 <a href="{{ url_for('main.index') }}">Home</a>
                 <a href="{{ url_for('main.tutorial') }}">Tutorial</a>
+                <a href="{{ url_for('main.privacy') }}">Privacy</a>
                 {% if current_user.is_anonymous %}
                     <a href="{{ url_for('main.login') }}">Login</a>
                 {% else %}

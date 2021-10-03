@@ -19,7 +19,6 @@ export type ElementType<T> = T extends Array<infer U> ? U : never;
 export type StoreType<T> = T extends Readable<infer U> ? U : never;
 export type ErrorHandler = (error: Error, retryTime?: number) => void;
 
-
 export class ReadableNetworkStore<T> implements Readable<T> {
     subscribe: (
         run: Subscriber<T>,
@@ -39,7 +38,7 @@ export class ReadableNetworkStore<T> implements Readable<T> {
     constructor(
         protected endpoint: string,
         defaultValue: T,
-        fetchErrorHandler: ErrorHandler = () => { }
+        fetchErrorHandler: ErrorHandler = () => {}
     ) {
         this.store = writableStore(defaultValue);
         this.storeValue = defaultValue;
@@ -79,12 +78,13 @@ export class ReadableNetworkStore<T> implements Readable<T> {
     }
 }
 
-export class WritableNetworkStore<T> extends ReadableNetworkStore<T>
+export class WritableNetworkStore<T>
+    extends ReadableNetworkStore<T>
     implements Writable<T> {
     constructor(
         endpoint: string,
         defaultValue: T,
-        fetchErrorHandler: ErrorHandler = () => { }
+        fetchErrorHandler: ErrorHandler = () => {}
     ) {
         super(endpoint, defaultValue, fetchErrorHandler);
     }
@@ -108,16 +108,24 @@ type ObjectDiscriminator<T> = (item: T) => T[keyof T][];
 // Useful for objects with an "id" property
 export type KeyMap<T> = Map<T[keyof T], T>;
 
+type QueryKeyMap<T> = Map<T[keyof T], KeyMap<T>>;
+
 /**
  * Create a map from a list by the values of a certain key. Objects may appear under
  * more than one value, determined by the objectDiscriminator function
  */
-function mapByKey<T>(objects: Set<T>, objectDiscriminator: ObjectDiscriminator<T>, objectIdentifier: keyof T): Map<T[keyof T], KeyMap<T>> {
+function mapByKey<T>(
+    objects: Set<T>,
+    objectDiscriminator: ObjectDiscriminator<T>,
+    objectIdentifier: keyof T
+): QueryKeyMap<T> {
     const mappedObjects = new Map<T[keyof T], KeyMap<T>>();
 
     for (let object of objects) {
         for (let key of objectDiscriminator(object)) {
-            const objectMap = mappedObjects.has(key) ? mappedObjects.get(key)! : new Map();
+            const objectMap = mappedObjects.has(key)
+                ? mappedObjects.get(key)!
+                : new Map();
             objectMap.set(object[objectIdentifier], object);
             mappedObjects.set(key, objectMap);
         }
@@ -126,17 +134,26 @@ function mapByKey<T>(objects: Set<T>, objectDiscriminator: ObjectDiscriminator<T
     return mappedObjects;
 }
 
-export class QueryNetworkStore<T, Args extends { [index: string]: string }> extends ReadableNetworkStore<Map<T[keyof T], KeyMap<T>>> {
+export class QueryNetworkStore<
+    T,
+    QueryArgs extends Record<string, string>
+> extends ReadableNetworkStore<QueryKeyMap<T>> {
     private objectDiscriminator: ObjectDiscriminator<T>;
     private objectId: keyof T;
 
-    constructor(endpoint: string, defaultValues: [T[keyof T], KeyMap<T>][] | undefined, objectDiscriminator: ObjectDiscriminator<T>, objectId: keyof T, fetchErrorHandler: ErrorHandler = () => { }) {
+    constructor(
+        endpoint: string,
+        defaultValues: [T[keyof T], KeyMap<T>][] | undefined,
+        objectDiscriminator: ObjectDiscriminator<T>,
+        objectId: keyof T,
+        fetchErrorHandler: ErrorHandler = () => {}
+    ) {
         super(endpoint, new Map(defaultValues), fetchErrorHandler);
         this.objectDiscriminator = objectDiscriminator;
         this.objectId = objectId;
     }
 
-    async query(queryArgs?: Args) {
+    async query(queryArgs?: QueryArgs) {
         if (!this.api) {
             throw new Error(
                 'Networking must be loaded before a call to query()'
@@ -144,14 +161,24 @@ export class QueryNetworkStore<T, Args extends { [index: string]: string }> exte
         }
 
         const queryArgsString = new URLSearchParams(queryArgs).toString();
-        const objects = await this.api.get(`${this.endpoint}${queryArgsString ? '?' + queryArgsString : ''}`);
+        const objects = await this.api.get(
+            `${this.endpoint}${queryArgsString ? '?' + queryArgsString : ''}`
+        );
 
-        const mappedObjects = mapByKey<T>(objects, this.objectDiscriminator, this.objectId);
+        const mappedObjects = mapByKey<T>(
+            objects,
+            this.objectDiscriminator,
+            this.objectId
+        );
 
         this.store.update((map) => {
             for (let [k, v] of mappedObjects) {
-                const objectMap = map.has(k) ? map.get(k)! : new Map<T[keyof T], T>();
-                v.forEach((mappedV, mappedK) => objectMap.set(mappedK, mappedV));
+                const objectMap = map.has(k)
+                    ? map.get(k)!
+                    : new Map<T[keyof T], T>();
+                v.forEach((mappedV, mappedK) =>
+                    objectMap.set(mappedK, mappedV)
+                );
                 map.set(k, objectMap);
             }
             return map;
@@ -168,7 +195,7 @@ export class QueryNetworkStore<T, Args extends { [index: string]: string }> exte
         });
     }
 
-    async reset(retryTime?: number, queryArgs?: Args) {
+    async reset(retryTime?: number, queryArgs?: QueryArgs) {
         if (!this.api) {
             throw new Error(
                 'Networking must be loaded before a call to reset()'
@@ -181,30 +208,27 @@ export class QueryNetworkStore<T, Args extends { [index: string]: string }> exte
             const retryTimeDef = retryTime || 2500;
 
             this.fetchErrorHandler(e, retryTimeDef);
-            await sleep(retryTimeDef).then(() => this.reset(retryTimeDef * 2, queryArgs));
+            await sleep(retryTimeDef).then(() =>
+                this.reset(retryTimeDef * 2, queryArgs)
+            );
         }
     }
 }
 
-export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableNetworkStore<T> {
+export class ListNetworkStore<T> extends WritableNetworkStore<T[]> {
     constructor(
         endpoint: string,
-        defaultValue: T,
-        fetchErrorHandler: ErrorHandler = () => { }
+        defaultValue: T[],
+        fetchErrorHandler: ErrorHandler = () => {}
     ) {
         super(endpoint, defaultValue, fetchErrorHandler);
     }
 
-    async sync(
-        key: keyof ElementType<T>,
-        value: ElementType<T>[typeof key]
-    ): Promise<ElementType<T> | undefined> {
+    async sync(key: keyof T, value: T[typeof key]): Promise<T | undefined> {
         if (!this.api) throw new Error('Networking not loaded');
 
         try {
-            const synced: ElementType<T> = await this.api.get(
-                this.endpoint + `/${value}`
-            );
+            const synced: T = await this.api.get(this.endpoint + `/${value}`);
 
             this.store.update((current) => {
                 const updated = [
@@ -223,14 +247,11 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
         }
     }
 
-    async create(element: ElementType<T>): Promise<ElementType<T> | undefined> {
+    async create(element: T): Promise<T | undefined> {
         if (!this.api) throw new Error('Networking not loaded');
 
         try {
-            const created: ElementType<T> = await this.api.post(
-                this.endpoint,
-                element
-            );
+            const created: T = await this.api.post(this.endpoint, element);
             this.store.update((current) => [created, ...current] as any);
             return created;
         } catch (e) {
@@ -238,7 +259,7 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
         }
     }
 
-    async update(element: ElementType<T>, discriminator: keyof ElementType<T>) {
+    async updateElement(element: T, discriminator: keyof T) {
         if (!this.api) throw new Error('Networking not loaded');
 
         try {
@@ -254,7 +275,7 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
                         return elem[discriminator] !== element[discriminator];
                     }),
                 ];
-    
+
                 return updated as any;
             });
         } catch (e) {
@@ -262,10 +283,7 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
         }
     }
 
-    async deleteByKey(
-        key: keyof ElementType<T>,
-        value: ElementType<T>[typeof key]
-    ) {
+    async deleteByKey(key: keyof T, value: T[typeof key]) {
         if (!this.api) throw new Error('Networking not loaded');
 
         this.store.update((current) => {
@@ -279,7 +297,7 @@ export class ListNetworkStore<T extends Array<ElementType<T>>> extends ReadableN
         }
     }
 
-    async delete(element: ElementType<T>, key: keyof ElementType<T>) {
+    async delete(element: T, key: keyof T) {
         await this.deleteByKey(key, element[key]);
     }
 }

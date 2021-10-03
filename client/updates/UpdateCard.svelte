@@ -22,7 +22,8 @@ let posted = false;
 let resets = 0;
 
 $: scheduled = isScheduled(update);
-$: realmName = ($realms.find((realm) => realm.id === update.realm_id) || {}).name;
+$: realmName = ($realms.find((realm) => realm.id === update.realm_id) || {})
+    .name;
 let scheduledText = '';
 const resetJob = () => (update.job = null);
 $: if (scheduled) {
@@ -44,7 +45,7 @@ $: if (scheduled) {
             scheduledText = 'Just posted';
             resetJob();
         } else {
-            scheduledText = 'Posts ' + timeUntilPost.humanize(true, {ss: 0});
+            scheduledText = 'Posts ' + timeUntilPost.humanize(true, { ss: 0 });
         }
     } else {
         // Only try resetting the updates store every 5 seconds because it sends a GET request.
@@ -70,9 +71,11 @@ $: if (isScheduled(update) && update.job) {
     if (update.job!.scheduled_for) {
         postTimeInfo = 'Posts at: ' + update.job!.scheduled_for;
     } else {
-        postTimeInfo = 'Posts at: ' +
+        postTimeInfo =
+            'Posts at: ' +
             schoologyTimeToMoment(update.job!.scheduled_at!)
-            .add(moment.duration(update.job!.scheduled_in)).format('YYYY-MM-DD HH:mm:ss');
+                .add(moment.duration(update.job!.scheduled_in))
+                .format('YYYY-MM-DD HH:mm:ss');
     }
 }
 $: postTimeTippyProps = {
@@ -112,7 +115,7 @@ function cancelUpdate() {
     dispatch('cancel');
 
     update.job = null;
-    updates.update(update, 'id');
+    updates.updateElement(update, 'id');
 }
 
 function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
@@ -137,7 +140,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
             </Button>
         </Actions>
     </Dialog>
-    <p  class="body one-line-parent" use:tippy={updateBodyTippyProps}>
+    <p class="body one-line-parent" use:tippy={updateBodyTippyProps}>
         <Icon
             class="material-icons"
             style="float: left; margin-right: 5px; font-size: 23px">
@@ -155,8 +158,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
             {scheduledText}
         </p>
     {:else}
-        <p  class="one-line"
-            use:tippy={realmNameTippyProps}>
+        <p class="one-line" use:tippy={realmNameTippyProps}>
             <Icon
                 class="material-icons"
                 style="float: left; margin-right: 5px; font-size: 23px">
@@ -166,7 +168,10 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
         </p>
     {/if}
     <Group style="width: 100%; margin-top: auto" variant="outlined">
-        <Button on:click={() => dispatch('edit')} disabled={selected} variant="outlined">
+        <Button
+            on:click={() => dispatch('edit')}
+            disabled={selected}
+            variant="outlined">
             <Icon class="material-icons">edit</Icon>
             <Label>Edit</Label>
         </Button>

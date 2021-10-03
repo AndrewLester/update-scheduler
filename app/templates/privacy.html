@@ -1,0 +1,125 @@
+{% extends "base.html" %} {% block head %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/main.css') }}"
+/>
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/privacy.css') }}"
+/>
+{% endblock %} {% block content %}
+<main>
+    <article>
+        <h1>Privacy Policy</h1>
+        <h2>Persistent data</h2>
+        <p>
+            Update Scheduler seeks to inform all users of the specific Schoology
+            related data accessed while using the service. The table below
+            outlines a specific subset of a user's Schoology data that Update
+            Scheduler stores in a persistent database for quick retrieval:
+        </p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Property Name</td>
+                        <td>Property Purpose</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>User ID</td>
+                        <td>Identifies a Schoology user in the database</td>
+                    </tr>
+                    <tr>
+                        <td>Username</td>
+                        <td>
+                            Used for identifying a user but was replaced with
+                            User ID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            Considered for sending notifications about failed
+                            update posts, but is not currently used
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Building ID</td>
+                        <td>
+                            Provides the school destination realm for updates
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>School ID</td>
+                        <td>
+                            Provides the district destination realm for updates
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Time zone</td>
+                        <td>Offsets update scheduling times</td>
+                    </tr>
+                    <tr>
+                        <td>Profile picture URL</td>
+                        <td>
+                            Displays the user's profile picture in the top right
+                            of the page
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2>Temporary data</h2>
+        <p>
+            Other Schoology data is accessed by Update Scheduler on an as needed
+            basis to allow for the site's function. The table below describes
+            the different properties accessed by the site:
+        </p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Property Name</td>
+                        <td>Property Purpose</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Courses</td>
+                        <td>Listed in the realm choice section of the site</td>
+                    </tr>
+                    <tr>
+                        <td>Groups</td>
+                        <td>Listed in the realm choice section of the site</td>
+                    </tr>
+                    <tr>
+                        <td>Full user profile data</td>
+                        <td>Unused but is cached nonetheles</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            The difference between this type of data access and the persistent
+            storage is that this data can change, so it is requested from
+            Schoology when needed. For a short period of time after the data is
+            requested, it may stick around in a temporary cache, but this cache
+            is cleared periodically and is never interacted with directly.
+        </p>
+        <h2>Contact</h2>
+        <p>
+            If you have any lingering concerns, please send a message via the
+            information below:
+        </p>
+        <p><strong>Developer</strong></p>
+        <p><a href="https://andrewlester.net">Andrew Lester</a></p>
+        <p>
+            <a href="mailto:alester3ATillinoisDOTedu" class="email-link"
+                >alester3ATillinoisDOTedu</a
+            >
+        </p>
+    </article>
+</main>
+{% endblock %}

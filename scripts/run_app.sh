@@ -5,4 +5,8 @@ redis-server ~/.local/etc/redis.conf &
 rq worker update-scheduler --with-scheduler &
 gunicorn update_scheduler:app --worker-class gevent -b 0.0.0.0:5000 --workers 3
 
-jobs -p | xargs kill
+if [ -n "$ZSH_VERSION" ]; then
+    kill ${${(v)jobstates##*:*:}%=*}
+else
+    jobs -p | xargs kill
+fi

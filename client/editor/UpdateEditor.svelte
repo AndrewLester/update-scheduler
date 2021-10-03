@@ -40,7 +40,9 @@ async function save(updateData: Update) {
     } else {
         // No need to await this because it can happen while the editor page is clearing
         // Since it just syncs the job id that was created
-        returnedData = await updates.update({ ...updateData, body }, 'id').then(() => updates.sync('id', update.id));
+        returnedData = await updates
+            .updateElement({ ...updateData, body }, 'id')
+            .then(() => updates.sync('id', update.id));
     }
 
     // There was an error
@@ -58,7 +60,7 @@ function handleNewUpdate() {
         save(scheduled ? update : updateMinusJob);
         return;
     }
-    
+
     resetUpdate();
 }
 
@@ -72,10 +74,18 @@ async function resetUpdate() {
 
 <div class="editor">
     <div class="button-row" style="margin-bottom: 5px; gap: 15px;">
-        <Button class="new-button" on:click={handleNewUpdate} variant="outlined"><Label>New Update</Label></Button>
+        <Button
+            class="new-button"
+            on:click={handleNewUpdate}
+            variant="outlined">
+            <Label>New Update</Label>
+        </Button>
         <h3>Create and Schedule an Update</h3>
     </div>
-    <TextEditor placeholder={'Write update'} bind:content={body} bind:this={editor} />
+    <TextEditor
+        placeholder={'Write update'}
+        bind:content={body}
+        bind:this={editor} />
     <div class="button-row">
         <div class="edit-buttons button-row">
             {#key id}
@@ -87,19 +97,30 @@ async function resetUpdate() {
                     ATTACHMENT{update.attachments.length !== 1 ? 'S' : ''}
                 </Label>
             </Button>
-            <AttachmentDialog bind:this={attachmentDialog} bind:attachments={update.attachments} />
+            <AttachmentDialog
+                bind:this={attachmentDialog}
+                bind:attachments={update.attachments} />
         </div>
         <div class="save-buttons">
-            <Button on:click={() => save(scheduled ? update : updateMinusJob)} variant="outlined"><Label>Save</Label></Button>
-            {#if !scheduled }
-                <Button on:click={() => save(update)} variant="raised"><Label>Save and Schedule</Label></Button>
+            <Button
+                on:click={() => save(scheduled ? update : updateMinusJob)}
+                variant="outlined">
+                <Label>Save</Label>
+            </Button>
+            {#if !scheduled}
+                <Button on:click={() => save(update)} variant="raised">
+                    <Label>Save and Schedule</Label>
+                </Button>
             {:else}
-                <Button on:click={() => update = getNewUpdate()} variant="outlined"><Label>Discard Edit</Label></Button>
+                <Button
+                    on:click={() => (update = getNewUpdate())}
+                    variant="outlined">
+                    <Label>Discard Edit</Label>
+                </Button>
             {/if}
         </div>
     </div>
 </div>
-
 
 <style>
 h3 {

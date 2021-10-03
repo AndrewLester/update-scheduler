@@ -5,4 +5,8 @@ rq worker update-scheduler --with-scheduler &
 npm run dev &
 flask run --host 0.0.0.0 --with-threads
 
-jobs -p | xargs kill
+if [ -n "$ZSH_VERSION" ]; then
+    kill ${${(v)jobstates##*:*:}%=*}
+else
+    jobs -p | xargs kill
+fi

@@ -158,6 +158,41 @@ fieldset.input input:focus::placeholder {
     opacity: 1;
 }
 
+.table-wrapper {
+    border: 2px solid darkgray;
+    border-radius: 5px;
+    margin: 15px 5px;
+    width: fit-content;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    padding: 5px;
+    font-size: 16px;
+}
+
+tbody td:not(:first-of-type) {
+    border-left: 1px solid darkgray;
+}
+
+tbody tr:not(:last-child) td {
+    border-bottom: 1px solid darkgray;
+}
+
+thead {
+    font-weight: bold;
+    margin-bottom: 3px;
+    box-shadow: 0px 0px 0px 2px black;
+    border-radius: 3px 3px 0px 0px;
+}
+
+thead td:not(:first-of-type) {
+    border-left: 2px solid black;
+}
+
 @keyframes rotate {
     100% {
         transform: rotate(360deg);
