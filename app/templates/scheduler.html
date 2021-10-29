@@ -1,15 +1,24 @@
-{% extends "base.html" %}
-
-{% block head %}
-<script>window.csrf_token = "{{ csrf_token() }}";</script>
+{% extends "base.html" %} {% block head %}
+<script>
+    window.bootstrap = {
+        csrf_token: '{{ csrf_token() }}',
+        timezone: '{{ current_user.timezone }}',
+    };
+</script>
 <script type="module" src="/scheduler/bundle/build/main.js" defer></script>
 <style>
     :root {
         --header-height: 50px;
     }
 </style>
-<link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet"  media="none" onload="if(media!='all')media='all'">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-{% endblock %}
-
-{% block content %}{% endblock %}
+<link
+    href="//cdn.quilljs.com/1.3.6/quill.snow.css"
+    rel="stylesheet"
+    media="none"
+    onload="if(media!='all')media='all'"
+/>
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+/>
+{% endblock %} {% block content %}{% endblock %}

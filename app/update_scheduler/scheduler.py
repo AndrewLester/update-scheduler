@@ -12,12 +12,14 @@ POST_UPDATE_TASK = 'app.tasks.post_update_task'
 
 def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update):
     """Schedule a schoology update for a certain time in the future"""
-    attachments = [attachment.to_schoology_json() for attachment in update.attachments]
+    attachments = [attachment.to_schoology_json()
+                   for attachment in update.attachments]
+    realms = [realm.to_json() for realm in update.realms]
     if isinstance(dt, datetime):
         job = queue.enqueue_at(
             dt.astimezone(pytz.utc),
             POST_UPDATE_TASK,
-            update.realm_type + '/' + update.realm_id,
+            realms,
             update.body,
             attachments
         )
@@ -25,12 +27,13 @@ def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update
         job = queue.enqueue_in(
             dt,
             POST_UPDATE_TASK,
-            update.realm_type + '/' + update.realm_id,
+            realms,
             update.body,
             attachments
         )
     user_timezone = pytz.timezone(User.query.get(update.user_id).timezone)
-    scheduled_at = pytz.utc.localize(cast(datetime, job.created_at or datetime.utcnow())).astimezone(user_timezone)
+    scheduled_at = pytz.utc.localize(
+        cast(datetime, job.created_at or datetime.utcnow())).astimezone(user_timezone)
 
     scheduled_job = ScheduledJob(
         id=job.id,

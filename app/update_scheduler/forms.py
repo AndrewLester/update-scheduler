@@ -1,14 +1,11 @@
-from app.utils import IntervalField
+from app.utils import FlaskSubform, IntervalField
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField
 from wtforms.fields.core import DateTimeField, FieldList, FormField, IntegerField
 from wtforms.validators import NoneOf, Required, Regexp, URL
 
 
-class Attachment(FlaskForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs, meta={'csrf': False})
-
+class Attachment(FlaskSubform):
     id = IntegerField()
     type = StringField(validators=[Regexp('(file|link|video)')])
     title = StringField()
@@ -18,10 +15,14 @@ class Attachment(FlaskForm):
     summary = StringField()
 
 
-class ScheduledJob(FlaskForm):
-    def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs, meta={'csrf': False})
+class Realm(FlaskSubform):
+    id = StringField()
+    type = StringField(
+        validators=[Regexp('(courses|groups|schools|districts|sections)')])
+    name = StringField()
 
+
+class ScheduledJob(FlaskSubform):
     id = StringField()
     scheduled_for = DateTimeField()
     scheduled_in = IntervalField()
@@ -29,9 +30,9 @@ class ScheduledJob(FlaskForm):
 
 class UpdateForm(FlaskForm):
     id = IntegerField(validators=[Required()])
-    realm_type = StringField('Update course type', validators=[Required(), Regexp('(courses|groups|schools|districts|sections)')])
-    realm_id = StringField('Update course ID', validators=[Required()])
-    body = StringField('Update body', validators=[Required(), NoneOf('<p><br></p>')])
+    body = StringField('Update body', validators=[
+                       Required(), NoneOf('<p><br></p>')])
 
     job = FormField(ScheduledJob, label='Post time')
     attachments = FieldList(FormField(Attachment, label='Attachment'))
+    realms = FieldList(FormField(Realm, label="Realm"), min_entries=1)

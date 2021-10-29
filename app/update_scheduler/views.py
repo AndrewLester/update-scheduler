@@ -12,7 +12,7 @@ from app.utils import rest_endpoint
 from app.exts import db
 
 from flask.templating import render_template
-from app.update_scheduler.models import Attachment, ScheduledJob, Update
+from app.update_scheduler.models import Attachment, Realm, Update
 from app.schoology.api import get_user_realms
 from flask import jsonify, abort
 from flask_login import current_user
@@ -48,7 +48,6 @@ def realms():
     form=UpdateForm,
     methods={'GET', 'POST', 'PUT', 'DELETE'}
 )
-@login_required
 def updates(form: UpdateForm) -> Union[Update, NoReturn]:
     update = Update.query.get(form.id.data)
 
@@ -64,12 +63,22 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
                 summary=attachment['summary']
             ))
 
+    realms = []
+    for form_realm in form.realms.data:
+        realm = Realm.query.get(form_realm['id'])
+        if realm is None:
+            realm = Realm(
+                id=form_realm['id'],
+                type=form_realm['type'],
+                name=form_realm['name']
+            )
+        realms.append(realm)
+
     if update is None:
         update = Update(
-            realm_type=form.realm_type.data,
-            realm_id=form.realm_id.data,
             body=form.body.data,
-            user_id=current_user.id
+            user_id=current_user.id,
+            realms=realms
         )
 
         if attachments:
@@ -85,8 +94,7 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
                 update
             )
     else:
-        update.realm_type = form.realm_type.data
-        update.realm_id = form.realm_id.data
+        update.realms = realms
         update.body = form.body.data
         if attachments:
             update.attachments = attachments
@@ -129,7 +137,8 @@ def scheduled_formdata_to_time(
             abort(400)
         return dt
     elif scheduled_in is not None:
-        tdelta = scheduled_in.tdelta if isinstance(scheduled_in, Duration) else scheduled_in
+        tdelta = scheduled_in.tdelta if isinstance(
+            scheduled_in, Duration) else scheduled_in
         # If the timedelta refers to the past
         if tdelta < timedelta():
             abort(400)

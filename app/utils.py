@@ -45,6 +45,11 @@ class LocalizableTz(Protocol):
         ...
 
 
+class FlaskSubform(FlaskForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, meta={'csrf': False})
+
+
 class IntervalField(Field):
     widget = TextInput()
 
@@ -76,7 +81,7 @@ def cache_header(max_age, **ckwargs):
     return decorator
 
 
-FormType = TypeVar('FormType', bound=Form)
+FormType = TypeVar('FormType', bound=Form)  # type: ignore
 ModelType = TypeVar('ModelType', bound=db.Model)  # type: ignore
 
 
