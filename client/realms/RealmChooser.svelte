@@ -40,7 +40,7 @@ function deselectRealm(realm: Realm) {
 </script>
 
 <div class="realm-chooser">
-    <h3>Choose a Destination for this Update</h3>
+    <h3>Choose some Destinations for this Update</h3>
     <h4>Selected Realms</h4>
     <div class="selected-realms">
         {#each update.realms as realm (realm.id)}
