@@ -34,19 +34,20 @@ $: {
 }
 
 async function save(updateData: Update) {
-    let returnedData: Update | undefined;
+    let success = false;
     if (updateData.id === -1) {
-        returnedData = await updates.create({ ...updateData, body });
+        success = !!(await updates.create({ ...updateData, body }));
     } else {
-        // No need to await this because it can happen while the editor page is clearing
-        // Since it just syncs the job id that was created
-        returnedData = await updates
-            .updateElement({ ...updateData, body }, 'id')
-            .then(() => updates.sync('id', update.id));
+        success = !!(await updates.updateElement(
+            { ...updateData, body },
+            'id'
+        ));
+
+        await updates.sync('id', update.id);
     }
 
     // There was an error
-    if (!returnedData) return;
+    if (!success) return;
 
     if (isMobile()) {
         notification.info('Saved update', 2000);
