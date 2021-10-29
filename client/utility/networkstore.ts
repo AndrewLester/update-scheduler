@@ -224,7 +224,10 @@ export class ListNetworkStore<T> extends WritableNetworkStore<T[]> {
         super(endpoint, defaultValue, fetchErrorHandler);
     }
 
-    async sync(key: keyof T, value: T[typeof key]): Promise<T | undefined> {
+    async sync<Key extends keyof T>(
+        key: Key,
+        value: T[Key]
+    ): Promise<T | undefined> {
         if (!this.api) throw new Error('Networking not loaded');
 
         try {
@@ -259,7 +262,10 @@ export class ListNetworkStore<T> extends WritableNetworkStore<T[]> {
         }
     }
 
-    async updateElement(element: T, discriminator: keyof T) {
+    async updateElement(
+        element: T,
+        discriminator: keyof T
+    ): Promise<boolean | undefined> {
         if (!this.api) throw new Error('Networking not loaded');
 
         try {
@@ -278,6 +284,7 @@ export class ListNetworkStore<T> extends WritableNetworkStore<T[]> {
 
                 return updated as any;
             });
+            return true;
         } catch (e) {
             this.fetchErrorHandler(e);
         }
