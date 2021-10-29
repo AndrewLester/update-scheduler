@@ -1,38 +1,34 @@
 import moment from 'moment';
 
-
 export interface ScheduledJob {
-    id: string,
-    scheduled_at?: string,
-    scheduled_for?: string,
-    scheduled_in?: string
+    id: string;
+    scheduled_at?: string;
+    scheduled_for?: string;
+    scheduled_in?: string;
 }
-
 
 export interface Attachment {
-    id: number,
-    type: 'file' | 'link' | 'video',
-    title?: string,
-    url: string,
-    image?: string,
-    icon?: string,
-    summary?: string
+    id: number;
+    type: 'file' | 'link' | 'video';
+    title?: string;
+    url: string;
+    image?: string;
+    icon?: string;
+    summary?: string;
 }
 
-
 export interface Update {
-    id: number,
-    realm_type: string,
-    realm_id: string,
-    body: string,
-    job: ScheduledJob | null,
-    attachments: Attachment[]
+    id: number;
+    body: string;
+    job: ScheduledJob | null;
+    attachments: Attachment[];
+    realms: Realm[];
 }
 
 export interface Realm {
-    id: string,
-    name: string,
-    realm_type: string
+    id: string;
+    name: string;
+    type: string;
 }
 
 export function isScheduled(update: Update): boolean {
@@ -41,7 +37,9 @@ export function isScheduled(update: Update): boolean {
 
 const schoologyTimestampFormat = 'YYYY-MM-DD HH:mm:ss';
 
-export function schoologyTimeToMoment(schoologyTimestamp: string): moment.Moment {
+export function schoologyTimeToMoment(
+    schoologyTimestamp: string
+): moment.Moment {
     return moment(schoologyTimestamp, schoologyTimestampFormat);
 }
 
@@ -54,8 +52,7 @@ export function getNewUpdate(): Update {
         id: -1,
         body: '',
         attachments: [],
-        realm_id: '',
-        realm_type: '',
+        realms: [],
         job: null,
     };
 }

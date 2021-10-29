@@ -4,13 +4,12 @@ import '@smui/checkbox/bare.css';
 import type { Realm } from '../api/types';
 
 export let realm: Realm;
-export let selected: boolean;
+export let selected: boolean = false;
 export let disabled = false;
-
 </script>
 
 <div class="realm-option" class:selected>
-    <div class="realm-image" data-realm={realm.realm_type}></div>
+    <div class="realm-image" data-realm={realm.type} />
     <p>{realm.name}</p>
     <div class="checkbox-wrapper" class:disabled>
         <Checkbox on:click checked={selected} />

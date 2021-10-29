@@ -6,15 +6,25 @@ import isodate
 from datetime import datetime
 
 
+update_realm = db.Table('update_realm', db.Model.metadata,
+                        db.Column('update_id', db.ForeignKey(
+                            'update.id'), primary_key=True),
+                        db.Column('realm_id', db.ForeignKey(
+                            'realm.id'), primary_key=True)
+                        )
+
+
 class Update(db.Model):
     __tablename__ = 'update'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    realm_type = db.Column(db.String(10), nullable=False)
-    realm_id = db.Column(db.String(30), nullable=False)
     body = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.String(30), db.ForeignKey(
         'user.id', name='fk_user_id'), nullable=False)
+    realms = db.relationship(
+        'Realm',
+        secondary=update_realm
+    )
     job = db.relationship(
         'ScheduledJob',
         uselist=False,
@@ -30,10 +40,9 @@ class Update(db.Model):
     def to_json(self):
         return {
             'id': self.id,
-            'realm_type': self.realm_type,
-            'realm_id': self.realm_id,
             'body': self.body,
             'attachments': [attachment.to_json() for attachment in self.attachments],
+            'realms': [realm.to_json() for realm in self.realms],
             'job': self.job.to_json() if self.job else None
         }
 
@@ -81,7 +90,7 @@ class Attachment(db.Model):
             'url': self.url,
             'summary': self.summary
         }
-    
+
     def to_schoology_json(self):
         return {
             'type': self.type,
@@ -89,4 +98,19 @@ class Attachment(db.Model):
             'url': self.url,
             'summary': self.summary,
             'thumbnail': self.image or self.icon
+        }
+
+
+class Realm(db.Model):
+    __tablename__ = 'realm'
+
+    id = db.Column(db.String(30), primary_key=True)
+    type = db.Column(db.String(20))
+    name = db.Column(db.String(150))
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'name': self.name
         }

@@ -8,8 +8,8 @@ import moment from 'moment';
 import { createEventDispatcher } from 'svelte';
 import type { Update } from '../api/types';
 import { schoologyTimeToMoment } from '../api/types';
-import { isScheduled, momentToSchoologyTime } from '../api/types';
-import { realms, time, updates } from '../stores';
+import { isScheduled } from '../api/types';
+import { time, updates } from '../stores';
 import tippy from '../utility/tippy';
 import 'tippy.js/animations/shift-away-subtle.css';
 
@@ -22,8 +22,7 @@ let posted = false;
 let resets = 0;
 
 $: scheduled = isScheduled(update);
-$: realmName = ($realms.find((realm) => realm.id === update.realm_id) || {})
-    .name;
+$: realmNames = update.realms.map((realm) => realm.name);
 let scheduledText = '';
 const resetJob = () => (update.job = null);
 $: if (scheduled) {
@@ -57,7 +56,7 @@ $: if (scheduled) {
 }
 
 $: realmNameTippyProps = {
-    content: realmName,
+    content: realmNames.join(', '),
     placement: 'right',
     arrow: true,
     duration: [100, 100],
@@ -164,7 +163,7 @@ function confirmDialogHandler(e: { detail: { action: 'delete' | 'cancel' } }) {
                 style="float: left; margin-right: 5px; font-size: 23px">
                 group
             </Icon>
-            {realmName || 'Loading...'}
+            {realmNames.join(', ')}
         </p>
     {/if}
     <Group style="width: 100%; margin-top: auto" variant="outlined">

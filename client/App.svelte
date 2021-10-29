@@ -1,5 +1,8 @@
 <script lang="ts" context="module">
-declare const csrf_token: string;
+declare const bootstrap: {
+    csrf_token: string;
+    timezone: string;
+};
 </script>
 
 <script lang="ts">
@@ -19,7 +22,7 @@ import UpdateCard from './updates/UpdateCard.svelte';
 import { fly } from 'svelte/transition';
 import NotificationDisplay from './notifications/NotificationDisplay.svelte';
 import NavigationDrawer from './utility/components/NavigationDrawer.svelte';
-import IconButton, {Icon} from '@smui/icon-button/bare';
+import IconButton, { Icon } from '@smui/icon-button/bare';
 import '@smui/icon-button/bare.css';
 
 let layout: Layout | undefined;
@@ -32,12 +35,8 @@ setContext('mobile', () => mobile);
 // TODO: Make mobile reactive after allowing layout to change from
 // mobile to normal using transitions. Remove it from onMount
 let mobile = false;
-$: scheduledUpdates = $updates.filter(
-    (update) => isScheduled(update)
-);
-$: savedUpdates = $updates.filter(
-    (update) => !isScheduled(update)
-);
+$: scheduledUpdates = $updates.filter((update) => isScheduled(update));
+$: savedUpdates = $updates.filter((update) => !isScheduled(update));
 
 let gridAreas: GridArea = 'minimal';
 let realmDrawerOpen = false;
@@ -57,11 +56,15 @@ $: {
     }
 }
 
-$: rightSidebarTransitionDelay = layout ? layout.getElementTransitionDelay('right-sidebar', gridAreas) || 0 : 0;
-$: bottombarTransitionDelay = layout ? layout.getElementTransitionDelay('bottombar', gridAreas) || 0 : 0;
+$: rightSidebarTransitionDelay = layout
+    ? layout.getElementTransitionDelay('right-sidebar', gridAreas) || 0
+    : 0;
+$: bottombarTransitionDelay = layout
+    ? layout.getElementTransitionDelay('bottombar', gridAreas) || 0
+    : 0;
 
 onMount(() => {
-    api = networking.mountNetworking(csrf_token);
+    api = networking.mountNetworking(bootstrap.csrf_token);
 
     realms.setAPI(api);
     realms.reset();
@@ -74,7 +77,7 @@ onMount(() => {
 
 function handleUpdateEdit(update: Update) {
     selectedUpdate = JSON.parse(JSON.stringify(update));
-    updateDrawerOpen = false
+    updateDrawerOpen = false;
     realmDrawerOpen = false;
 }
 
@@ -89,16 +92,18 @@ function handleUpdateCancel(update: Update) {
 }
 </script>
 
-<svelte:window bind:innerWidth={screenWidth}></svelte:window>
+<svelte:window bind:innerWidth={screenWidth} />
 
 <Layout areas={gridAreas} bind:this={layout}>
     <slot slot="main">
         {#if mobile}
             <div class="mobile-drawer-buttons">
-                <IconButton on:click={() => realmDrawerOpen = !realmDrawerOpen}>
+                <IconButton
+                    on:click={() => (realmDrawerOpen = !realmDrawerOpen)}>
                     <Icon class="material-icons">group</Icon>
                 </IconButton>
-                <IconButton on:click={() => updateDrawerOpen = !updateDrawerOpen}>
+                <IconButton
+                    on:click={() => (updateDrawerOpen = !updateDrawerOpen)}>
                     <Icon class="material-icons">schedule_send</Icon>
                 </IconButton>
             </div>

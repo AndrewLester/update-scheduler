@@ -44,7 +44,7 @@ def register_extensions(app: Flask):
     db.init_app(app)
     cache.init_app(app, config=app.config)
     with app.app_context():
-        if db.engine.url.drivername == 'sqlite':
+        if db.engine.url.drivername == 'sqlite':  # type: ignore
             migrate.init_app(app, db, render_as_batch=True)
         else:
             migrate.init_app(app, db)
@@ -54,7 +54,7 @@ def register_extensions(app: Flask):
         item = oauth.models.OAuth1Token.query.filter_by(
             name=name, user_id=user_id
         ).first()
-        
+
         return item.to_token()
 
     oauth_client.init_app(app, fetch_token=fetch_token, cache=cache)
@@ -78,8 +78,10 @@ def register_blueprints(app):
 
 
 def register_errorhandlers(app):
-    app.register_error_handler(404, lambda _: (render_template('404.html'), 404))
-    app.register_error_handler(CSRFError, lambda error: (jsonify(errors=[error.description]), 400))
+    app.register_error_handler(404, lambda _: (
+        render_template('404.html'), 404))
+    app.register_error_handler(CSRFError, lambda error: (
+        jsonify(errors=[error.description]), 400))
 
     def internal_error(error):
         db.session.rollback()  # type: ignore
