@@ -52,7 +52,7 @@ def datetime_to_schoology(time: datetime) -> str:
     return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
-@cache.memoize(timeout=900)
+@cache.memoize(timeout=300)
 def get_user_realms(user: User) -> List[Realm]:
     sections: List[Realm] = [
         {'id': section['id'], 'name': section['course_title'],
