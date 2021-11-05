@@ -98,6 +98,9 @@ def post_updates(realms: List[Realm], body: str, attachments: List[Dict]):
     if attachments:
         data['attachments'] = attachments
 
+    if isinstance(realms, str):
+        return oauth.schoology.post(f'{realms}/updates', json=data)
+
     responses = []
     for realm in realms:
         response = oauth.schoology.post(  # type: ignore

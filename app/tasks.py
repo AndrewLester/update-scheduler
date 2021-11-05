@@ -26,8 +26,9 @@ def post_update_task(realms: List[Realm], body: str, attachments: List[Dict]):
         update = scheduled_job.update
         g.user_id = update.user_id
         responses = post_updates(realms, body, attachments)
-        app.logger.info('Posted updates with response codes: ' +
-                        ', '.join([str(response.status_code) for response in responses]))
+        if type(responses) is list:
+            app.logger.info('Posted updates with response codes: ' +
+                            ', '.join([str(response.status_code) for response in responses]))
 
         job.cleanup(0)
         db.session.delete(update)  # type: ignore
