@@ -81,6 +81,16 @@ def get_user_realms(user: User) -> List[Realm]:
     return sections + groups + school + district
 
 
+def post_update(realm: str, body: str, attachments: List[Dict]):
+    data: Dict[Any, Any] = {
+        'body': body,
+    }
+    if attachments:
+        data['attachments'] = attachments
+
+    return oauth.schoology.post(f'{realm}/updates', json=data)  # type: ignore
+
+
 def post_updates(realms: List[Realm], body: str, attachments: List[Dict]):
     data: Dict[Any, Any] = {
         'body': body,
