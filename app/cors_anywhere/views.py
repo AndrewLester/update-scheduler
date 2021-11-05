@@ -25,7 +25,7 @@ def cors_anywhere(url: str):
         response = make_response(
             requests.get(url).text,
         )
-    except (InvalidURL, HTTPError):
+    except:
         return render_template('500.html'), 500
     response.headers['Access-Control-Allow-Origin'] = url_for('main.index')
     return response
