@@ -52,7 +52,7 @@ def datetime_to_schoology(time: datetime) -> str:
     return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
-# @cache.memoize(timeout=21600)
+@cache.memoize(timeout=21600)
 def get_user_schools(
     school_id: Optional[str],
     building_id: Optional[str],
@@ -112,7 +112,7 @@ def get_user_schools(
     return schools
 
 
-# @cache.memoize(timeout=300)
+@cache.memoize(timeout=300)
 def get_user_realms(user: User) -> List[Realm]:
     user_data = oauth.schoology.get('users/me').json()  # type: ignore
 
