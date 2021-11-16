@@ -52,7 +52,7 @@ def datetime_to_schoology(time: datetime) -> str:
     return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
-@cache.memoize(timeout=21600)
+# @cache.memoize(timeout=21600)
 def get_user_schools(
     school_id: Optional[str],
     building_id: Optional[str],
@@ -88,7 +88,7 @@ def get_user_schools(
         ]
         schools += realms
 
-    if building_id and not any([school['id'] == building_id for school in schools]):
+    if building_id and all([school['id'] != building_id for school in schools]):
         school = oauth.schoology.get(  # type: ignore
             f'schools/{building_id}').json()
         schools.append({
@@ -102,6 +102,7 @@ def get_user_schools(
         for building_id in building_ids:
             school = oauth.schoology.get(  # type: ignore
                 f'schools/{building_id}')
+
             schools.append({
                 'id': school['id'],
                 'name': school['title'],
@@ -111,7 +112,7 @@ def get_user_schools(
     return schools
 
 
-@cache.memoize(timeout=300)
+# @cache.memoize(timeout=300)
 def get_user_realms(user: User) -> List[Realm]:
     user_data = oauth.schoology.get('users/me').json()  # type: ignore
 
@@ -129,9 +130,9 @@ def get_user_realms(user: User) -> List[Realm]:
         ).json()['group']
     ]
 
-    school_id = user_data.get('school_id')
-    building_id = user_data.get('building_id')
-    additional_buildings = user_data.get('additional_buildings')
+    school_id = str(user_data.get('school_id', ''))
+    building_id = str(user_data.get('building_id', ''))
+    additional_buildings = str(user_data.get('additional_buildings', ''))
 
     schools = get_user_schools(school_id, building_id, additional_buildings)
 
