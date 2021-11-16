@@ -59,14 +59,22 @@ def get_user_schools(
     additional_buildings: Optional[str]
 ) -> List[Realm]:
     building_id = building_id or school_id
-
     schools: List[Realm] = []
-
     buildings_response: Optional[List[Dict]] = None
+
     if school_id:
+        school = oauth.schoology.get(  # type: ignore
+            f'schools/{school_id}').json()
+        schools.append({
+            'id': school['id'],
+            'name': school['title'],
+            'type': 'schools'
+        })
+
         buildings_response = oauth.schoology.get(  # type: ignore
             f'schools/{school_id}/buildings'
         )
+
         if buildings_response.ok and buildings_response.text:  # type: ignore
             buildings_response = buildings_response.json()  # type: ignore
         else:
@@ -94,7 +102,6 @@ def get_user_schools(
         for building_id in building_ids:
             school = oauth.schoology.get(  # type: ignore
                 f'schools/{building_id}')
-
             schools.append({
                 'id': school['id'],
                 'name': school['title'],
@@ -121,9 +128,11 @@ def get_user_realms(user: User) -> List[Realm]:
             f'users/{user.id}/groups'
         ).json()['group']
     ]
+
     school_id = user_data.get('school_id')
     building_id = user_data.get('building_id')
     additional_buildings = user_data.get('additional_buildings')
+
     schools = get_user_schools(school_id, building_id, additional_buildings)
 
     return sections + groups + schools
