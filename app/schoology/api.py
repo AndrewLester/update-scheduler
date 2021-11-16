@@ -62,8 +62,6 @@ def get_user_schools(
 
     schools: List[Realm] = []
 
-    print(f'{school_id=}, {building_id=}, {additional_buildings=}')
-
     buildings_response: Optional[List[Dict]] = None
     if school_id:
         buildings_response = oauth.schoology.get(  # type: ignore
