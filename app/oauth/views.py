@@ -41,19 +41,22 @@ def login():
     next_query_arg = f'?next={requested_url}' if requested_url else ''
     redirect_uri = url_for('.authorize', _external=True) + next_query_arg
 
-    oauth.schoology.authorize_url = domain
-    return oauth.schoology.authorize_redirect(redirect_uri, oauth_callback=redirect_uri)
+    oauth.schoology.authorize_url = domain  # type: ignore
+    return oauth.schoology.authorize_redirect(  # type: ignore
+        redirect_uri,
+        oauth_callback=redirect_uri
+    )
 
 
 @blueprint.route('/authorize')
 def authorize():
     try:
-        token = oauth.schoology.authorize_access_token()
+        token = oauth.schoology.authorize_access_token()  # type: ignore
     except (AuthlibBaseError):
         flash('Please restart the login procedure...')
         return render_template('500.html'), 500
 
-    user_data = oauth.schoology.get('users/me').json()
+    user_data = oauth.schoology.get('users/me').json()  # type: ignore
 
     user = User.query.get(user_data['uid'])
     if user is None:
