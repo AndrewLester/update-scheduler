@@ -104,7 +104,7 @@ class Attachment(db.Model):
 class Realm(db.Model):
     __tablename__ = 'realm'
 
-    id = db.Column(db.String(30), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     type = db.Column(db.String(20))
     name = db.Column(db.String(150))
 
