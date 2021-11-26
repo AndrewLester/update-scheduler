@@ -114,23 +114,41 @@ def get_user_schools(
     return schools
 
 
+def get_user_sections(user: User) -> List[Realm]:
+    sections_response = oauth.schoology.get(  # type: ignore
+        f'users/{user.id}/sections'
+    )
+
+    if not sections_response.ok:
+        return []
+
+    return [
+        {'id': section['id'], 'name': section['course_title'],
+            'type': 'sections'}
+        for section in sections_response.json()['section']
+    ]
+
+
+def get_user_groups(user: User) -> List[Realm]:
+    groups_response = oauth.schoology.get(  # type: ignore
+        f'users/{user.id}/groups'
+    )
+
+    if not groups_response.ok:
+        return []
+
+    return [
+        {'id': group['id'], 'name': group['title'], 'type': 'groups'}
+        for group in groups_response.json()['group']
+    ]
+
+
 @cache.memoize(timeout=300)
 def get_user_realms(user: User) -> List[Realm]:
     user_data = oauth.schoology.get('users/me').json()  # type: ignore
 
-    sections: List[Realm] = [
-        {'id': section['id'], 'name': section['course_title'],
-            'type': 'sections'}
-        for section in oauth.schoology.get(  # type: ignore
-            f'users/{user.id}/sections'
-        ).json()['section']
-    ]
-    groups: List[Realm] = [
-        {'id': group['id'], 'name': group['title'], 'type': 'groups'}
-        for group in oauth.schoology.get(  # type: ignore
-            f'users/{user.id}/groups'
-        ).json()['group']
-    ]
+    sections = get_user_sections(user)
+    groups = get_user_groups(user)
 
     school_id = str(user_data.get('school_id', ''))
     building_id = str(user_data.get('building_id', ''))
