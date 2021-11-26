@@ -1,4 +1,5 @@
 from __future__ import with_statement
+from flask import current_app
 
 import os
 import logging
@@ -22,7 +23,6 @@ logger = logging.getLogger('alembic.env')
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from flask import current_app
 config.set_main_option(
     'sqlalchemy.url',
     str(current_app.extensions['migrate'].db.engine.url).replace('%', '%%'))
@@ -75,7 +75,8 @@ def run_migrations_online():
 
     connect_args = {}
     if os.environ.get('DATABASE_URL'):
-        connect_args = {'ssl': {'ca': '.mysqlclient/cleardb-ca.pem', 'cipher': 'DHE-RSA-AES128-GCM-SHA256:AES128-SHA:@SECLEVEL=1'}}
+        connect_args = {'ssl': {'ca': '.mysqlclient/cleardb-ca.pem',
+                                'cipher': 'DHE-RSA-AES128-GCM-SHA256:AES128-SHA:@SECLEVEL=1'}}
 
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
@@ -89,6 +90,7 @@ def run_migrations_online():
             connection=connection,
             target_metadata=target_metadata,
             process_revision_directives=process_revision_directives,
+            compare_type=True,
             **current_app.extensions['migrate'].configure_args
         )
 
