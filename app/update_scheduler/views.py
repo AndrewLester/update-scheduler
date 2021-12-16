@@ -86,7 +86,7 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
 
         if form.job.scheduled_for.data or form.job.scheduled_in.data:
             schedule_update(
-                current_app.redis_queue,
+                current_app.redis_queue,  # type: ignore
                 scheduled_formdata_to_time(
                     form.job.scheduled_for.data,
                     form.job.scheduled_in.data
@@ -105,11 +105,11 @@ def updates(form: UpdateForm) -> Union[Update, NoReturn]:
             except NoSuchJobError:
                 db.session.delete(update.job)
             else:
-                job.cancel()
+                job.delete()
 
         if form.job.scheduled_for.data or form.job.scheduled_in.data:
             schedule_update(
-                current_app.redis_queue,
+                current_app.redis_queue,  # type: ignore
                 scheduled_formdata_to_time(
                     form.job.scheduled_for.data,
                     form.job.scheduled_in.data

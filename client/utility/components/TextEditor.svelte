@@ -12,20 +12,6 @@ onMount(() => {
     editor!.firstElementChild!.innerHTML = content;
 });
 
-const options = {
-    modules: {
-        toolbar: [
-            [{ header: [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image']
-        ]
-    },
-    placeholder: placeholder,
-    theme: 'snow'
-};
-
 export function setContent(newContent: string) {
     if (editor && editor.firstElementChild) {
         editor.firstElementChild.innerHTML = newContent;
@@ -40,7 +26,7 @@ export function clear() {
 <div
     class="editor"
     bind:this={editor}
-    use:quill={options}
+    use:quill={{ placeholder }}
     on:text-change={(e) => (content = e.detail.html)} />
 
 <style>
@@ -51,6 +37,5 @@ export function clear() {
     height: 100px;
     font-family: inherit;
     font-size: inherit;
-    
 }
 </style>
