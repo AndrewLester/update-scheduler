@@ -99,6 +99,8 @@ def rest_endpoint(
             if request.method == 'GET' and 'GET' in methods:
                 if id is not None:
                     model_instance = model.query.get_or_404(id)  # type: ignore
+                    if model_instance.user_id != current_user.id:
+                        return abort(404)
                     return jsonify(**model_instance.to_json())
                 else:
                     return jsonify(
@@ -112,6 +114,8 @@ def rest_endpoint(
 
             if request.method == 'DELETE' and 'DELETE' in methods and id is not None:
                 model_instance = model.query.get_or_404(id)  # type: ignore
+                if model_instance.user_id != current_user.id:
+                    return abort(404)
                 db.session.delete(model_instance)  # type: ignore
                 db.session.commit()  # type: ignore
                 return jsonify(), 204
@@ -127,6 +131,9 @@ def rest_endpoint(
                 return model_instance.to_json()  # type: ignore
 
             if request.method == 'PUT' and 'PUT' in methods and id is not None:
+                model_instance = model.query.get_or_404(id)
+                if model_instance.user_id != current_user.id:
+                    return abort(404)
                 model_instance = func(form_data)
                 db.session.add(model_instance)  # type: ignore
                 db.session.commit()  # type: ignore
