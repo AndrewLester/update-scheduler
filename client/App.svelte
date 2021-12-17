@@ -9,6 +9,7 @@ declare const bootstrap: {
 import { onMount, setContext, tick } from 'svelte';
 import type { Networking } from './api/network';
 import * as networking from './api/network';
+import { scheduledSort } from './api/types';
 import type { Update } from './api/types';
 import { getNewUpdate, isScheduled } from './api/types';
 import UpdateEditor from './editor/UpdateEditor.svelte';
@@ -35,7 +36,7 @@ setContext('mobile', () => mobile);
 // TODO: Make mobile reactive after allowing layout to change from
 // mobile to normal using transitions. Remove it from onMount
 let mobile = false;
-$: scheduledUpdates = $updates.filter((update) => isScheduled(update));
+$: scheduledUpdates = $updates.filter(isScheduled).sort(scheduledSort);
 $: savedUpdates = $updates.filter((update) => !isScheduled(update));
 
 let gridAreas: GridArea = 'minimal';
