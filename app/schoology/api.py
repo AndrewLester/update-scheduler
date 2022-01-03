@@ -103,7 +103,7 @@ def get_user_schools(
             [school['id'] != b_id for school in schools])]
         for building_id in building_ids:
             school = oauth.schoology.get(  # type: ignore
-                f'schools/{building_id}')
+                f'schools/{building_id}').json()
 
             schools.append({
                 'id': school['id'],
