@@ -2,14 +2,14 @@ from app.utils import FlaskSubform, IntervalField
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField
 from wtforms.fields.core import DateTimeField, FieldList, FormField, IntegerField
-from wtforms.validators import NoneOf, Required, Regexp, URL
+from wtforms.validators import Length, NoneOf, Required, Regexp, URL
 
 
 class Attachment(FlaskSubform):
     id = IntegerField()
     type = StringField(validators=[Regexp('(file|link|video)')])
     title = StringField()
-    url = StringField(validators=[URL()])
+    url = StringField(validators=[URL(), Length(max=300)])
     image = StringField()
     icon = StringField()
     summary = StringField()

@@ -20,7 +20,7 @@ def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update
             dt.astimezone(pytz.utc),
             POST_UPDATE_TASK,
             realms,
-            update.body,
+            '',  # TODO: Remove this and the string param to the task once all tasks using the old system are sent
             attachments
         )
     else:
@@ -28,7 +28,7 @@ def schedule_update(queue: Queue, dt: Union[datetime, timedelta], update: Update
             dt,
             POST_UPDATE_TASK,
             realms,
-            update.body,
+            '',  # TODO: Remove this and the string param to the task once all tasks using the old system are sent
             attachments
         )
     user_timezone = pytz.timezone(User.query.get(update.user_id).timezone)
