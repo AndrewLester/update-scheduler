@@ -34,48 +34,43 @@ const urlRegex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{
 let openGraphData: any;
 let active = tabs.find((tab) => tab.label === attachment.type) || tabs[0];
 $: attachment.type = active.label as 'video' | 'link' | 'file';
+$: attachmentUrl = attachment.url;
 $: {
-    const matches = attachment.url.match(urlRegex);
+    const matches = attachmentUrl.match(urlRegex);
     if (
-        attachment.url &&
-        attachment.url.includes('.') &&
+        attachmentUrl &&
+        attachmentUrl.includes('.') &&
         matches !== null &&
         matches.length >= 1 &&
-        matches[0] === attachment.url
+        matches[0] === attachmentUrl
     ) {
-        fetch('/cors/' + attachment.url)
-            .then((res) => {
-                if (res.status >= 500) {
-                    openGraphData = undefined;
-                    throw new Error('Invalid URL/page request');
-                }
-                return res;
-            })
-            .then((res) => res.text())
-            .then((html) => {
-                const document = new DOMParser().parseFromString(
-                    html,
-                    'text/html'
-                );
-                const addSchema = !(
-                    attachment.url.startsWith('http://') ||
-                    attachment.url.startsWith('https://')
-                );
-                const pageData = getMetadata(
-                    document,
-                    (addSchema ? 'http://' : '') + attachment.url
-                );
-                if (pageData.title) {
-                    openGraphData = pageData;
-                    attachment.title = openGraphData.title;
-                    attachment.image = openGraphData.image;
-                    attachment.icon = openGraphData.icon;
-                    attachment.summary = openGraphData.description;
-                } else {
-                    openGraphData = undefined;
-                }
-            })
-            .catch();
+        loadData(attachmentUrl);
+    } else {
+        openGraphData = undefined;
+    }
+}
+
+async function loadData(url: string) {
+    const res = await fetch('/cors/' + url).catch();
+
+    if (res.status >= 500) {
+        openGraphData = undefined;
+        return;
+    }
+
+    const html = await res.text();
+    const document = new DOMParser().parseFromString(html, 'text/html');
+    const addSchema = !(
+        attachment.url.startsWith('http://') ||
+        attachment.url.startsWith('https://')
+    );
+    const pageData = getMetadata(document, (addSchema ? 'http://' : '') + url);
+    if (pageData.title) {
+        openGraphData = pageData;
+        attachment.title = openGraphData.title;
+        attachment.image = openGraphData.image;
+        attachment.icon = openGraphData.icon;
+        attachment.summary = openGraphData.description;
     } else {
         openGraphData = undefined;
     }
