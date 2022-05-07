@@ -1,15 +1,14 @@
-from logging import Logger
 from typing import Optional
 
 import dill
 from rq import Queue
 import redis
-from flask import Flask, render_template, jsonify, flash, g
+from flask import Flask, render_template, jsonify, flash, g, Response, request, make_response, redirect
 from flask.cli import load_dotenv
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
-from app import login, db, migrate, cache, csrf, oauth_client
+from app import login, db, migrate, cache, csrf, oauth_client, talisman
 from app import update_scheduler, main, oauth, cors_anywhere
 from config import Config
 
@@ -25,6 +24,7 @@ def create_app(config=Config):
         connection=app.redis
     )
 
+    register_before_request_handlers(app)
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)
@@ -39,6 +39,7 @@ def create_app(config=Config):
 
 
 def register_extensions(app: Flask):
+    talisman.init_app(app, content_security_policy=None)
     login.init_app(app)
     login.login_view = 'main.login'  # type: ignore
     db.init_app(app)
@@ -89,3 +90,10 @@ def register_errorhandlers(app):
         return render_template('500.html'), 500
 
     app.register_error_handler(500, internal_error)
+
+
+def register_before_request_handlers(app: Flask):
+    def handle_before_request() -> Optional[Response]:
+        if 'update-scheduler-production.herokuapp.com' in request.host:
+            return make_response(redirect('https://www.updatescheduler.com/', code=301))
+    app.before_request(handle_before_request)

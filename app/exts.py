@@ -5,6 +5,7 @@ from flask_caching import Cache
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
 
 
@@ -14,6 +15,7 @@ migrate = Migrate(db=db)
 cache = Cache()
 oauth_client = OAuth()
 csrf = CSRFProtect()
+talisman = Talisman()
 wtforms_json.init()
 
 
