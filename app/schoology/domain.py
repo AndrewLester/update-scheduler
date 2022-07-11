@@ -20,7 +20,7 @@ def authorization_domain(prefix: Optional[str]) -> str:
     """
     if not prefix:
         # If they put in blank or invalid, use the schoology domain
-        domain = 'www.schoology.com'
+        domain = 'app.schoology.com'
     elif is_domain(prefix):
         # If they gave a custom domain/subdomain for their school, use its entirety
         # But parse out any excess url stuff (https://, /, #)
