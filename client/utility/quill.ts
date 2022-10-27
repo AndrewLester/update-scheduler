@@ -11,7 +11,7 @@ function quill(node: HTMLElement, options = {}) {
                 ['bold', 'italic', 'underline', 'strike'],
                 [{ color: [] }, { background: [] }],
                 [{ list: 'ordered' }, { list: 'bullet' }],
-                ['link', 'image'],
+                ['link', 'image', 'video'],
             ],
             imageCompress: {
                 quality: 0.9,
