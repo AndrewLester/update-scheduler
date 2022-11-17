@@ -31,11 +31,17 @@ export function clear() {
 
 <style>
 .editor {
-    resize: vertical;
-    overflow-y: auto;
     overflow-x: visible;
-    height: 100px;
     font-family: inherit;
     font-size: inherit;
+    height: unset !important;
+}
+
+.editor :global(.ql-editor) {
+    min-height: 200px;
+}
+
+.editor :global(.ql-tooltip[data-mode='video']::before) {
+    content: 'Enter web page or video:';
 }
 </style>
