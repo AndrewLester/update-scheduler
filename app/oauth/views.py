@@ -79,6 +79,7 @@ def authorize():
         db.session.delete(user.oauth_token)
         db.session.commit()
     user.oauth_token = oauth_token
+    user.timezone = user_data['tz_name']
 
     db.session.add(user)  # type: ignore
     db.session.commit()  # type: ignore
