@@ -37,7 +37,7 @@ def scheduler():
 @blueprint.route('/realms')
 @login_required
 def realms():
-    realms = get_user_realms(current_user)  # type: ignore
+    realms = get_user_realms(current_user.id)  # type: ignore
     return jsonify(realms)
 
 

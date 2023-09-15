@@ -115,9 +115,9 @@ def get_user_schools(
     return schools
 
 
-def get_user_sections(user: User) -> List[Realm]:
+def get_user_sections(user_id: str) -> List[Realm]:
     sections_response = oauth.schoology.get(  # type: ignore
-        f'users/{user.id}/sections'
+        f'users/{user_id}/sections'
     )
 
     if not sections_response.ok:
@@ -138,9 +138,9 @@ def get_user_sections(user: User) -> List[Realm]:
     return cast(List[Realm], sections)
 
 
-def get_user_groups(user: User) -> List[Realm]:
+def get_user_groups(user_id: str) -> List[Realm]:
     groups_response = oauth.schoology.get(  # type: ignore
-        f'users/{user.id}/groups'
+        f'users/{user_id}/groups'
     )
 
     if not groups_response.ok:
@@ -153,11 +153,11 @@ def get_user_groups(user: User) -> List[Realm]:
 
 
 @cache.memoize(timeout=300)
-def get_user_realms(user: User) -> List[Realm]:
+def get_user_realms(user_id: str) -> List[Realm]:
     user_data = oauth.schoology.get('users/me').json()  # type: ignore
 
-    sections = get_user_sections(user)
-    groups = get_user_groups(user)
+    sections = get_user_sections(user_id)
+    groups = get_user_groups(user_id)
 
     school_id = str(user_data.get('school_id', ''))
     building_id = str(user_data.get('building_id', ''))
