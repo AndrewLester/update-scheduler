@@ -1,10 +1,11 @@
 from app.schoology.types import Realm
 from datetime import datetime
 from json.decoder import JSONDecodeError
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, cast
 from app.exts import cache, oauth_client as oauth
 from app.main.models import User
 import time
+from collections import Counter
 
 from app.utils import LocalizableTz
 
@@ -122,11 +123,19 @@ def get_user_sections(user: User) -> List[Realm]:
     if not sections_response.ok:
         return []
 
-    return [
-        {'id': section['id'], 'name': section['course_title'],
+    sections = [
+        {'id': section['id'], 'name': section['course_title'], 'section_name': section.get('section_title', ''),
             'type': 'sections'}
         for section in sections_response.json()['section']
     ]
+
+    section_name_counts = Counter([section['name'] for section in sections])
+    for section in sections:
+        if section_name_counts[section['name']] > 1:
+            section['name'] += f": {section['section_name']}"
+        del section['section_name']
+
+    return cast(List[Realm], sections)
 
 
 def get_user_groups(user: User) -> List[Realm]:
