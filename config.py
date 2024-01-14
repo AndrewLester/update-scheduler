@@ -15,8 +15,6 @@ class Config:
         SQLALCHEMY_MAX_OVERFLOW = 3
         SQLALCHEMY_POOL_RECYCLE = 55
         SQLALCHEMY_POOL_TIMEOUT = 5
-        SSL_CIPHER = 'DHE-RSA-AES128-GCM-SHA256:AES128-SHA:@SECLEVEL=1'
-        SQLALCHEMY_ENGINE_OPTIONS = {'connect_args': {'ssl': {'ca': '.mysqlclient/cleardb-ca.pem', 'cipher': SSL_CIPHER}}}
 
     SCHOOLOGY_CLIENT_ID = os.environ.get('CONSUMER_KEY')
     SCHOOLOGY_CLIENT_SECRET = os.environ.get('CONSUMER_SECRET')

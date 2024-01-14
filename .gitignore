@@ -22,3 +22,5 @@ app/bundle/
 *.csr
 *.key
 *.sqlite
+
+transfer_config.sql
