@@ -48,3 +48,4 @@ WTForms==2.3.3
 WTForms-JSON==0.3.3
 zope.event==4.5.0
 zope.interface==5.2.0
+psycopg2
