@@ -7,7 +7,7 @@ from app.exts import db, login
 
 @login.user_loader
 def load_user(id):
-    user = User.query.get(int(id))
+    user = User.query.get(str(id))
     if user is not None and user.oauth_token is None:
         user = None
     return user
