@@ -31,4 +31,5 @@ class Config:
 
 # Settings for rq-worker
 REDIS_URL = Config.REDIS_URL
-
+REDIS_SSL = True
+REDIS_SSL_CERT_REQS = None
