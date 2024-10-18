@@ -36,4 +36,6 @@ REDIS_HOST = redis_url.hostname
 REDIS_PORT = redis_url.port
 REDIS_PASSWORD = redis_url.password
 REDIS_SSL = redis_url.scheme == "rediss"
+REDIS_SSL_CA_CERTS = None
+REDIS_DB = 0
 REDIS_SSL_CERT_REQS = None
