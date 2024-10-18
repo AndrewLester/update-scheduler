@@ -1,4 +1,5 @@
 from typing import Optional
+from urllib.parse import urlparse
 
 import dill
 from rq import Queue
@@ -17,7 +18,8 @@ def create_app(config=Config):
     load_dotenv()
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config)
-    app.redis = redis.from_url(app.config['REDIS_URL'])
+    redis_url = urlparse(app.config['REDIS_URL'])
+    app.redis = redis.Redis(host=redis_url.hostname, port=redis_url.port, password=redis_url.password, ssl=(redis_url.scheme == "rediss"), ssl_cert_reqs=None)
     app.redis_queue = Queue(
         name=app.config['APP_NAME'].lower().replace(' ', '-'),
         serializer=dill,  # type: ignore
