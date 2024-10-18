@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -30,6 +31,9 @@ class Config:
 
 
 # Settings for rq-worker
-REDIS_URL = Config.REDIS_URL
-REDIS_SSL = True
+redis_url = urlparse(Config.REDIS_URL)
+REDIS_HOST = redis_url.hostname
+REDIS_PORT = redis_url.port
+REDIS_PASSWORD = redis_url.password
+REDIS_SSL = redis_url.scheme == "rediss"
 REDIS_SSL_CERT_REQS = None
