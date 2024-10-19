@@ -22,7 +22,6 @@ gevent
 greenlet
 gunicorn
 idna==2.10
-install==1.3.4
 isodate==0.6.0
 itsdangerous==1.1.0
 Jinja2==2.11.2
@@ -38,7 +37,7 @@ python-editor==1.0.4
 pytz==2020.5
 redis==3.5.3
 requests==2.25.1
-rq==1.11.0
+rq==1.11.1
 six==1.15.0
 SQLAlchemy==1.3.22
 toml==0.10.2
