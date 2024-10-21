@@ -32,11 +32,11 @@ class Config:
     CACHE_TYPE = 'redis'
     CACHE_DEFAULT_TIMEOUT = 1000
     CACHE_KEY_PREFIX = 'redis_flask_cache'
-    CACHE_REDIS_HOST = redis_url.hostname
-    CACHE_REDIS_PORT = redis_url.port
-    CACHE_REDIS_PASSWORD = redis_url.password
+    CACHE_REDIS_HOST = REDIS_HOST
+    CACHE_REDIS_PORT = REDIS_PORT
+    CACHE_REDIS_PASSWORD = REDIS_PASSWORD
     CACHE_OPTIONS = {
-        'ssl': redis_url.scheme == 'rediss',
-        'ssl_cert_reqs': None,
+        'ssl': REDIS_SSL,
+        'ssl_cert_reqs': REDIS_SSL_CERT_REQS,
     }
     CACHE_IGNORE_ERRORS = True
