@@ -29,6 +29,7 @@ class Config:
     SCHOOLOGY_CLIENT_ID = os.environ.get('CONSUMER_KEY')
     SCHOOLOGY_CLIENT_SECRET = os.environ.get('CONSUMER_SECRET')
 
+    REDIS_URL = redis_url
     CACHE_TYPE = 'redis'
     CACHE_DEFAULT_TIMEOUT = 1000
     CACHE_KEY_PREFIX = 'redis_flask_cache'
